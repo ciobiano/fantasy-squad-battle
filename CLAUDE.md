@@ -69,6 +69,23 @@ Verified API facts (2026-10-08):
 - No database for the MVP. Add one only when it's actually needed.
 - Analytics: PostHog, installed through the Vercel Marketplace. Cookieless (no consent banner), EU region, loaded after the page is interactive. Events: `league_loaded`, `card_viewed`, `card_downloaded`, `card_shared` {award, format, language}, `language_changed`.
 
+## Engineering priorities
+
+**Speed comes first, then features.** Judge everything by how it feels on a mid-range Android phone on Nigerian 4G.
+
+- **Server Components by default.** Client JS only where there's interaction (stories, switchers, and later the planner).
+  - Budget: no more than about 170 KB gzipped first-load JS on the home screen.
+  - The framework alone is about 126 KB gzipped (measured 2026-10-08).
+  - Load PostHog and anything else non-critical after interaction.
+- **Cache Components** (`cacheComponents: true`, with `'use cache'` and `cacheLife`):
+  - Finished GW data is cached forever.
+  - Data that isn't league-specific (bootstrap, live, dream-team, each manager's history and picks) is cached once and shared across every league and visitor.
+- **Region:** Vercel functions run in London (`lhr1`), next to FPL, unless the `/api/health` latency numbers say otherwise. Visitors get cached responses from the CDN.
+- **Built for what comes next.** Phase 2 and later add a draft tool, a GW planner, live prices, expected points and price risers and fallers: the paid FFS feature set, for free.
+  - Price risers and expected points need history. That means a scheduled job (Vercel Cron) that snapshots bootstrap data into a database, added when phase 2 starts.
+  - Models can run as Python functions on Vercel if needed.
+  - Keep raw API access (`lib/fpl/`) separate from domain logic (`lib/league/`), so new features reuse both.
+
 ## Legal / brand guardrails
 
 - Don't use the Premier League logo, club crests or player photos, and don't put "FPL" or "Premier League" in the app name.
