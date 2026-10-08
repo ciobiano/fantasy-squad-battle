@@ -85,7 +85,12 @@ Verified API facts (2026-10-08):
   - FPL sits behind Fastly, which sends a 403 to some server IP addresses and lets others through.
   - The block doesn't depend on region or headers. Two Paris deployments behaved differently: one got 200s and the other 403s on every call. A London deployment also got 403s, while Washington, Frankfurt, Dublin and Cape Town got 200s.
   - Plain curl works from a home connection.
-  - So any single deployment can end up blocked. Fetching from Vercel needs a fallback path (see tasks/todo.md).
+  - So any single deployment can end up blocked. The fix is the **Cloudflare relay**: `relay/`, deployed as `fsb-fpl-relay` on workers.dev.
+    - `lib/fpl/http.ts` calls FPL directly. On a 403 it switches to the relay and stays on it for 10 minutes.
+    - The relay forwards only the allowlisted FPL endpoints, and only to requests carrying the `x-relay-key` header.
+    - Env vars: `FPL_RELAY_URL` and `FPL_RELAY_KEY` live in Vercel (all environments) and `.env.local`. `RELAY_SECRET` lives in Cloudflare.
+    - Verified 2026-10-08: on a blocked preview, every probe came back through the relay in 103–342 ms.
+    - Wrangler needs Node 22 or newer. Run it with nvm's Node 24 (`PATH=~/.nvm/versions/node/v24.13.1/bin:$PATH`); the project default is Node 20.
 - **Built for what comes next.** Phase 2 and later add a draft tool, a GW planner, live prices, expected points and price risers and fallers: the paid FFS feature set, for free.
   - Price risers and expected points need history. That means a scheduled job (Vercel Cron) that snapshots bootstrap data into a database, added when phase 2 starts.
   - Models can run as Python functions on Vercel if needed.

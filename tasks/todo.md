@@ -21,8 +21,10 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - Blocked: one `lhr1` deployment, and 1 of 2 `cdg1` deployments.
   - Fine: `iad1`, `fra1`, `dub1`, `cpt1`, and the other `cdg1` deployment.
   - Region set to `cdg1`, the fastest.
-- [ ] **Decide the fallback for blocked deployments (Ralph).** Then build it before phase 1 relies on FPL in production.
-- [ ] Merge to `main` (production is currently `iad1`, and works)
+- [x] **Fallback:** the Cloudflare relay `fsb-fpl-relay` is deployed and locked.
+  - Checked: no key gets 401, a path outside the list gets 404, a non-GET gets 405, and all 7 FPL endpoints return 200.
+  - End to end: a blocked `cdg1` preview served every probe through the relay, and the next call skipped the direct attempt.
+- [ ] Merge to `main` so production gets the relay and the `cdg1` region. Needs Ralph's OK.
 - [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
 
 ## 1. Data layer: `lib/fpl/` (the only module that touches the API)
