@@ -80,9 +80,12 @@ Verified API facts (2026-10-08):
 - **Cache Components** (`cacheComponents: true`, with `'use cache'` and `cacheLife`):
   - Finished GW data is cached forever.
   - Data that isn't league-specific (bootstrap, live, dream-team, each manager's history and picks) is cached once and shared across every league and visitor.
-- **Region:** Vercel functions run in Paris (`cdg1`), set in `vercel.json`. Visitors get cached responses from the CDN.
-  - Measured on 2026-10-08: **FPL returns 403 to every request from London (`lhr1`).** Paris answered fastest (22–61 ms warm). Frankfurt, Dublin, Cape Town and Washington also work.
-  - If FPL starts blocking Paris, change that one line to another working region, and confirm with `/api/health`.
+- **Region:** Vercel functions run in Paris (`cdg1`), set in `vercel.json`. It was the fastest for reaching FPL (22–61 ms warm). Visitors get cached responses from the CDN.
+- **FPL blocks some Vercel servers** (measured 2026-10-08):
+  - FPL sits behind Fastly, which sends a 403 to some server IP addresses and lets others through.
+  - The block doesn't depend on region or headers. Two Paris deployments behaved differently: one got 200s and the other 403s on every call. A London deployment also got 403s, while Washington, Frankfurt, Dublin and Cape Town got 200s.
+  - Plain curl works from a home connection.
+  - So any single deployment can end up blocked. Fetching from Vercel needs a fallback path (see tasks/todo.md).
 - **Built for what comes next.** Phase 2 and later add a draft tool, a GW planner, live prices, expected points and price risers and fallers: the paid FFS feature set, for free.
   - Price risers and expected points need history. That means a scheduled job (Vercel Cron) that snapshots bootstrap data into a database, added when phase 2 starts.
   - Models can run as Python functions on Vercel if needed.
