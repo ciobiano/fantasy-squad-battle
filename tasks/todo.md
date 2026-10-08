@@ -14,7 +14,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - browser-like headers
   - a guard that refuses any path outside FPL's `/api/`
   - backoff retry on 403, 429 and 5xx responses and on network errors
-  - 12 unit tests
+  - 11 unit tests
 - [x] `/api/health` checks bootstrap, fixtures, standings and dream-team. It passed locally on 2026-10-08.
 - [ ] **Spike:** hit `/api/health` on the Vercel preview of `spike/fpl-health`, to confirm FPL doesn't block Vercel's servers. *Waiting on Ralph to import the repo in Vercel.*
 - [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
