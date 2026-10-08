@@ -52,9 +52,17 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [ ] Guardrail review. Ralph edits EN and Pidgin; FR stays marked beta.
 
 ## 4. Design exploration
-- [ ] Claude Design canvas with the **Market** and **Editorial** directions, using Denizens of Olympus GW5 data
-- [ ] Show both directions in light and dark, including our own gradient palette (no purple, no glow)
-- [ ] Ralph picks a direction, then the Design System artifact gets made: colour tokens for both themes, Inter plus Instrument Serif type scale, and AA contrast checks over gradients
+The full spec is in [docs/design/brief.md](../docs/design/brief.md).
+- [x] Design brief: every card, screen, state and component, the two directions, Satori limits, and the data each surface needs
+- [ ] Fetch Denizens of Olympus GW5 data as a canvas fixture, with surnames stripped. *Waiting on Ralph for the league ID.*
+- [ ] Draft roast lines for the pass 1 cards (EN, Pidgin, FR), marked as drafts
+- [ ] Canvas pass 1, to pick a direction:
+  - Market and Editorial: Wrap (Status), Oga (Status), Wooden Spoon (X)
+  - The Market tab in light and dark, in each direction
+  - A few candidates for our gradient palette (no purple, no glow)
+- [ ] Ralph picks a direction
+- [ ] Canvas pass 2, the chosen direction only: the other cards in both formats, story viewer, League tab, Start screen, share page and every state
+- [ ] Design System artifact: colour tokens for both themes, Inter plus Instrument Serif type scale, components, and AA contrast checks over gradients
 
 ## 5. Cards: `next/og`
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
