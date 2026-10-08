@@ -8,9 +8,16 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - importing the GitHub repo in the Vercel dashboard
 
 ## 0. Setup and risk check
-- [ ] `git init` and a private GitHub repo on `ciobiano`
-- [ ] Next.js 16.3.8 with the App Router, TypeScript, Tailwind, CVA, clsx and Vitest
-- [ ] **Spike:** an API route that calls `bootstrap-static` from a Vercel preview, to confirm FPL doesn't block Vercel's servers
+- [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
+- [x] Next.js 16.3.8 with the App Router, TypeScript, Tailwind, CVA, clsx and Vitest. Inter and Instrument Serif come through `next/font`.
+- [x] `lib/fpl/http.ts`:
+  - browser-like headers
+  - a guard that refuses any path outside FPL's `/api/`
+  - backoff retry on 403, 429 and 5xx responses and on network errors
+  - 12 unit tests
+- [x] `/api/health` checks bootstrap, fixtures, standings and dream-team. It passed locally on 2026-10-08.
+- [ ] **Spike:** hit `/api/health` on the Vercel preview of `spike/fpl-health`, to confirm FPL doesn't block Vercel's servers. *Waiting on Ralph to import the repo in Vercel.*
+- [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
 
 ## 1. Data layer: `lib/fpl/` (the only module that touches the API)
 - [ ] `parseLeagueInput`: accept a raw ID or a league URL
