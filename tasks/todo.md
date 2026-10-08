@@ -16,7 +16,9 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - backoff retry on 403, 429 and 5xx responses and on network errors
   - 11 unit tests
 - [x] `/api/health` checks bootstrap, fixtures, standings and dream-team. It passed locally on 2026-10-08.
-- [ ] **Spike:** hit `/api/health` on the Vercel preview of `spike/fpl-health`, to confirm FPL doesn't block Vercel's servers. *Waiting on Ralph to import the repo in Vercel.*
+- [x] Vercel project `fantasy-squad-battle` is linked and connected to GitHub. Production is at fantasy-squad-battle.vercel.app.
+- [x] **Spike result (2026-10-08):** FPL answers from Vercel `iad1`, `cdg1`, `fra1`, `dub1` and `cpt1`, but **returns 403 to everything from `lhr1`**. Region set to `cdg1`, the fastest.
+- [ ] Merge to `main` so production moves from `iad1` to `cdg1`. Needs Ralph's OK.
 - [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
 
 ## 1. Data layer: `lib/fpl/` (the only module that touches the API)

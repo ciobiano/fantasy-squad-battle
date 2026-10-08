@@ -80,7 +80,9 @@ Verified API facts (2026-10-08):
 - **Cache Components** (`cacheComponents: true`, with `'use cache'` and `cacheLife`):
   - Finished GW data is cached forever.
   - Data that isn't league-specific (bootstrap, live, dream-team, each manager's history and picks) is cached once and shared across every league and visitor.
-- **Region:** Vercel functions run in London (`lhr1`), next to FPL, unless the `/api/health` latency numbers say otherwise. Visitors get cached responses from the CDN.
+- **Region:** Vercel functions run in Paris (`cdg1`), set in `vercel.json`. Visitors get cached responses from the CDN.
+  - Measured on 2026-10-08: **FPL returns 403 to every request from London (`lhr1`).** Paris answered fastest (22–61 ms warm). Frankfurt, Dublin, Cape Town and Washington also work.
+  - If FPL starts blocking Paris, change that one line to another working region, and confirm with `/api/health`.
 - **Built for what comes next.** Phase 2 and later add a draft tool, a GW planner, live prices, expected points and price risers and fallers: the paid FFS feature set, for free.
   - Price risers and expected points need history. That means a scheduled job (Vercel Cron) that snapshots bootstrap data into a database, added when phase 2 starts.
   - Models can run as Python functions on Vercel if needed.
