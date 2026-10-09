@@ -61,9 +61,15 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - The Market tab in light and dark, in each direction
   - Gradient candidates Harmattan and Lagoon, with every text pair checked for AA
   - Checked in the browser; fixed two cards that ran into the Status safe zone and one grey-on-gradient contrast failure
-- [ ] Ralph picks a direction and a gradient
-- [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader
-- [ ] Canvas pass 2, the chosen direction only: the other cards in both formats, story viewer, League tab, Start screen, share page and every state
+- [x] Ralph picks a direction: **A · Market** (2026-10-09). Gradient still open; Harmattan stays the default.
+- [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader. Pass 2 uses a proposal: middle third of the table and moved ≤ 1 place over 3 GWs. That gives Ngozi, Seun and Ibrahim.
+- [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
+  - [x] **Card component** (`A-Card`): all 8 awards in Status and X, with ties, the provisional tag and the language switch. Each award gets its own visual: trend line, rank line, captain bars, bench row, hit bar, flat group lines.
+  - [x] **Wrap:** Status and X, plus a version where an award has no winner and a group line takes its row
+  - [x] **Screens:** Start, Market tab, League tab, story viewer, share sheet, public share page
+  - [x] **States:** invalid ID, league not found or head-to-head, FPL down, loading, provisional, over 50 managers, GW still in progress, fewer than 3 GWs
+  - [ ] Visual check of the X row, screens and states in the browser. The Status row and both Wraps are checked.
+- [ ] Ralph reviews pass 2 and edits the Pidgin and English copy
 - [ ] Design System artifact: colour tokens for both themes, Inter plus Instrument Serif type scale, components, and AA contrast checks over gradients
 
 ## 5. Cards: `next/og`

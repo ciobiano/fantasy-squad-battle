@@ -152,8 +152,23 @@ Real data from Ralph's league (Denizens of Olympus, GW5, a finished GW), with su
 - Cards have a language switch (Pidgin, English, French) and the Wrap a gradient switch, in the canvas's Tweaks panel.
 - **Product finding:** with the sample data, 7 of 12 managers qualify as Middle Class, including the league leader. The "rank moved ≤ 1 over 3 GWs" rule needs a tighter definition, e.g. only the middle third of the table.
 
-**Pass 2, the chosen direction only:**
-- The remaining cards in both formats.
-- The story viewer, the League tab, the Start screen, the share page and the states in section 1.
+**Pass 2, Market direction:** done 2026-10-09, on the canvas pages "Pass 2 · Cards" and "Pass 2 · Screens".
+- **One card component** renders every award in both formats, like the `next/og` port will: header, award label, winner(s), hero number, one visual, stats row (Status only), roast, watermark. The visual depends on the award:
+
+  | Award | Visual |
+  |---|---|
+  | Oga, Wooden Spoon | Season total against the league average (trend line over a dashed baseline) |
+  | Climber, Faller, Middle Class | League position by GW (rank line, 1st at the top). Ties get one line each, labelled at the end |
+  | Captain Disaster | Three bars: the captain's points, the league's favourite captain, the best captain in that team |
+  | Bench Regret | The four bench players with their points |
+  | Hit Merchant | One bar: points kept and points paid in hits |
+
+- **Ties:** up to 3 winners stacked smaller under the label. Faller (Femi and Bayo) and Middle Class (3 names) show it.
+- **Middle Class** uses the proposed rule (middle third and ≤ 1 place over 3 GWs), so the Wrap now names Ngozi, Seun and Ibrahim. Decision still Ralph's.
+- **Screens and states** take settings, not copies: the Market tab has a `state` (loading, provisional, over 50, live GW, early season) and the Start screen has a `state` (invalid, not found, FPL down) plus language and theme.
+- **Start screen:** the language switch sits at the bottom as a segmented control and the theme as an icon button, so both are always visible. Two real cards preview the product above the form.
+- **Story viewer:** progress segments, close, invisible previous and next tap zones (real buttons for screen readers), Share and a visible Pause button (WCAG 2.2.2). Share opens a sheet with three choices: WhatsApp Status (tall), X (square), Save image.
+- **Share page:** a fluid web page, not a phone frame. It has the Wrapped card, a swipeable row of the 8 award cards, the standings, a fan-project disclaimer and a sticky "Roast your own league" button.
+- **Copy:** state messages and the Start screen are in Pidgin by default, with English and French behind the language setting. Navigation labels stay English. Ralph to edit.
 
 **Then:** a Design System artifact from the winner (tokens for both themes, type scale, components, contrast checks), which phase 5 and 6 build from.
