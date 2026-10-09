@@ -54,13 +54,15 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 ## 4. Design exploration
 The full spec is in [docs/design/brief.md](../docs/design/brief.md).
 - [x] Design brief: every card, screen, state and component, the two directions, Satori limits, and the data each surface needs
-- [ ] Fetch Denizens of Olympus GW5 data as a canvas fixture, with surnames stripped. *Waiting on Ralph for the league ID.*
-- [ ] Draft roast lines for the pass 1 cards (EN, Pidgin, FR), marked as drafts
-- [ ] Canvas pass 1, to pick a direction:
+- [ ] Fetch Denizens of Olympus GW5 data and swap it into the canvas, with surnames stripped. *Waiting on Ralph for the league ID.* Pass 1 used a sample league with real GW5 player data.
+- [x] Draft roast lines for the pass 1 cards (EN, Pidgin, FR), marked as drafts
+- [x] Canvas pass 1, to pick a direction ("Squad Battle Directions", 2026-10-09):
   - Market and Editorial: Wrap (Status), Oga (Status), Wooden Spoon (X)
   - The Market tab in light and dark, in each direction
-  - A few candidates for our gradient palette (no purple, no glow)
-- [ ] Ralph picks a direction
+  - Gradient candidates Harmattan and Lagoon, with every text pair checked for AA
+  - Checked in the browser; fixed two cards that ran into the Status safe zone and one grey-on-gradient contrast failure
+- [ ] Ralph picks a direction and a gradient
+- [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader
 - [ ] Canvas pass 2, the chosen direction only: the other cards in both formats, story viewer, League tab, Start screen, share page and every state
 - [ ] Design System artifact: colour tokens for both themes, Inter plus Instrument Serif type scale, components, and AA contrast checks over gradients
 

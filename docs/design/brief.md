@@ -27,7 +27,8 @@ Edge cases every card layout must survive:
 - **Long names:** team names run to 20 characters (FPL's limit). Player names run to 16, e.g. "Williams-Barnett".
 - **Accents:** player names need Latin Extended, not just French accents: Šeško, Kadıoğlu, Kovačić (all in the 2026 bootstrap data).
 - **Three languages:** French and Pidgin lines run up to ~30% longer than English.
-- **Big numbers:** scores and totals up to 3 digits, totals up to 4. All numbers use tabular figures.
+- **Big numbers:** scores up to 3 digits, totals up to 4. Hero numbers use proportional figures (tabular digits look loose at display size). Columns of numbers use tabular figures.
+- **Status safe zones:** WhatsApp draws its progress bar and name over the top of a Status and its reply bar over the bottom. Keep the top 220px and bottom 240px of a 1080×1920 card free of anything important.
 
 ### App screens (mobile-first, 390 wide)
 
@@ -78,7 +79,14 @@ Both share Inter for UI and numbers, the same components and the same data. They
 - Progress rings and emoji chips.
 - The shared card is always light.
 
-**Our gradient palette:** both directions draw on one gradient family of our own. No purple, no glow, no generic AI washes. The canvas will try a few candidates, such as warm (amber to coral) and pitch (green to teal). Text over a gradient must pass AA against its worst stop.
+**Our gradient palette:** both directions draw on one gradient family of our own. No purple, no glow, no generic AI washes. Text over a gradient must pass AA against its worst stop.
+- **Candidates on the canvas:** Harmattan (#FFC145 → #FF8F3F) and Lagoon (#3FD0C9 → #5B8DEF). Dark ink passes on every stop of both; white text fails on both.
+- **Ruled out:** green-to-teal reads as "up" and coral reads as "down", which clashes with the movement colours.
+
+**Learned in pass 1 (2026-10-09):**
+- Bright green and red pills need dark ink. White on #2FD27A is only 2.0:1.
+- Grey secondary text fails over a gradient (2.9–4.1:1 on Harmattan), so text that sits on a gradient uses full ink.
+- The Apple HIG advises against an app-only appearance setting. CLAUDE.md asks for a System / Light / Dark switch. Keep the switch (on the web there is no system setting to defer to), but default it to System.
 
 ## 4. Constraints
 
@@ -138,9 +146,11 @@ type TeamOfTheWeek = {
 
 Real data from Ralph's league (Denizens of Olympus, GW5, a finished GW), with surnames stripped. Roast lines are drafts until phase 3.
 
-**Pass 1, to choose a direction** (10 artboards):
-- Per direction: Wrap (Status), Oga (Status), Wooden Spoon (X).
-- Per direction: the Market tab in light and in dark.
+**Pass 1, to choose a direction:** done 2026-10-09 on the canvas "Squad Battle Directions".
+- 11 artboards. Per direction: Wrap (Status), Oga (Status), Wooden Spoon (X), and the Market tab in light and in dark. Plus a palette board.
+- Built with a sample league of 12 (the league ID hadn't arrived yet). Player names, points and the Team of the Week are real GW5 data.
+- Cards have a language switch (Pidgin, English, French) and the Wrap a gradient switch, in the canvas's Tweaks panel.
+- **Product finding:** with the sample data, 7 of 12 managers qualify as Middle Class, including the league leader. The "rank moved ≤ 1 over 3 GWs" rule needs a tighter definition, e.g. only the middle third of the table.
 
 **Pass 2, the chosen direction only:**
 - The remaining cards in both formats.
