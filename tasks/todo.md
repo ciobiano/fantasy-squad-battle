@@ -39,7 +39,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - Late joiners get `picks: null`.
   - An unknown league is a result, not an error.
 - [x] Local production check: a cold load takes 6.7 s from Lagos (about 100 FPL calls); a warm one takes 7–12 ms. The bundle is 145 KB.
-- [ ] Check cold and warm timings on a Vercel preview (`cdg1`, Runtime Cache)
+- [x] Vercel preview (`cdg1`, Runtime Cache), league 314 with 50 managers: cold load 634–988 ms, warm load 27–29 ms. An unknown league returns `league-not-found`.
 - [ ] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it
 
 ## 2. Domain logic: `lib/league/` (pure functions, unit tested)
