@@ -80,6 +80,10 @@ Verified API facts (2026-10-08):
 - **Cache Components** (`cacheComponents: true`, with `'use cache'` and `cacheLife`):
   - Finished GW data is cached forever.
   - Data that isn't league-specific (bootstrap, live, dream-team, each manager's history and picks) is cached once and shared across every league and visitor.
+  - FPL reads use `'use cache: remote'`, which on Vercel is the shared Runtime Cache (per region, 2 MB per item). Plain `'use cache'` is per-instance memory and barely survives on serverless.
+  - Lifetimes: bootstrap `hours`, live or provisional GWs `provisional` (5 min, defined in `next.config.ts`), final GWs `max`. A league bundle (`getLeagueGameweek`) refreshes hourly even when final, because membership can change.
+  - **Errors thrown inside a `'use cache'` function lose their class and fields in production builds.** Return expected outcomes (no such league, no picks that GW) as values. Throw only for real failures. Tests don't catch this, because they don't serialise.
+  - Routes that should never run at build time call `await connection()` first.
 - **Region:** Vercel functions run in Paris (`cdg1`), set in `vercel.json`. It was the fastest for reaching FPL (22–61 ms warm). Visitors get cached responses from the CDN.
 - **FPL blocks some Vercel servers** (measured 2026-10-08):
   - FPL sits behind Fastly, which sends a 403 to some server IP addresses and lets others through.
@@ -93,6 +97,7 @@ Verified API facts (2026-10-08):
     - Wrangler needs Node 22 or newer. Run it with nvm's Node 24 (`PATH=~/.nvm/versions/node/v24.13.1/bin:$PATH`); the project default is Node 20.
 - **Built for what comes next.** Phase 2 and later add a draft tool, a GW planner, live prices, expected points and price risers and fallers: the paid FFS feature set, for free.
   - Price risers and expected points need history. That means a scheduled job (Vercel Cron) that snapshots bootstrap data into a database, added when phase 2 starts.
+  - FPL's player data now has `price_change_projections`, `price_change_hourly_rate` and `price_change_percent` (seen 2026-10-09). Price predictions may not need our own history at all.
   - Models can run as Python functions on Vercel if needed.
   - Keep raw API access (`lib/fpl/`) separate from domain logic (`lib/league/`), so new features reuse both.
 

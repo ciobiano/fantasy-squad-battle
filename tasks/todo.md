@@ -3,9 +3,7 @@
 The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions".
 
 **Waiting on Ralph:**
-- league IDs
-- running `vercel login`
-- importing the GitHub repo in the Vercel dashboard
+- league IDs (Phase 2 testing uses public league 314 until then)
 
 ## 0. Setup and risk check
 - [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
@@ -28,14 +26,21 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
 
 ## 1. Data layer: `lib/fpl/` (the only module that touches the API)
-- [ ] `parseLeagueInput`: accept a raw ID or a league URL
-- [ ] A client that sends browser-like headers, retries 403 and 503 with backoff, and validates with zod
-- [ ] Endpoints: bootstrap, fixtures, standings (page 1), history, picks, live and dream-team
-- [ ] Caching:
-  - bootstrap: 1 hour
-  - finished GW data: cached forever
+- [x] `parseLeagueInput`: a raw ID or a league URL. Head-to-head, draft and invite links each get a clear error.
+- [x] zod schemas for the 7 endpoints, covering only the fields we use. Tested against trimmed, anonymised real GW5 responses in `lib/fpl/__fixtures__/`.
+- [x] Cached getters (`lib/fpl/api.ts`) using `'use cache: remote'`:
+  - bootstrap: hourly
   - provisional data: 5 minutes
-- [ ] About 6 requests at a time when fetching managers. Cap at 50 managers.
+  - final GW data: kept for good
+  - a 404 comes back as `null` (see CLAUDE.md on errors and `'use cache'`)
+- [x] Gameweek status (upcoming, live, provisional, final) and the default gameweek: the newest one with unlocked cards
+- [x] `getLeagueGameweek`: one cached bundle per league and GW.
+  - 6 requests at a time, top 50 managers.
+  - Late joiners get `picks: null`.
+  - An unknown league is a result, not an error.
+- [x] Local production check: a cold load takes 6.7 s from Lagos (about 100 FPL calls); a warm one takes 7–12 ms. The bundle is 145 KB.
+- [ ] Check cold and warm timings on a Vercel preview (`cdg1`, Runtime Cache)
+- [ ] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it
 
 ## 2. Domain logic: `lib/league/` (pure functions, unit tested)
 - [ ] Net GW score and its breakdown
@@ -96,6 +101,8 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 ## Decision log
 - **FPL wrapper vs our own module:** there are maintained wrappers (`fpl-api` 5.0.1, `fpl-fetch`), but we only need about 7 endpoints and Next's per-request `fetch` cache control. So we write a thin module of our own. It's also the single place to change if the API does.
 - **Card rendering:** `next/og` is built into Next.js, so no extra dependency.
+- **Concurrency:** `p-limit` 7.3.3, a well-tested tiny library, rather than a hand-written pool.
+- **Validation:** `zod` 4.6.5. Its schemas also strip unused fields, which keeps cached payloads small.
 
 ## Review
 _(fill in after the build)_
