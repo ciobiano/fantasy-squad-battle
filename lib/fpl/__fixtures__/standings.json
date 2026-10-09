@@ -1,0 +1,62 @@
+{
+ "league": {
+  "admin_entry": null,
+  "closed": false,
+  "code_privacy": "p",
+  "created": "2026-07-23T11:37:00.733233Z",
+  "cup_league": null,
+  "has_cup": true,
+  "id": 314,
+  "league_type": "s",
+  "max_entries": null,
+  "name": "Overall",
+  "rank": null,
+  "scoring": "c",
+  "start_event": 1
+ },
+ "standings": {
+  "has_next": true,
+  "page": 1,
+  "results": [
+   {
+    "club_badge_src": "https://fantasy.premierleague.com/gcs/plfpl-production-adobe-approved/plfpl-production/895045/a4866ea0-c5ad-47d3-9620-a3e3ef491279.png",
+    "entry": 895045,
+    "entry_name": "Team 1 FC",
+    "event_total": 63,
+    "last_rank": 1,
+    "player_name": "Manager1 Surname1",
+    "rank": 1,
+    "rank_sort": 1,
+    "total": 468
+   },
+   {
+    "club_badge_src": null,
+    "entry": 5151567,
+    "entry_name": "Team 2 FC",
+    "event_total": 80,
+    "last_rank": 57,
+    "player_name": "Manager2 Surname2",
+    "rank": 2,
+    "rank_sort": 2,
+    "total": 456
+   },
+   {
+    "club_badge_src": null,
+    "entry": 2385620,
+    "entry_name": "Team 3 FC",
+    "event_total": 90,
+    "last_rank": 310,
+    "player_name": "Manager3 Surname3",
+    "rank": 3,
+    "rank_sort": 3,
+    "total": 456
+   }
+  ]
+ },
+ "last_updated_data": "2026-10-09T19:59:24Z",
+ "new_entries": {
+  "has_next": false,
+  "page": 1,
+  "results": []
+ }
+}
