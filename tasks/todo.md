@@ -72,7 +72,12 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
 - [x] Ralph approves pass 2 (2026-10-10), asking for less text
 - [x] Simplicity pass on cards and screens, following Apple's guidance (see tasks/lessons.md)
 - [ ] Ralph edits the Pidgin and English copy
-- [ ] Design System artifact: colour tokens for both themes, Inter plus Instrument Serif type scale, components, and AA contrast checks over gradients
+- [x] Design System artifact "Fantasy Squad Battle" (2026-10-10): https://claude.ai/artifact/8hkdZjwZq7JvCU4FS7NzYi
+  - Tokens for dark (first) and light: 36 colours, all text pairs AA in both themes; Inter App and Card type scales; spacing, radius, size and gradient tokens
+  - Brand book as usage rules: voice, colour, type, layout, share cards, iconography, motion, accessibility
+  - 18 components with guidelines and live HTML previews, from Button to AwardCard and WrapCard, plus a cover
+  - Instrument Serif dropped with the Editorial direction
+- [ ] Bring the tokens into the codebase: `app/globals.css` (both themes, clamp() type scale) and `lib/variants.ts` (CVA per component)
 
 ## 5. Cards: `next/og`
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
