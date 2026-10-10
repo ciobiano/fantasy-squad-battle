@@ -2,8 +2,12 @@
 
 The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions".
 
+**Scope update (2026-10-10):** the app now has two halves, league banter and free FPL tools, on one data layer. See "Scope update" in CLAUDE.md.
+
 **Waiting on Ralph:**
 - league IDs (Phase 2 testing uses public league 314 until then)
+- Phase 2 decisions D1–D6, on the [system map](https://claude.ai/artifact/Sg1zjwKdBnW72H4H48dTJq)
+- the projections approach: FPL's form-based number with an honest label, our own model, or both
 
 ## 0. Setup and risk check
 - [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
@@ -42,6 +46,12 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`, Runtime Cache), league 314 with 50 managers: cold load 634–988 ms, warm load 27–29 ms. An unknown league returns `league-not-found`.
 - [ ] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it
 
+## 1b. More FPL readers: `lib/fpl/`
+- [ ] Team ID input: accept a team ID or a team URL (`/entry/{id}/...`) alongside league links
+- [ ] `entry/{id}` reader: the manager's name and every classic league they're in (for "pick your league"), plus their squad, bank and team value for the planner
+- [ ] `element-summary/{id}` reader: one player's fixtures ahead and gameweek history (player pages)
+- [ ] Add the tool fields to the bootstrap schema: status, news, chance of playing, xG, xA, xGI, ICT, defensive contributions, transfers in and out, price changes, team strengths. Check the cached size stays well under 2 MB.
+
 ## 2. Domain logic: `lib/league/` (pure functions, unit tested)
 - [ ] Net GW score and its breakdown
 - [ ] Rank at each GW, worked out from `history.total_points`
@@ -64,6 +74,11 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [ ] Language detection from the phone, plus a switcher that remembers the choice
 - [ ] Guardrail review. Ralph edits EN and Pidgin; FR stays marked beta.
 
+## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
+- [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run
+- [ ] Injuries & bans: flagged players with status, news, chance of playing and date reported, newest first, filterable by team
+- [ ] Unit tests on real bootstrap and fixtures samples
+
 ## 4. Design exploration
 - [ ] Claude Design canvas with the **Market** and **Editorial** directions, using Denizens of Olympus GW5 data
 - [ ] Show both directions in light and dark, including our own gradient palette (no purple, no glow)
@@ -77,7 +92,10 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 ## 6. App UI (mobile-first)
 - [ ] Market tab: story circles, then Team of the Week on a pitch, then the Market list with sparklines and rank pills
 - [ ] Story viewer: 5 s per card, tap to move, hold to pause, Status or X share, watched state, reduced motion respected
-- [ ] League tab: the classic table
+- [ ] League tab: the classic table (Table view)
+- [ ] Start screen: a league link **or** your team ID, then pick your league; remembered on the phone *(scope added 2026-10-10; design session)*
+- [ ] Fixtures tab: the difficulty ticker *(scope added 2026-10-10; design session)*
+- [ ] Players tab: injuries & bans for the first release *(scope added 2026-10-10; design session)*
 - [ ] Sharing through the Web Share API with files (for WhatsApp Status), with a download fallback
 - [ ] A public share page for each league and GW, with link-preview tags using the Wrapped card
 - [ ] Every state covered:
@@ -88,6 +106,13 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - GW not started
   - provisional data
   - fewer than 3 GWs, so no Middle Class card
+
+## After launch (scope added 2026-10-10), in order
+1. Player stats: a sortable, filterable table (price, ownership, form, points, projected points, xG, xA, xGI, defensive contributions, minutes), then player pages with fixtures ahead and gameweek history
+2. Projections: approach still to decide (FPL's form-based number labelled honestly, our own model from free data, or both)
+3. Price changes and transfer trends: FPL's `price_change_projections` and transfers in and out first. Snapshots in a database only if needed.
+4. Planner, as its own phase: your squad from your team ID, future fixtures and projections. Selling prices are estimates, labelled, because exact ones need an FPL login.
+5. Our own attack and defence fixture difficulty, from team strength ratings
 
 ## 7. Analytics
 - [ ] PostHog through the Vercel Marketplace: cookieless, EU region, loaded late, the 5 agreed events
