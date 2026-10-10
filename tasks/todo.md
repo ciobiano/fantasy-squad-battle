@@ -6,8 +6,6 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 
 **Waiting on Ralph:**
 - league IDs (Phase 2 testing uses public league 314 until then)
-- Phase 2 decisions D1–D6, on the [system map](https://claude.ai/artifact/Sg1zjwKdBnW72H4H48dTJq)
-- the projections approach: FPL's form-based number with an honest label, our own model, or both
 
 ## 0. Setup and risk check
 - [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
@@ -58,11 +56,11 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [ ] For the Market list: the league-average series, each manager's gap to it, and the rank change
 - [ ] Awards:
   - Oga and Wooden Spoon
-  - Captain Disaster: the armband passing to the vice-captain, and triple captain
-  - Bench Regret: skip a Bench Boost GW
-  - Hit Merchant: Wildcard and Free Hit don't count as hits
-  - Climber and Faller
-  - Middle Class
+  - Captain Disaster: the chosen captain's points; zero minutes counts, and Triple Captain counts (D4, D6)
+  - Bench Regret and Hit Merchant: read FPL's fields directly, with tests for chip weeks (D6)
+  - Climber and Faller: ranks per D5, skipping anyone with no previous GW
+  - Middle Class: middle third of the table, rank moved 1 place or less over 3 GWs (D3)
+- [ ] Awards stay language-free; roast lines and titles are added last (D1, D2)
 - [ ] Ties (3 names, then "+N"). Skip awards nobody qualifies for and give the Wrap a group line.
 - [ ] GW state: provisional or final, based on `finished_provisional` and `finished`
 - [ ] Team of the Week ownership counts within the league
@@ -109,7 +107,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 
 ## After launch (scope added 2026-10-10), in order
 1. Player stats: a sortable, filterable table (price, ownership, form, points, projected points, xG, xA, xGI, defensive contributions, minutes), then player pages with fixtures ahead and gameweek history
-2. Projections: approach still to decide (FPL's form-based number labelled honestly, our own model from free data, or both)
+2. Projections: our own model from free data (D7). FPL's `ep_next` is shown as "Form", never as a projection
 3. Price changes and transfer trends: FPL's `price_change_projections` and transfers in and out first. Snapshots in a database only if needed.
 4. Planner, as its own phase: your squad from your team ID, future fixtures and projections. Selling prices are estimates, labelled, because exact ones need an FPL login.
 5. Our own attack and defence fixture difficulty, from team strength ratings

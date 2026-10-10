@@ -141,25 +141,37 @@ Verified API facts (2026-10-08):
 - **App tabs:** League (Market and Table views) · Fixtures · Players · Planner (after launch).
 - **First release:** roast cards, the League views, the fixture ticker, and injuries & bans.
 - **After launch, in order:**
-  1. Player stats: a sortable table (including projected points), then player pages with fixtures ahead and gameweek history.
-  2. Price changes and transfer trends.
-  3. The planner, as its own phase.
-- **Player stats v1 columns:** price, ownership, form, points, projected points (source still open), xG, xA, xGI, defensive contributions and minutes. These are Opta-derived stats that FPL publishes for free; Opta's own data feed is a paid licence and out of scope.
+  1. Player stats: a sortable table, then player pages with fixtures ahead and gameweek history.
+  2. Projections: our own model (D7).
+  3. Price changes and transfer trends.
+  4. The planner, as its own phase.
+- **Player stats v1 columns:** price, ownership, form (FPL's number), points, xG, xA, xGI, defensive contributions and minutes. These are Opta-derived stats that FPL publishes for free; Opta's own data feed is a paid licence and out of scope.
 - **Fixture difficulty:** FPL's official ratings and colours first. Later, as something extra, our own attack and defence split built from team strength ratings.
-- **Projections (added back 2026-10-10):** in scope. They appear in the player stats table, on player pages and in the planner.
-  - FPL's `ep_next` turned out to be recent form adjusted for injuries, not a real projection (see Verified API facts).
-  - Which version we build is still open (see Open questions).
+- **Projections (decided 2026-10-10, D7):** our own model, as its own phase after player stats.
+  - Inputs, all free: expected minutes × (goals from xG, assists from xA, clean-sheet chance, appearance and bonus points), adjusted for opponent strength over the next 1–5 gameweeks.
+  - FPL's `ep_next` is recent form, not a projection, so the stats table shows it as **Form**. The word "projection" is used only for our own model.
+  - Projections appear in the player stats table, on player pages and in the planner.
 - **Not doing:** the upcoming-gameweek view (parked).
 
 ### Awards and cards
 
 - **Cards:** a "GW Wrapped" card plus one card per award, each in both formats.
 - **Wooden Spoon:** a normal card that anyone can share. The roast is the point.
-- **Middle Class:** managers whose league rank moved 1 place or less across the last 3 GWs, excluding this GW's top and bottom scorers. One group card. Needs 3 finished GWs.
+- **Middle Class (updated 2026-10-10, D3):** managers in the middle third of the table whose league rank moved 1 place or less over the last 3 GWs. One group card. Needs 3 finished GWs.
 - **When nobody qualifies:** skip that card and put a group line in the Wrap instead, e.g. "Nobody take hit this week. Una too dey fear."
 - **Roast lines:** Claude drafts about 6 lines per award per language. Ralph edits English and Pidgin. French ships as "beta" until a native speaker reviews it.
 - **Stable picks:** the line is chosen with a seed of league + GW + award, so a card stays the same however often it's shared.
 - **Titles** for the top scorer and the middle class: decided as we go.
+
+### League logic decisions (2026-10-10)
+
+- **D1 · Where it runs:** plain functions over the cached league bundle, run on every request. Pages and card images call the same function. No second cache for computed results unless measurements call for one.
+- **D2 · Language:** awards are worked out once, with no language. Roast lines and titles are added last, per language.
+- **D3 · Middle Class:** the middle third of the table, with league rank moved 1 place or less over the last 3 GWs.
+- **D4 · Captain Disaster:** judge the captain the manager chose. Zero minutes counts, even when the vice-captain saved the points; the roast can mention the rescue. Read minutes from live points, not from the multipliers.
+- **D5 · League ranks:** rank the loaded managers (top 50) by total points at each GW. Equal totals share a rank (1, 2, 2, 4). Climber and Faller skip anyone with no previous GW.
+- **D6 · Chips:** read FPL's fields directly, with tests that pin the behaviour. FPL already zeroes hits on Wildcard and Free Hit weeks and bench points on Bench Boost weeks. Triple Captain still counts as a captain pick.
+- **D7 · Projections:** see the scope update above.
 
 ### App structure
 
@@ -212,12 +224,12 @@ Verified API facts (2026-10-08):
 - **Repo:** private, on GitHub account `ciobiano`.
   - **Standing approval (2026-10-08):** Claude may push feature branches without asking. Push `main` only when Ralph asks.
 - Ralph wants concise answers.
+- **System map** (interactive, private): https://claude.ai/artifact/Sg1zjwKdBnW72H4H48dTJq
+- **Cross-session handoffs** between the data session and the design session go in `docs/handoff/`.
 
 ## Open questions
 
 - Titles for the top scorer and middle class cards.
-- Projections: show FPL's form-based number with an honest label, build our own model from free data, or both.
-- Phase 2 logic decisions D1–D6, with recommendations on the system map: https://claude.ai/artifact/Sg1zjwKdBnW72H4H48dTJq (interactive, private).
 - Phase 2 prediction model: start with simple fixture difficulty plus form plus xG, or something smarter?
 - Growth: seed through Ralph's own leagues, then Nigerian FPL creators on X.
 
