@@ -63,6 +63,11 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - Checked in the browser; fixed two cards that ran into the Status safe zone and one grey-on-gradient contrast failure
 - [x] Ralph picks a direction: **A · Market** (2026-10-09).
 - [x] Ralph picks the official gradient: **Mint**, aqua `#35E1E5` to green `#28E4A3`, with grain and a deep-teal wash (2026-10-10). Applied to the canvas and the design system; Harmattan and Lagoon retired.
+- [x] **Mist sky** replaces bright Mint (2026-10-10). Bright Mint's aqua was ΔE 4.7 from the Premier League's own cyan (#05F0FF) and its green ΔE 9.7 from PL green (#00FF87), read from premierleague.com's stylesheet. New look from Ralph's reference: deep teal at the top, misty mint, fading into white (light) or black (dark). Every sky and accent colour is ΔE ≥ 16 from the PL palette, chroma ≤ 19.
+  - Cards now come in light and dark (canvas v29: 18 new light boards). Every text element checked for AA at its position on the sky.
+  - Accent: pale mint #C8EBDD on dark, deep teal #143A53 on light. Start and Market screens get the sky header.
+  - [ ] Design system: replace brand-start/brand-end tokens, update README, Cover, WrapCard, AwardCard, Button, StoryRing
+  - [ ] Ralph: shared image theme. Proposal: the image follows the app theme at share time; link previews use dark
 - [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader. Pass 2 uses a proposal: middle third of the table and moved ≤ 1 place over 3 GWs. That gives Ngozi, Seun and Ibrahim.
 - [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
   - [x] **Card component** (`A-Card`): all 8 awards in Status and X, with ties, the provisional tag and the language switch. Each award gets its own visual: trend line, rank line, captain bars, bench row, hit bar, flat group lines.
