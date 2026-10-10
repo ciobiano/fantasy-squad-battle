@@ -79,13 +79,18 @@ Both share Inter for UI and numbers, the same components and the same data. They
 - Progress rings and emoji chips.
 - The shared card is always light.
 
-**Our gradient palette:** both directions draw on one gradient family of our own. No purple, no glow, no generic AI washes. Text over a gradient must pass AA against its worst stop.
-- **Candidates on the canvas:** Harmattan (#FFC145 → #FF8F3F) and Lagoon (#3FD0C9 → #5B8DEF). Dark ink passes on every stop of both; white text fails on both.
-- **Ruled out:** green-to-teal reads as "up" and coral reads as "down", which clashes with the movement colours.
+**Our gradient palette:** one gradient family of our own. No purple, no glow, no generic AI washes. Text over a gradient must pass AA against its worst stop.
+- **Official: Mint** (Ralph's call, 2026-10-10, from two references he shared: a grainy aqua-to-green swatch and a fintech app with a deep-teal-to-mint hero). Colours measured from the references:
+  - **Gradient:** aqua `#35E1E5` to mint green `#28E4A3`.
+  - **Wash:** deep teal `#143A53`, pale mint `#D5F1E5`, mist `#EFEFEF`.
+- **Text:** dark teal `#06201F` reads 10:1 or better on both gradient stops; white fails (1.6:1). On the wash, text sits only on the pale lower half.
+- **Grain:** large gradient fields carry a fine monochrome grain (fractal noise, about 22%). Check that `next/og` renders it (resvg supports SVG filters) when the cards are built.
+- **Known clash:** the green end is close to the dark theme's up green (ΔE 14). The gradient never touches movement pills or arrows, and movement always carries ▲ ▼.
+- **Retired:** Harmattan (gold to apricot) and Lagoon (aqua to cornflower), the pass 1 candidates.
 
 **Learned in pass 1 (2026-10-09):**
 - Bright green and red pills need dark ink. White on #2FD27A is only 2.0:1.
-- Grey secondary text fails over a gradient (2.9–4.1:1 on Harmattan), so text that sits on a gradient uses full ink.
+- Grey secondary text fails over a gradient (2.9–4.1:1 on the old Harmattan gradient), so text that sits on a gradient uses full ink.
 - The Apple HIG advises against an app-only appearance setting. CLAUDE.md asks for a System / Light / Dark switch. Keep the switch (on the web there is no system setting to defer to), but default it to System.
 
 ## 4. Constraints

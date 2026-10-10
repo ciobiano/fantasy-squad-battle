@@ -61,7 +61,8 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - The Market tab in light and dark, in each direction
   - Gradient candidates Harmattan and Lagoon, with every text pair checked for AA
   - Checked in the browser; fixed two cards that ran into the Status safe zone and one grey-on-gradient contrast failure
-- [x] Ralph picks a direction: **A · Market** (2026-10-09). Gradient still open; Harmattan stays the default.
+- [x] Ralph picks a direction: **A · Market** (2026-10-09).
+- [x] Ralph picks the official gradient: **Mint**, aqua `#35E1E5` to green `#28E4A3`, with grain and a deep-teal wash (2026-10-10). Applied to the canvas and the design system; Harmattan and Lagoon retired.
 - [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader. Pass 2 uses a proposal: middle third of the table and moved ≤ 1 place over 3 GWs. That gives Ngozi, Seun and Ibrahim.
 - [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
   - [x] **Card component** (`A-Card`): all 8 awards in Status and X, with ties, the provisional tag and the language switch. Each award gets its own visual: trend line, rank line, captain bars, bench row, hit bar, flat group lines.
