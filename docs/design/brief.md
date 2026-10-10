@@ -153,15 +153,22 @@ Real data from Ralph's league (Denizens of Olympus, GW5, a finished GW), with su
 - **Product finding:** with the sample data, 7 of 12 managers qualify as Middle Class, including the league leader. The "rank moved ≤ 1 over 3 GWs" rule needs a tighter definition, e.g. only the middle third of the table.
 
 **Pass 2, Market direction:** done 2026-10-09, on the canvas pages "Pass 2 · Cards" and "Pass 2 · Screens".
-- **One card component** renders every award in both formats, like the `next/og` port will: header, award label, winner(s), hero number, one visual, stats row (Status only), roast, watermark. The visual depends on the award:
+- **One card component** renders every award in both formats, like the `next/og` port will: header, award label, winner(s), hero number with one line of context, one visual, then the roast and watermark anchored at the bottom. The visual depends on the award:
 
   | Award | Visual |
   |---|---|
-  | Oga, Wooden Spoon | Season total against the league average (trend line over a dashed baseline) |
+  | Oga, Wooden Spoon | Season total against the league average (trend line over a dashed baseline), with one message line such as "49 above the league average" |
   | Climber, Faller, Middle Class | League position by GW (rank line, 1st at the top). Ties get one line each, labelled at the end |
-  | Captain Disaster | Three bars: the captain's points, the league's favourite captain, the best captain in that team |
-  | Bench Regret | The four bench players with their points |
+  | Captain Disaster | Two bars: the captain's points and the best player in that team |
+  | Bench Regret | The four bench players: points and name |
   | Hit Merchant | One bar: points kept and points paid in hits |
+
+- **Less text (2026-10-10, Ralph's call, following Apple's simplicity and writing guidance):**
+  - Cards lost their stats row, rank pill, chart titles, legends and GW labels.
+  - The Wrap rows show first names only.
+  - The pitch shows points and owners, without club codes.
+  - Start, stories, League and share page lost their subheadings and footnotes.
+  - Rules for next time are in [tasks/lessons.md](../../tasks/lessons.md).
 
 - **Ties:** up to 3 winners stacked smaller under the label. Faller (Femi and Bayo) and Middle Class (3 names) show it.
 - **Middle Class** uses the proposed rule (middle third and ≤ 1 place over 3 GWs), so the Wrap now names Ngozi, Seun and Ibrahim. Decision still Ralph's.

@@ -68,8 +68,10 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - [x] **Wrap:** Status and X, plus a version where an award has no winner and a group line takes its row
   - [x] **Screens:** Start, Market tab, League tab, story viewer, share sheet, public share page
   - [x] **States:** invalid ID, league not found or head-to-head, FPL down, loading, provisional, over 50 managers, GW still in progress, fewer than 3 GWs
-  - [ ] Visual check of the X row, screens and states in the browser. The Status row and both Wraps are checked.
-- [ ] Ralph reviews pass 2 and edits the Pidgin and English copy
+  - [x] Visual check of every card, screen and state in the browser
+- [x] Ralph approves pass 2 (2026-10-10), asking for less text
+- [x] Simplicity pass on cards and screens, following Apple's guidance (see tasks/lessons.md)
+- [ ] Ralph edits the Pidgin and English copy
 - [ ] Design System artifact: colour tokens for both themes, Inter plus Instrument Serif type scale, components, and AA contrast checks over gradients
 
 ## 5. Cards: `next/og`
