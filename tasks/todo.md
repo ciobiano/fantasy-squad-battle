@@ -71,7 +71,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - Climber and Faller, skipping anyone with no previous GW (D5)
   - Middle Class: middle third of the table, rank moved 1 place or less over 3 GWs (D3)
 - [x] Team of the Week, with ownership counted across the league's squads
-- [x] 63 league-logic tests: rule by rule, plus end to end on real GW5 samples (143 in total)
+- [x] 30 new tests: 26 rule by rule and 4 end to end on real GW5 samples (143 in the suite)
 - [x] Real-data check (league 314, top 50):
   - GW5 view: 4.8 s cold from Lagos, 17 ms warm
   - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
