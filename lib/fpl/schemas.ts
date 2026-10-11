@@ -6,6 +6,23 @@ import { z } from "zod";
 
 const id = z.number().int().positive();
 
+// Fields used only by the tools (injuries, stats, prices). If FPL changes or
+// drops one, it becomes null with a one-time warning, so a tool shows a gap
+// instead of the league pages failing. FPL sends many numbers as strings
+// ("1.23"), so numbers are coerced.
+const warned = new Set<string>();
+function tolerant<T extends z.ZodType>(field: string, schema: T) {
+  return schema.nullable().catch(() => {
+    if (!warned.has(field)) {
+      warned.add(field);
+      console.warn(`[fpl] unexpected value for "${field}", using null`);
+    }
+    return null;
+  });
+}
+const toolNumber = (field: string) => tolerant(field, z.coerce.number());
+const toolText = (field: string) => tolerant(field, z.string());
+
 export const eventSchema = z.object({
   id,
   name: z.string(),
@@ -22,6 +39,11 @@ export const teamSchema = z.object({
   id,
   name: z.string(),
   short_name: z.string(),
+  strength: toolNumber("team.strength"),
+  strength_attack_home: toolNumber("team.strength_attack_home"),
+  strength_attack_away: toolNumber("team.strength_attack_away"),
+  strength_defence_home: toolNumber("team.strength_defence_home"),
+  strength_defence_away: toolNumber("team.strength_defence_away"),
 });
 
 export const elementSchema = z.object({
@@ -31,6 +53,43 @@ export const elementSchema = z.object({
   second_name: z.string(),
   team: id,
   element_type: z.number().int().min(1).max(5),
+  // Injuries & bans
+  status: toolText("status"),
+  news: toolText("news"),
+  news_added: toolText("news_added"),
+  chance_of_playing_next_round: toolNumber("chance_of_playing_next_round"),
+  // Stats
+  now_cost: toolNumber("now_cost"),
+  selected_by_percent: toolNumber("selected_by_percent"),
+  form: toolNumber("form"),
+  points_per_game: toolNumber("points_per_game"),
+  total_points: toolNumber("total_points"),
+  minutes: toolNumber("minutes"),
+  starts: toolNumber("starts"),
+  goals_scored: toolNumber("goals_scored"),
+  assists: toolNumber("assists"),
+  clean_sheets: toolNumber("clean_sheets"),
+  expected_goals: toolNumber("expected_goals"),
+  expected_assists: toolNumber("expected_assists"),
+  expected_goal_involvements: toolNumber("expected_goal_involvements"),
+  ict_index: toolNumber("ict_index"),
+  defensive_contribution: toolNumber("defensive_contribution"),
+  /** FPL's "expected points": in practice this is recent form (see CLAUDE.md). Never label it a projection. */
+  ep_next: toolNumber("ep_next"),
+  // Prices and transfers
+  transfers_in_event: toolNumber("transfers_in_event"),
+  transfers_out_event: toolNumber("transfers_out_event"),
+  cost_change_event: toolNumber("cost_change_event"),
+  price_change_projections: tolerant(
+    "price_change_projections",
+    z.array(
+      z.object({
+        offset: z.number().int(),
+        projected_percent: z.coerce.number(),
+        likelihood: z.number(),
+      }),
+    ),
+  ),
 });
 
 export const bootstrapSchema = z.object({
@@ -120,6 +179,67 @@ export const dreamTeamSchema = z.object({
   team: z.array(z.object({ element: id, points: z.number(), position: z.number().int() })),
 });
 
+/** A manager's team. Surnames are deliberately not read (cards use first names only). */
+export const entrySchema = z.object({
+  id,
+  name: z.string(),
+  player_first_name: z.string(),
+  current_event: z.number().int().nullable(),
+  last_deadline_bank: z.number().int().nullable(),
+  last_deadline_value: z.number().int().nullable(),
+  leagues: z.object({
+    classic: z.array(
+      z.object({
+        id,
+        name: z.string(),
+        /** "x": made by players; "s": FPL's own (Overall, countries, clubs, gameweek leagues). */
+        league_type: z.string(),
+        /** Number of managers in the league; null for leagues that haven't started. */
+        rank_count: z.number().int().nullable(),
+        entry_rank: z.number().int().nullable(),
+        entry_last_rank: z.number().int().nullable(),
+      }),
+    ),
+  }),
+});
+
+/** One player's fixtures ahead and this season's gameweek history (player pages). */
+export const playerSummarySchema = z.object({
+  fixtures: z.array(
+    z.object({
+      id,
+      event: z.number().int().nullable(),
+      team_h: id,
+      team_a: id,
+      is_home: z.boolean(),
+      difficulty: z.number().int().min(1).max(5),
+      kickoff_time: z.string().nullable(),
+      finished: z.boolean(),
+    }),
+  ),
+  history: z.array(
+    z.object({
+      round: id,
+      fixture: id,
+      opponent_team: id,
+      was_home: z.boolean(),
+      total_points: z.number(),
+      minutes: z.number(),
+      starts: toolNumber("history.starts"),
+      goals_scored: toolNumber("history.goals_scored"),
+      assists: toolNumber("history.assists"),
+      clean_sheets: toolNumber("history.clean_sheets"),
+      bonus: toolNumber("history.bonus"),
+      expected_goals: toolNumber("history.expected_goals"),
+      expected_assists: toolNumber("history.expected_assists"),
+      expected_goal_involvements: toolNumber("history.expected_goal_involvements"),
+      defensive_contribution: toolNumber("history.defensive_contribution"),
+      value: toolNumber("history.value"),
+      selected: toolNumber("history.selected"),
+    }),
+  ),
+});
+
 export type Event = z.infer<typeof eventSchema>;
 export type Team = z.infer<typeof teamSchema>;
 export type Element = z.infer<typeof elementSchema>;
@@ -130,6 +250,8 @@ export type History = z.infer<typeof historySchema>;
 export type Picks = z.infer<typeof picksSchema>;
 export type Live = z.infer<typeof liveSchema>;
 export type DreamTeam = z.infer<typeof dreamTeamSchema>;
+export type Entry = z.infer<typeof entrySchema>;
+export type PlayerSummary = z.infer<typeof playerSummarySchema>;
 
 export class FplSchemaError extends Error {
   constructor(
