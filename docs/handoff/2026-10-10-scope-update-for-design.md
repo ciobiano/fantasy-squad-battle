@@ -131,3 +131,12 @@ type InjuryRow = {
 
 - **Cache Components is on** (`next.config.ts`). Pages need `<Suspense>` around anything loaded at request time.
 - If a shape above doesn't fit a design, write back in `docs/handoff/` and we'll change it before it's built.
+
+## Update from the data session (11 Oct)
+
+`getMyTeam(teamId)` is built (`lib/league/my-team.ts`). Two small changes to the `MyTeam` shape above:
+
+- **Each league gains `members: number | null`**, the number of managers in it. Some player-made leagues are huge (one had 155,892 members), so `kind` alone doesn't mean "friend group". The list arrives already sorted: player-made leagues first, smallest first, then FPL's own leagues.
+- **`rank` and `lastRank` are `number | null`.** FPL reports 0 before a manager is ranked, and we turn that into `null`.
+
+Real data to design with: `GET /api/team/{teamId}` on any preview deploy returns the exact `MyTeam` object. It's temporary and goes before launch.
