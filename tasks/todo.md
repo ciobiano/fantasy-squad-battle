@@ -75,7 +75,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Real-data check (league 314, top 50):
   - GW5 view: 4.8 s cold from Lagos, 17 ms warm
   - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
-- [ ] Check on a Vercel preview
+- [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
 - [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
 ## 3. Roasts and translation: `lib/roasts/` and `lib/i18n/`
