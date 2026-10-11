@@ -58,20 +58,25 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`): `/api/team/{id}` takes 167 ms cold and 11 ms warm. An unknown team returns `team-not-found`. The league bundle is still about 145 KB.
 - [ ] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it
 
-## 2. Domain logic: `lib/league/` (pure functions, unit tested)
-- [ ] Net GW score and its breakdown
-- [ ] Rank at each GW, worked out from `history.total_points`
-- [ ] For the Market list: the league-average series, each manager's gap to it, and the rank change
-- [ ] Awards:
-  - Oga and Wooden Spoon
-  - Captain Disaster: the chosen captain's points; zero minutes counts, and Triple Captain counts (D4, D6)
-  - Bench Regret and Hit Merchant: read FPL's fields directly, with tests for chip weeks (D6)
-  - Climber and Faller: ranks per D5, skipping anyone with no previous GW
+## 2. Domain logic: `lib/league/` (done 2026-10-11)
+- [x] Language-free view types (`lib/league/types.ts`, D2). `getLeagueView(leagueId, { gw, now, youId })` runs on every request, straight from the cached bundle (D1).
+- [x] Net GW score and breakdown ("67 (71 −4)"); first names only ("valentine chukwu" → "Valentine")
+- [x] League rank at every GW from season totals; equal totals share a rank, 1, 2, 2, 4 (D5)
+- [x] Market list: GW rank, league rank change, gap to the league average for every GW, award tags, `isYou`
+- [x] Table view: rank, last rank, movement, total, GW score
+- [x] All 8 awards, ties shared, in story order. Awards nobody qualifies for go into `skipped`, for the Wrap's group lines.
+  - Oga and Wooden Spoon. The Spoon is skipped when everyone scored the same.
+  - Captain Disaster: the chosen captain on 2 points or fewer. Zero minutes counts, with `viceRescued`; Triple Captain counts (D4, D6).
+  - Bench Regret and Hit Merchant, read straight from FPL's fields (D6)
+  - Climber and Faller, skipping anyone with no previous GW (D5)
   - Middle Class: middle third of the table, rank moved 1 place or less over 3 GWs (D3)
-- [ ] Awards stay language-free; roast lines and titles are added last (D1, D2)
-- [ ] Ties (3 names, then "+N"). Skip awards nobody qualifies for and give the Wrap a group line.
-- [ ] GW state: provisional or final, based on `finished_provisional` and `finished`
-- [ ] Team of the Week ownership counts within the league
+- [x] Team of the Week, with ownership counted across the league's squads
+- [x] 63 league-logic tests: rule by rule, plus end to end on real GW5 samples (143 in total)
+- [x] Real-data check (league 314, top 50):
+  - GW5 view: 4.8 s cold from Lagos, 17 ms warm
+  - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
+- [ ] Check on a Vercel preview
+- [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
 ## 3. Roasts and translation: `lib/roasts/` and `lib/i18n/`
 - [ ] About 6 lines per award per language (EN, Pidgin, FR), using variables
@@ -79,6 +84,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [ ] Translated award titles
 - [ ] Language detection from the phone, plus a switcher that remembers the choice
 - [ ] Guardrail review. Ralph edits EN and Pidgin; FR stays marked beta.
+- [ ] A group roast for mass ties, for when a large share of the league shares an award (seen: 42 of 50 on Captain Disaster)
 
 ## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
 - [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run

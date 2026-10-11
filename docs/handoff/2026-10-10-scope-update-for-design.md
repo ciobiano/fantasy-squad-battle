@@ -140,3 +140,38 @@ type InjuryRow = {
 - **`rank` and `lastRank` are `number | null`.** FPL reports 0 before a manager is ranked, and we turn that into `null`.
 
 Real data to design with: `GET /api/team/{teamId}` on any preview deploy returns the exact `MyTeam` object. It's temporary and goes before launch.
+
+## Update from the data session (11 Oct): Phase 2 league logic is built
+
+`getLeagueView(leagueId, { gw, now, youId })` in `lib/league/league-view.ts` returns a `LeagueView`. All types are in `lib/league/types.ts`. It follows section 5 of your brief, with these differences:
+
+- **`Award` = `{ id, stat, winners }`.**
+  - `winners` holds *everyone* who shares the award, already sorted. The card shows 3 names, then "+N others", where N = `winners.length − 3`.
+  - The roast line and the title arrive in Phase 3, per language. The facts never change between languages.
+- **Each winner carries what its card needs:**
+  - `score` (`{ net, points, hits }`) for Oga, Wooden Spoon and Hit Merchant
+  - `captain` (`{ name, points, minutes, tripleCaptain, viceRescued }`) for Captain Disaster
+  - `ranks` (`{ from, to }`) for Climber, Faller and Middle Class
+- **`stat`, the headline number:**
+
+  | Award | `stat` |
+  |---|---|
+  | Oga, Wooden Spoon | the net score |
+  | Captain Disaster | the captain's own points, before the armband |
+  | Bench Regret | bench points |
+  | Hit Merchant | the hit cost (e.g. 8) |
+  | Climber, Faller | places moved, as a positive number |
+  | Middle Class | how many managers are in it |
+
+- **Wrap data:** `league`, `gameweek` (`{ id, status, provisional }`), `averages` (`{ league, fpl }`), `awards` (in story order) and `skipped`. `skipped` lists the awards nobody qualified for; the Wrap shows a group line for each.
+- **`MarketRow`:**
+  - `manager` (`{ id, firstName, teamName, isYou }`) and `score` (`null` if they hadn't started that week)
+  - `gwRank`, `leagueRank` and `leagueRankChange`
+  - `gapSeries`: the gap to the league average for every gameweek from 1, with `null` before they joined
+  - `awards`
+- **`TableRow`:** `rank`, `lastRank`, `movement`, `total` and `gwScore`.
+- **`TeamOfTheWeek`:** each player has `{ id, name, club, position, points, ownedBy }`, plus `topPlayer`.
+
+**Design for big ties.** Real data from GW1: 42 of the top 50 Overall managers shared Captain Disaster after all captaining Fernandes (2 pts). Make sure the card handles a large "+N others" well. Phase 3 will add a group roast that addresses everyone who shares the award.
+
+**Real data to design with:** `GET /api/league/{id}/view?gw=5&you={teamId}` on any preview returns this exact object. It's temporary and goes before launch.
