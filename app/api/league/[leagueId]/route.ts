@@ -1,5 +1,5 @@
 import { getLeagueGameweek, resolveGameweek } from "@/lib/fpl/league-gameweek";
-import { parseLeagueInput } from "@/lib/fpl/league-input";
+import { parseLeagueInput } from "@/lib/fpl/start-input";
 
 // Phase 1 inspection endpoint: returns the raw bundle lib/league will consume,
 // with timings, so caching can be checked on a real deployment.
