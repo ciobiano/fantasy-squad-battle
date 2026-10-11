@@ -92,7 +92,7 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
 - [x] **Mist sky** replaces bright Mint (2026-10-10). Bright Mint's aqua was ΔE 4.7 from the Premier League's own cyan (#05F0FF) and its green ΔE 9.7 from PL green (#00FF87), read from premierleague.com's stylesheet. New look from Ralph's reference: deep teal at the top, misty mint, fading into white (light) or black (dark). Every sky and accent colour is ΔE ≥ 16 from the PL palette, chroma ≤ 19.
   - Cards now come in light and dark (canvas v29: 18 new light boards). Every text element checked for AA at its position on the sky.
   - Accent: pale mint #C8EBDD on dark, deep teal #143A53 on light. Start and Market screens get the sky header.
-  - [ ] Design system: replace brand-start/brand-end tokens, update README, Cover, WrapCard, AwardCard, Button, StoryRing
+  - [x] Design system v5 (2026-10-11): Mist tokens (sky, accent, ring, you, caution, difficulty 1–5), brand book rules, restyled Button/StoryRing/AwardCard/WrapCard/Cover/TabBar, new Sky, LeaguePicker, FixtureTicker, InjuryList
   - [ ] Ralph: shared image theme. Proposal: the image follows the app theme at share time; link previews use dark
 - [x] Middle Class rule: middle third of the table and moved ≤ 1 place over 3 GWs (adopted as D3, 2026-10-10).
 - [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
@@ -118,9 +118,21 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - [x] AA checked at each text's position on the sky, both themes
   - [x] Reply to the data session: [docs/handoff/2026-10-11-design-reply-pass3.md](../docs/handoff/2026-10-11-design-reply-pass3.md)
 - [ ] Ralph reviews pass 3
-- [ ] Bring the tokens into the codebase: `app/globals.css` (both themes, clamp() type scale) and `lib/variants.ts` (CVA per component)
 
-## 5. Cards: `next/og`
+## 5. Build, slice 1 (started 2026-10-11): tokens and the share cards
+Data isn't wired yet (`lib/league` is in the data session's branch), so cards render from a sample league with the canvas data. The card takes a small view model (`lib/cards/types.ts`) that the award logic will fill later.
+- [x] Tokens: `design/tokens.json` (copied from the Design System) → `npm run tokens` generates `app/tokens.css` (light, dark by system preference, `data-theme` overrides, Tailwind mapping) and `lib/tokens.ts` (plain values for cards). `app/globals.css` holds the clamp() type scale. Inter only; Instrument Serif removed.
+- [ ] `lib/variants.ts`: CVA variants for the app's base components (with the app screens, slice 2)
+- [x] Card assets: Inter 400/600/700 Latin + Latin Extended WOFF from `@fontsource/inter` 5.3.0 (OFL, 240 KB), the 8 award emoji as Noto SVGs (OFL; the CDN set lacks 🫠), a sparse grain tile (`scripts/make-grain.mjs`, 8% speckle)
+- [x] `lib/cards/`: view-model types, words per language (`describe` turns facts into number, context and chart message), sky stops, air above the winner, trend and rank charts (rank scale spans the ranks shown; labels kept a line apart), request parsing, sample league. 26 unit tests.
+- [x] Card JSX for `next/og` (`lib/cards/render/`): award card and Wrap, Status and X, light and dark, provisional, ties (3 named + "+N others"). Inline style objects and plain `img` there are deliberate: Satori reads neither class names nor next/image. ▲ ▼ are drawn as shapes (the card fonts don't carry them).
+- [x] Route `app/cards/[league]/[gw]/[award]/route.tsx` (`award` = wrap or an award key; `?format=status|x&theme=dark|light&lang=pcm|en|fr&provisional=1`). Only `sample/5` until lib/league is wired; others 404. Final GWs: s-maxage 1 day; provisional: 5 minutes.
+- [x] Verified (2026-10-11): typecheck, lint, 108 tests, production build (assets traced into the route). All 36 cards (9 × 2 formats × 2 themes) rendered and checked by eye, plus French and provisional. Render 0.15–0.9 s warm.
+  - **Size:** dark Status cards are about 400 KB, light about 170 KB, X cards 100–270 KB. The grain costs about 200 KB on a dark card (dense noise made it 1.3 MB; sparse 8% speckle keeps the look). Ralph to decide whether shared cards keep the grain.
+- [ ] Slice 2: app screens (Start, picker, League Market/Table, Fixtures, Players) on the tokens, with `lib/variants.ts`
+- [ ] Wire cards to `lib/league` awards once the data session exposes them (plus `entryId` on winners, per the handoff reply)
+
+## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
 - [ ] Bundled font files, Noto or Twemoji emoji, generated team badges and the web address watermark
 - [ ] Long-lived cache headers for finished GWs and a short cache for provisional ones
