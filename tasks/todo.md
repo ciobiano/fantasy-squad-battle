@@ -68,7 +68,7 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - Accent: pale mint #C8EBDD on dark, deep teal #143A53 on light. Start and Market screens get the sky header.
   - [ ] Design system: replace brand-start/brand-end tokens, update README, Cover, WrapCard, AwardCard, Button, StoryRing
   - [ ] Ralph: shared image theme. Proposal: the image follows the app theme at share time; link previews use dark
-- [ ] Decide the Middle Class rule: the current one catches 7 of 12 managers in the sample, including the leader. Pass 2 uses a proposal: middle third of the table and moved ≤ 1 place over 3 GWs. That gives Ngozi, Seun and Ibrahim.
+- [x] Middle Class rule: middle third of the table and moved ≤ 1 place over 3 GWs (adopted as D3, 2026-10-10).
 - [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
   - [x] **Card component** (`A-Card`): all 8 awards in Status and X, with ties, the provisional tag and the language switch. Each award gets its own visual: trend line, rank line, captain bars, bench row, hit bar, flat group lines.
   - [x] **Wrap:** Status and X, plus a version where an award has no winner and a group line takes its row
@@ -83,6 +83,15 @@ The full spec is in [docs/design/brief.md](../docs/design/brief.md).
   - Brand book as usage rules: voice, colour, type, layout, share cards, iconography, motion, accessibility
   - 18 components with guidelines and live HTML previews, from Button to AwardCard and WrapCard, plus a cover
   - Instrument Serif dropped with the Editorial direction
+- [x] **Canvas pass 3, new scope** (2026-10-11), page "Pass 3 · New scope", dark and light, real FPL data:
+  - [x] Start with My team ID | League link, help, team-not-found
+  - [x] League picker: your leagues, public folded, no private leagues, loading, FPL down
+  - [x] Tab bar League · Fixtures · Players; Market | Table switch; Change league; your row and card highlighted
+  - [x] Fixtures ticker GW 7–12: sort, sticky team column, difficulty colours plus numbers, double and blank, end of season, loading, FPL down
+  - [x] Players, injuries & bans: status chips, filters (Unavailable separate), nothing flagged, loading, FPL down
+  - [x] AA checked at each text's position on the sky, both themes
+  - [x] Reply to the data session: [docs/handoff/2026-10-11-design-reply-pass3.md](../docs/handoff/2026-10-11-design-reply-pass3.md)
+- [ ] Ralph reviews pass 3
 - [ ] Bring the tokens into the codebase: `app/globals.css` (both themes, clamp() type scale) and `lib/variants.ts` (CVA per component)
 
 ## 5. Cards: `next/og`

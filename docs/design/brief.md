@@ -32,6 +32,8 @@ Edge cases every card layout must survive:
 
 ### App screens (mobile-first, 390 wide)
 
+**Scope update (2026-10-10, from the data session's handoff):** tabs are **League · Fixtures · Players**. League has a Market | Table switch. People can enter with their own team ID, which lists their leagues. Pass 3 below covers the new screens.
+
 1. **Start:** paste a league ID or URL, with help on where to find it. Language and theme switchers visible.
 2. **Market tab** (the default), top to bottom:
    - Header: league name, GW picker, provisional tag.
@@ -60,6 +62,12 @@ Loading (skeletons, not spinners), invalid ID, private league, league over 50 (t
 | Provisional tag | Header, cards | |
 | Segmented control | Tabs, language, theme | |
 | Pitch | Team of the Week | Flexbox rows by position |
+| Tab bar | Every tab | League · Fixtures · Players. Navigation only, one-word labels, no disabled tabs (HIG) |
+| View switch | League | Segmented control, Market \| Table, solid track so it reads on the sky |
+| League row | Picker | Name, your rank, a movement pill (private leagues show the number; public ones the arrow only, since a six-digit move says nothing) |
+| Ticker cell | Fixtures | Opponent's short name, H or A, and the difficulty number. Colour plus the number, so colour is never the only signal. Doubles stack two fixtures; blanks are a dashed "No match" |
+| Status chip | Players | Injured (down red), Doubtful as its percentage (amber `#F2B33D` with dark text), Suspended (ink), Unavailable (outline) |
+| You marker | Market, Table | Your row tinted (`youTint`) with a small "You" tag; your own card first in the stories |
 
 Starting emoji per award, to try on the canvas: Oga 👑, Climber 📈, Captain Disaster 🫠, Bench Regret 🪑, Hit Merchant 💸, Middle Class 🛋️, Faller 📉, Wooden Spoon 🥄.
 
@@ -79,14 +87,15 @@ Both share Inter for UI and numbers, the same components and the same data. They
 - Progress rings and emoji chips.
 - The shared card is always light.
 
-**Our gradient palette:** one gradient family of our own. No purple, no glow, no generic AI washes. Text over a gradient must pass AA against its worst stop.
-- **Official: Mint** (Ralph's call, 2026-10-10, from two references he shared: a grainy aqua-to-green swatch and a fintech app with a deep-teal-to-mint hero). Colours measured from the references:
-  - **Gradient:** aqua `#35E1E5` to mint green `#28E4A3`.
-  - **Wash:** deep teal `#143A53`, pale mint `#D5F1E5`, mist `#EFEFEF`.
-- **Text:** dark teal `#06201F` reads 10:1 or better on both gradient stops; white fails (1.6:1). On the wash, text sits only on the pale lower half.
-- **Grain:** large gradient fields carry a fine monochrome grain (fractal noise, about 22%). Check that `next/og` renders it (resvg supports SVG filters) when the cards are built.
-- **Known clash:** the green end is close to the dark theme's up green (ΔE 14). The gradient never touches movement pills or arrows, and movement always carries ▲ ▼.
-- **Retired:** Harmattan (gold to apricot) and Lagoon (aqua to cornflower), the pass 1 candidates.
+**Our gradient: the Mist sky** (Ralph, 2026-10-10). Deep teal at the top, misty mint in the middle, fading into the page: white in light mode, near-black in dark mode. Taken from Ralph's fintech reference; stops sampled from it.
+- **Light:** `#143A53` → `#315569` → `#7DA4A5` → `#A7D1C7` → `#D5F1E5` → `#FFFFFF`. **Dark:** `#143A53` → `#265858` (with a soft mint glow) → `#08090A`. Full stop lists live in the canvas components (`skyProfile`).
+- **Where:** the top of every share card and of the app's main screens (Start, picker, League, Fixtures, Players). Content sits on it; the page colour takes over below.
+- **Text on the sky:** white on the deep-teal top, then ink once it turns pale (light), or white throughout (dark). Grey secondary text fails on the mint, so text on the sky is full ink or white. Every text element is checked at its actual position.
+- **Accent** (buttons, the selected story ring, the top scorer's points): pale mint `#C8EBDD` with `#06201F` text on dark; deep teal `#143A53` with white text on light.
+- **Grain:** fine monochrome noise at 16%, fading out with the sky. Check that `next/og` renders it (or ship it as a PNG tile).
+- **Clear of the Premier League palette.** The PL's own stylesheet (premierleague.com, read 2026-10-10) uses cyan `#05F0FF`, green `#00FF87`, purple `#37003C`, lilac `#953BFF`, pink `#FF2882`, orange `#FF6900`, yellow `#EBFF00`, all at full chroma. Every sky and accent colour is ΔE2000 ≥ 16 from all of them, at chroma ≤ 19. The bright Mint (`#35E1E5` → `#28E4A3`) was ΔE 4.7 and 9.7 from PL cyan and green, so it is retired. Movement green `#2FD27A` is ΔE 10 from PL green; it stays, because it is a status colour on small pills, never a brand fill.
+- **Retired:** bright Mint, Harmattan (gold to apricot) and Lagoon (aqua to cornflower).
+- **Cards in both themes:** a card renders in light or dark. Proposal (Ralph to confirm): the shared image follows the app's theme at the moment of sharing; link previews use dark.
 
 **Learned in pass 1 (2026-10-09):**
 - Bright green and red pills need dark ink. White on #2FD27A is only 2.0:1.
@@ -182,5 +191,16 @@ Real data from Ralph's league (Denizens of Olympus, GW5, a finished GW), with su
 - **Story viewer:** progress segments, close, invisible previous and next tap zones (real buttons for screen readers), Share and a visible Pause button (WCAG 2.2.2). Share opens a sheet with three choices: WhatsApp Status (tall), X (square), Save image.
 - **Share page:** a fluid web page, not a phone frame. It has the Wrapped card, a swipeable row of the 8 award cards, the standings, a fan-project disclaimer and a sticky "Roast your own league" button.
 - **Copy:** state messages and the Start screen are in Pidgin by default, with English and French behind the language setting. Navigation labels stay English. Ralph to edit.
+
+**Mist sky and light cards (2026-10-10):** every card and the Start and League screens carry the sky; 18 light card boards sit below the dark ones on "Pass 2 · Cards". Bright Mint retired (see the gradient section).
+
+**Pass 3, new scope (2026-10-11):** on the canvas page "Pass 3 · New scope", in dark and light, with states. Data is real FPL data from 2026-10-11 (GW 7–12 fixtures, 202 flagged players).
+- **Start:** one field with a My team ID | League link switch. Team ID is the default path; a pasted league link flips the switch. Help shows where the ID lives in the Points page address.
+- **League picker:** header names the person ("Emeka · Agbero Athletic"). Your leagues first; Public leagues folded, with a count. "Not you? Change team" is the way back.
+- **League tab:** the league name is a button ("Change league"), then the Market | Table switch. Your row is tinted with a "You" tag and your own card leads the stories.
+- **Fixtures:** 20 teams × 6 gameweeks, sticky team column with the run total under the short name, scroll sideways. Sort Easiest | A–Z. Legend line "Easiest 1 2 3 4 5 Hardest". States: loading, double and blank (an example, not real fixtures), end of season (three columns), FPL down.
+- **Difficulty tokens** (fill / text), our own colours in FPL's order: dark `1 #1F7A44/white · 2 #2FD27A/#04140B · 3 #2A2D31/ink · 4 #FF5A4E/#1A0503 · 5 #9C2A2F/white`; light `1 #11823B/white · 2 #B5E8C6/ink · 3 #E9EBE8/ink · 4 #EE6A60/ink · 5 #A3222A/white`. Every cell's text is 4.5:1 or better.
+- **Players:** "Injuries & bans" list, newest first: name and status chip, the news line, then team · position · age of the report. Filters: All (injured, doubtful, suspended), each status, and Unavailable on its own, because 105 of 202 flags are loans and transfers out. Team filter as a menu. States: loading, nothing flagged, FPL down.
+- **Checked:** every screen rendered in both themes; every text element passes AA at its position on the sky; story rings pass 3:1 against the sky.
 
 **Then:** a Design System artifact from the winner (tokens for both themes, type scale, components, contrast checks), which phase 5 and 6 build from.
