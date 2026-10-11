@@ -55,7 +55,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] The league bundle keeps slim player objects, so it stays about 145 KB.
 - [x] The relay allows `element-summary` (redeployed 2026-10-11). It still refuses login-only endpoints such as `my-team`.
 - [x] Local production check: `/api/team/{id}` takes 658 ms cold and 2 ms warm. An unknown team returns `team-not-found`. 113 tests pass.
-- [ ] Check on a Vercel preview
+- [x] Vercel preview (`cdg1`): `/api/team/{id}` takes 167 ms cold and 11 ms warm. An unknown team returns `team-not-found`. The league bundle is still about 145 KB.
 - [ ] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it
 
 ## 2. Domain logic: `lib/league/` (pure functions, unit tested)
