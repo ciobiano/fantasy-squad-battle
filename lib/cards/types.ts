@@ -1,0 +1,105 @@
+// The view model a share card renders from. The award logic (lib/league, data
+// session) produces facts; lib/cards turns them into words, numbers and shapes.
+// Keep this free of FPL API shapes.
+
+export type CardFormat = "status" | "x";
+export type CardTheme = "dark" | "light";
+export type Lang = "pcm" | "en" | "fr";
+
+export const AWARD_KEYS = ["oga", "climber", "captain", "bench", "hits", "middle", "faller", "spoon"] as const;
+export type AwardKey = (typeof AWARD_KEYS)[number];
+
+export type BadgeShape = "circle" | "squircle" | "shield";
+
+export interface Manager {
+  /** First name only, never the surname. */
+  readonly firstName: string;
+  readonly teamName: string;
+  readonly badge: { readonly initials: string; readonly colour: string; readonly shape: BadgeShape };
+}
+
+export interface CardMeta {
+  readonly leagueName: string;
+  readonly gw: number;
+  /** True until every fixture of the gameweek is final. */
+  readonly provisional: boolean;
+}
+
+/** The facts behind each award: what the card shows, before any wording. */
+export type AwardFacts =
+  | {
+      readonly award: "oga" | "spoon";
+      /** Net GW score (points − hits) and the hits taken. */
+      readonly net: number;
+      readonly hits: number;
+      /** Season total minus the league average after each GW so far, oldest first. */
+      readonly gapByGw: readonly number[];
+    }
+  | {
+      readonly award: "climber" | "faller";
+      /** Places moved this GW (positive). Ties share the same move. */
+      readonly places: number;
+      /** For a single winner: rank before and after. */
+      readonly from: number;
+      readonly to: number;
+      /** League rank after each GW, oldest first, one series per winner. */
+      readonly rankByGw: readonly (readonly number[])[];
+      readonly leagueSize: number;
+    }
+  | {
+      readonly award: "middle";
+      /** Places moved over the window (always ≤ 1). */
+      readonly places: number;
+      readonly weeks: number;
+      readonly rankByGw: readonly (readonly number[])[];
+      readonly leagueSize: number;
+    }
+  | {
+      readonly award: "captain";
+      readonly captain: { readonly name: string; readonly points: number };
+      readonly best: { readonly name: string; readonly points: number };
+    }
+  | {
+      readonly award: "bench";
+      readonly total: number;
+      readonly players: readonly { readonly name: string; readonly points: number }[];
+    }
+  | {
+      readonly award: "hits";
+      /** Points scored before hits, and hit points paid. */
+      readonly gross: number;
+      readonly paid: number;
+    };
+
+export interface AwardCardModel {
+  readonly meta: CardMeta;
+  /** Up to three winners are named; the rest are counted. */
+  readonly winners: readonly Manager[];
+  readonly facts: AwardFacts;
+  /** Already picked by the league + GW + award seed (lib/roasts). */
+  readonly roast: string;
+}
+
+export interface WrapRow {
+  readonly award: AwardKey;
+  /** First names of the winners; empty when nobody won. */
+  readonly winners: readonly string[];
+  /** The headline number, e.g. "92", "3", "−12"; null when nobody won. */
+  readonly value: string | null;
+  /** Rank movement: drawn as a triangle on a green or red pill before the value. */
+  readonly movement?: "up" | "down";
+  /** Shown instead of names when nobody won ("Nobody take hit this week."). */
+  readonly groupLine?: string;
+}
+
+export interface WrapCardModel {
+  readonly meta: CardMeta;
+  readonly leagueAverage: number;
+  readonly rows: readonly WrapRow[];
+}
+
+export interface CardOptions {
+  readonly format: CardFormat;
+  readonly theme: CardTheme;
+  readonly lang: Lang;
+}
