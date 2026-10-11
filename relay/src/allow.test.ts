@@ -16,6 +16,7 @@ describe("isAllowedFplRequest", () => {
     "/api/entry/689819/history/",
     "/api/entry/689819/event/5/picks/",
     "/api/leagues-classic/314/standings/?page_standings=2",
+    "/api/element-summary/552/",
   ])("allows %s", (path) => {
     expect(allowed(path)).toBe(true);
   });
@@ -28,6 +29,7 @@ describe("isAllowedFplRequest", () => {
     "/api/fixtures/?event=6;drop",
     "/admin/",
     "/api/bootstrap-static",
+    "/api/element-summary/1234567/",
   ])("refuses %s", (path) => {
     expect(allowed(path)).toBe(false);
   });
