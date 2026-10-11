@@ -1,0 +1,115 @@
+{
+ "current": [
+  {
+   "event": 1,
+   "points": 97,
+   "total_points": 97,
+   "rank": 2744,
+   "rank_sort": 2859,
+   "overall_rank": 2744,
+   "percentile_rank": 1,
+   "overall_rank_percentage": "0.0",
+   "bank": 0,
+   "value": 1000,
+   "event_transfers": 0,
+   "event_transfers_cost": 0,
+   "points_on_bench": 0
+  },
+  {
+   "event": 2,
+   "points": 123,
+   "total_points": 220,
+   "rank": 103325,
+   "rank_sort": 103710,
+   "overall_rank": 221,
+   "percentile_rank": 5,
+   "overall_rank_percentage": "0.0",
+   "bank": 25,
+   "value": 1001,
+   "event_transfers": 1,
+   "event_transfers_cost": 0,
+   "points_on_bench": 12
+  },
+  {
+   "event": 3,
+   "points": 74,
+   "total_points": 294,
+   "rank": 217413,
+   "rank_sort": 218616,
+   "overall_rank": 24,
+   "percentile_rank": 5,
+   "overall_rank_percentage": "0.0",
+   "bank": 10,
+   "value": 1002,
+   "event_transfers": 0,
+   "event_transfers_cost": 0,
+   "points_on_bench": 8
+  },
+  {
+   "event": 4,
+   "points": 78,
+   "total_points": 372,
+   "rank": 2850878,
+   "rank_sort": 2861553,
+   "overall_rank": 108,
+   "percentile_rank": 30,
+   "overall_rank_percentage": "0.0",
+   "bank": 10,
+   "value": 1002,
+   "event_transfers": 0,
+   "event_transfers_cost": 0,
+   "points_on_bench": 7
+  },
+  {
+   "event": 5,
+   "points": 71,
+   "total_points": 439,
+   "rank": 372192,
+   "rank_sort": 372708,
+   "overall_rank": 21,
+   "percentile_rank": 5,
+   "overall_rank_percentage": "0.0",
+   "bank": 12,
+   "value": 1003,
+   "event_transfers": 2,
+   "event_transfers_cost": 4,
+   "points_on_bench": 0
+  }
+ ],
+ "past": [
+  {
+   "season_name": "2020/21",
+   "total_points": 46,
+   "rank": 8212664,
+   "rank_percentage": "100"
+  },
+  {
+   "season_name": "2021/22",
+   "total_points": 2001,
+   "rank": 2787609,
+   "rank_percentage": "30"
+  }
+ ],
+ "chips": [
+  {
+   "name": "bboost",
+   "time": "2026-07-28T05:52:46.607103Z",
+   "event": 1
+  },
+  {
+   "name": "3xc",
+   "time": "2026-08-27T08:36:17.063926Z",
+   "event": 2
+  },
+  {
+   "name": "wildcard",
+   "time": "2026-08-29T00:55:47.513706Z",
+   "event": 3
+  },
+  {
+   "name": "freehit",
+   "time": "2026-09-11T10:58:44.756653Z",
+   "event": 4
+  }
+ ]
+}

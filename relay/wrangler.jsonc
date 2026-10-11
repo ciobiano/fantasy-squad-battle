@@ -1,0 +1,9 @@
+// Needs Node 22+ (see CLAUDE.md). Deploy: npx wrangler@4.139.0 deploy --config relay/wrangler.jsonc
+// Secret: npx wrangler@4.139.0 secret put RELAY_SECRET --config relay/wrangler.jsonc
+{
+  "name": "fsb-fpl-relay",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "observability": { "enabled": true }
+}
