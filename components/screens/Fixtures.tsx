@@ -3,7 +3,7 @@
 // never the only signal. Sorting is a pair of links (no JavaScript).
 import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
-import { tickerGameweeks, type TickerRow, type TickerSort } from "@/lib/screens/tools";
+import type { FixturesView } from "@/lib/screens/fixtures";
 import {
   column, fixture, fixtureBlank, fixtureOpponent, fixtureSub, legend, legendSwatch, onSkyRow, onSkyTitle, sectionAside,
   segment, segmented, ticker, tickerCell, tickerGw, tickerRow, tickerRun, tickerScroll, tickerShort, tickerTeam, visuallyHidden,
@@ -12,10 +12,10 @@ import { ThemeToggle } from "../ui/ThemeToggle";
 
 const DIFFICULTIES = [1, 2, 3, 4, 5] as const;
 
-export function Fixtures({ rows, sort, lang }: { rows: readonly TickerRow[]; sort: TickerSort; lang: Lang }) {
+export function Fixtures({ view, lang }: { view: FixturesView; lang: Lang }) {
   const t = copyFor(lang);
   const f = t.fixtures;
-  const gws = tickerGameweeks(rows);
+  const { rows, sort, gameweeks: gws } = view;
   const width = gws.length <= 3 ? "wide" : "normal";
   return (
     <div lang={lang} className={column({ gap: "md" })}>

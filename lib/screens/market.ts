@@ -1,8 +1,9 @@
-// The League tab's Market view, in the shapes of docs/design/brief.md §5.
-// lib/league (data session) will produce MarketRow and TeamOfTheWeek; until
-// then the sample league from the design canvas fills them.
+// The League tab's Market view. lib/league (data session) will produce
+// MarketData, in the shapes of docs/design/brief.md §5; until then the design
+// canvas's sample league fills it. marketView turns it into what the screen draws.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
+import { movedBy, type Movement } from "@/lib/ui/format";
 
 export interface Score {
   /** points − hits */
@@ -26,7 +27,8 @@ export interface TeamOfTheWeek {
   readonly lines: readonly (readonly { readonly name: string; readonly points: number; readonly ownedBy: number; readonly top: boolean }[])[];
 }
 
-export interface MarketView {
+/** What the award logic hands the Market: one league's gameweek. */
+export interface MarketData {
   readonly leagueId: string;
   readonly leagueName: string;
   readonly gw: number;
@@ -34,31 +36,63 @@ export interface MarketView {
   /** Awards with a winner, in story order. */
   readonly awards: readonly AwardKey[];
   readonly teamOfTheWeek: TeamOfTheWeek;
+  /** Ranked by net GW score. */
   readonly rows: readonly MarketRow[];
 }
 
+/** A row's sparkline: the gap to the league average per GW, around a dashed zero line. */
 export interface Spark {
   readonly points: string;
   readonly baseY: number;
   readonly direction: "up" | "down";
 }
 
-/** A row's sparkline: the gap to the league average per GW, around a dashed zero line. */
-export function spark(gaps: readonly number[], width = 72, height = 32): Spark {
+export interface MarketLine {
+  readonly id: number;
+  readonly firstName: string;
+  readonly teamName: string;
+  readonly badge: Badge;
+  /** The one emoji the row shows (its first award in story order); a row with one opens that card. */
+  readonly award: AwardKey | null;
+  readonly net: number;
+  readonly move: Movement;
+  readonly spark: Spark;
+}
+
+export interface MarketView {
+  readonly leagueId: string;
+  readonly gw: number;
+  readonly awards: readonly AwardKey[];
+  readonly teamOfTheWeek: TeamOfTheWeek;
+  readonly rows: readonly MarketLine[];
+}
+
+export const SPARK_WIDTH = 72;
+export const SPARK_HEIGHT = 32;
+
+function spark(gaps: readonly number[]): Spark {
   const values = gaps.length > 1 ? gaps : [0, ...gaps];
-  const baseY = height / 2;
+  const baseY = SPARK_HEIGHT / 2;
   const reach = Math.max(1, ...values.map(Math.abs));
-  const scale = (height / 2 - 2) / reach;
-  const step = (width - 4) / (values.length - 1);
+  const scale = (SPARK_HEIGHT / 2 - 2) / reach;
+  const step = (SPARK_WIDTH - 4) / (values.length - 1);
   const points = values.map((g, i) => `${(2 + i * step).toFixed(1)},${(baseY - g * scale).toFixed(1)}`).join(" ");
   return { points, baseY, direction: (values.at(-1) ?? 0) >= 0 ? "up" : "down" };
 }
 
-export const badgeOf = (row: MarketRow): Badge => badgeFor(row.manager.teamName);
+const toLine = (row: MarketRow): MarketLine => ({
+  id: row.manager.id,
+  firstName: row.manager.firstName,
+  teamName: row.manager.teamName,
+  badge: badgeFor(row.manager.teamName),
+  award: AWARD_KEYS.find((key) => row.awards.includes(key)) ?? null,
+  net: row.score.net,
+  move: movedBy(row.leagueRankChange),
+  spark: spark(row.gapSeries),
+});
 
-/** The one emoji a row shows: its first award in story order. */
-export function rowAward(row: MarketRow): AwardKey | null {
-  return AWARD_KEYS.find((key) => row.awards.includes(key)) ?? null;
+export function marketView(data: MarketData): MarketView {
+  return { leagueId: data.leagueId, gw: data.gw, awards: data.awards, teamOfTheWeek: data.teamOfTheWeek, rows: data.rows.map(toLine) };
 }
 
 const m = (id: number, firstName: string, teamName: string) => ({ id, firstName, teamName });
@@ -72,7 +106,7 @@ const r = (manager: MarketRow["manager"], points: number, hits: number, change: 
 const p = (name: string, points: number, ownedBy = 0, top = false) => ({ name, points, ownedBy, top });
 
 /** The design canvas's sample league (real GW 5 players), ranked by net GW score. */
-export const SAMPLE_MARKET: MarketView = {
+export const SAMPLE_MARKET: MarketData = {
   leagueId: "sample",
   leagueName: "Ikeja Banter League",
   gw: 5,

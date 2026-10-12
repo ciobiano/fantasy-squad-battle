@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
 import type { PickerRow, PickerView } from "@/lib/screens/picker";
-import { badgeFor } from "@/lib/ui/badge";
 import {
   button, chevron, column, disclosure, disclosureChevron, disclosureSummary, group, groupHeading, listRow, listRowName,
   listRowValue, onSkyKicker, onSkyTitle, panel,
@@ -40,7 +39,7 @@ export function Picker({ view, lang }: { view: PickerView; lang: Lang }) {
     <div lang={lang} className={column({ gap: "md" })}>
       <header>
         <span className={onSkyKicker()}>
-          <TeamBadge value={badgeFor(view.teamName)} size="sm" /> {view.firstName} · {view.teamName}
+          <TeamBadge value={view.badge} size="sm" /> {view.firstName} · {view.teamName}
         </span>
         <h1 className={onSkyTitle()}>{t.title}</h1>
       </header>

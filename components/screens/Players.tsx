@@ -3,7 +3,7 @@
 // can be shared.
 import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
-import { filterInjuries, injuryCounts, type InjuryFilter, type InjuryRow } from "@/lib/screens/tools";
+import { INJURY_FILTERS, type InjuryFilter, type PlayersView } from "@/lib/screens/players";
 import { age } from "@/lib/ui/format";
 import {
   column, filterChip, filterCount, filters, newsHead, newsMeta, newsRow, newsText, onSkyKicker, onSkyRow, onSkyTitle,
@@ -11,18 +11,6 @@ import {
 } from "@/lib/variants";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { ChevronDown } from "../ui/icons";
-
-const FILTERS: readonly InjuryFilter[] = ["all", "injured", "doubtful", "suspended", "unavailable"];
-const SHOWN = 40;
-
-interface PlayersProps {
-  readonly rows: readonly InjuryRow[];
-  readonly status: InjuryFilter;
-  readonly team: string | null;
-  readonly teams: readonly string[];
-  readonly now: number;
-  readonly lang: Lang;
-}
 
 const href = (status: InjuryFilter, team: string | null) => {
   const query = new URLSearchParams();
@@ -32,11 +20,10 @@ const href = (status: InjuryFilter, team: string | null) => {
   return text ? `/players?${text}` : "/players";
 };
 
-export function Players({ rows, status, team, teams, now, lang }: PlayersProps) {
+export function Players({ view, lang }: { view: PlayersView; lang: Lang }) {
   const t = copyFor(lang);
   const p = t.players;
-  const counts = injuryCounts(rows, team);
-  const list = filterInjuries(rows, status, team).slice(0, SHOWN);
+  const { status, team, clubs, counts, rows: list, asOf } = view;
   const label: Record<InjuryFilter, string> = { all: p.all, injured: p.injured, doubtful: p.doubtful, suspended: p.suspended, unavailable: p.unavailable };
   return (
     <div lang={lang} className={column({ gap: "md" })}>
@@ -49,7 +36,7 @@ export function Players({ rows, status, team, teams, now, lang }: PlayersProps) 
       </header>
 
       <nav aria-label={p.filterLabel} className={filters()}>
-        {FILTERS.map((f) => (
+        {INJURY_FILTERS.map((f) => (
           <Link key={f} href={href(f, team)} aria-current={f === status ? "true" : undefined} className={filterChip()}>
             {label[f]}
             <span className={filterCount()}>{counts[f]}</span>
@@ -66,7 +53,7 @@ export function Players({ rows, status, team, teams, now, lang }: PlayersProps) 
           <Link href={href(status, null)} aria-current={team === null ? "true" : undefined} className={teamMenuItem()}>
             {p.all}
           </Link>
-          {teams.map((short) => (
+          {clubs.map((short) => (
             <Link key={short} href={href(status, short)} aria-current={short === team ? "true" : undefined} className={teamMenuItem()}>
               {short}
             </Link>
@@ -90,7 +77,7 @@ export function Players({ rows, status, team, teams, now, lang }: PlayersProps) 
               </span>
               <span className={newsText()}>{row.news}</span>
               <span className={newsMeta()}>
-                {row.team} · {row.position} · {p.ago(age(row.reportedAt, now))}
+                {row.team} · {row.position} · {p.ago(age(row.reportedAt, asOf))}
               </span>
             </li>
           ))}

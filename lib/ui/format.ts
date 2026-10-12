@@ -19,6 +19,12 @@ export function movement(rank: number | null, lastRank: number | null): Movement
   return rank < lastRank ? { direction: "up", places: lastRank - rank } : { direction: "down", places: rank - lastRank };
 }
 
+/** Movement from a change in places: positive is up. */
+export function movedBy(change: number): Movement {
+  if (change === 0) return { direction: "none", places: 0 };
+  return change > 0 ? { direction: "up", places: change } : { direction: "down", places: -change };
+}
+
 /** "14h", "2d": how long ago a report came in, from ISO time to now. */
 export function age(isoTime: string, now: number): string {
   const ms = Math.max(0, now - Date.parse(isoTime));

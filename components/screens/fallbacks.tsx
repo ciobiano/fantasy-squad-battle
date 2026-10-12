@@ -20,3 +20,22 @@ export function ListFallback() {
     </div>
   );
 }
+
+export function PickerFallback() {
+  return (
+    <div aria-busy="true" className={column({ gap: "md" })}>
+      <div className={skeleton({ shape: "row" })} />
+      <div className={skeleton({ shape: "block" })} />
+      <div className={skeleton({ shape: "row" })} />
+    </div>
+  );
+}
+
+export function StartFallback() {
+  return (
+    <div aria-busy="true" className={column({ gap: "md" })}>
+      <div className={skeleton({ shape: "block" })} />
+      <div className={skeleton({ shape: "row" })} />
+    </div>
+  );
+}

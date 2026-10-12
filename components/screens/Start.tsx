@@ -3,8 +3,8 @@
 // control, and CSS (globals.css, [data-mode-switch]) swaps the label, button
 // and help text. The form goes to /find.
 import Image from "next/image";
-import { copyFor, type Lang, type StartError } from "@/lib/i18n";
-import type { StartMode } from "@/lib/fpl/start-input";
+import { copyFor, type Lang } from "@/lib/i18n";
+import type { StartView } from "@/lib/screens/start";
 import {
   button, column, fieldError, fieldLabel, form, help, helpSummary, helpUrl, helpUrlId, input, onSkyRow,
   previewCard, previewStack, segment, segmented, startFooter, startHeadline, visuallyHidden, wordmark, wordmarkSquare,
@@ -13,14 +13,8 @@ import { LanguageSwitch } from "../ui/LanguageSwitch";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { AlertIcon, ChevronDown } from "../ui/icons";
 
-interface StartProps {
-  readonly lang: Lang;
-  readonly mode: StartMode;
-  readonly value: string;
-  readonly error: StartError | null;
-}
-
-export function Start({ lang, mode, value, error }: StartProps) {
+export function Start({ view, lang }: { view: StartView; lang: Lang }) {
+  const { mode, value, error } = view;
   const t = copyFor(lang);
   const s = t.start;
   const back = "/?start=1";
