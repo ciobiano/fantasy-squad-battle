@@ -141,13 +141,16 @@ Data isn't wired yet (`lib/league` is in the data session's branch), so cards re
 
 ## 5c. Build, slice 2 (started 2026-10-12): the app screens
 Real data where the data layer already has it (start input, `getMyTeam`, standings); typed samples where the logic belongs to the data session and isn't built yet (Market data, ticker, injuries). Screens take view models (`lib/screens/`), so wiring the real logic later swaps one function per screen.
-- [ ] Foundations: `lib/variants.ts` (CVA), `components/ui/` (Sky, TabBar, segmented links, theme toggle, language switch, down panel, badge, rank pill, emoji), theme with no flash (System / Light / Dark, `data-theme`), language from a cookie with the phone's language as the default (French phones → French, else Pidgin)
-- [ ] Start `/` (real, no client JS): My team ID | League link as radio segments, help as `<details>`, errors from `parseStartInput`; `/find` redirects to the picker or the league
-- [ ] Picker `/team/[teamId]` (real `getMyTeam`): your leagues, public folded, team not found → back to Start with the error, FPL down panel, loading skeleton
-- [ ] Remembered on the phone: `proxy.ts` keeps the last team and league in cookies and opens `/` straight into the last league (`/?start=1` skips it)
-- [ ] League `/league/[id]` (Market) and `/league/[id]/table`: shared header (Change league, Market | Table), Table on real standings, Market on the sample league until `lib/league` lands
-- [ ] Fixtures `/fixtures` and Players `/players` on the agreed `TickerRow` / `InjuryRow` shapes, from the 11 Oct snapshot until `lib/tools` lands
-- [ ] Tests for the view-model adapters; verify typecheck, lint, tests, build, first-load JS, and every screen in both themes
+- [x] Foundations: `lib/variants.ts` (CVA, no arbitrary values: named utilities and variants in `globals.css`), `components/ui/` (Sky, TabBar, theme toggle, language switch, down panel, badge, rank pill, Noto award emoji), theme with no flash (System / Light / Dark, `data-theme`), language from a cookie with the phone's language as the default
+- [x] Start `/` (real, no client JavaScript): My team ID | League link as radio segments, help as `<details>`, every `parseStartInput` error in three languages; `/find` redirects to the picker or the league
+- [x] Picker `/team/[teamId]` (real `getMyTeam`): your leagues, public folded, team not found → back to Start with the error, FPL down panel, loading skeleton
+- [x] Remembered on the phone: `proxy.ts` keeps the last team and league in cookies and opens `/` straight into the last league (`/?start=1` skips it)
+- [x] League `/league/[id]` (Market) and `/league/[id]/table`: shared header (Change league, Market | Table), Table on real standings (your row tinted, Top 50 note), Market on `/league/sample` until `lib/league` lands; real leagues show a note and a link to the Table
+- [x] Fixtures `/fixtures` and Players `/players` on the agreed `TickerRow` / `InjuryRow` shapes, from a 12 Oct snapshot until `lib/tools` lands; sort and filters are links (no JavaScript)
+- [x] Verified (2026-10-12): typecheck, lint, 163 tests, production build (every screen a partial prerender). Real flows checked in the browser at phone size in both themes: Start (mode switch, errors), picker on real team 1, Table on league 314 (Top 50), sample Market, Fixtures, Players, theme toggle, language switch, remembered league.
+  - **First-load JS on Start: 178 KB gzipped** (budget ~170). The Next/React runtime is ~164 KB in this build; ours is ~9 KB (next/image for the two card previews, the theme toggle). Ralph to decide: drop the previews or accept.
+- [ ] Wire the Market view to `lib/league`, Fixtures and Players to `lib/tools` (one call per screen; see docs/handoff/2026-10-12-screens-ready.md)
+- [ ] Story viewer and sharing (next slice)
 
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
