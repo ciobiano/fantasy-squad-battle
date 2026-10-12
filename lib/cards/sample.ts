@@ -5,7 +5,6 @@ import type { AwardKey } from "@/lib/awards";
 import type { Lang } from "@/lib/i18n";
 import type { AwardCardModel, AwardFacts, CardMeta, Manager, WrapCardModel } from "./types";
 
-export const SAMPLE_LEAGUE_ID = "sample";
 export const SAMPLE_GW = 5;
 
 const meta: CardMeta = { leagueName: "Ikeja Banter League", gw: SAMPLE_GW, provisional: false };

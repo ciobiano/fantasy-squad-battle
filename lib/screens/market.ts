@@ -2,6 +2,7 @@
 // MarketData, in the shapes of docs/design/brief.md §5; until then the design
 // canvas's sample league fills it. marketView turns it into what the screen draws.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
+import { SAMPLE_LEAGUE } from "@/lib/ids";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
 import { movedBy, type Movement } from "@/lib/ui/format";
 
@@ -107,7 +108,7 @@ const p = (name: string, points: number, ownedBy = 0, top = false) => ({ name, p
 
 /** The design canvas's sample league (real GW 5 players), ranked by net GW score. */
 export const SAMPLE_MARKET: MarketData = {
-  leagueId: "sample",
+  leagueId: SAMPLE_LEAGUE,
   leagueName: "Ikeja Banter League",
   gw: 5,
   provisional: false,

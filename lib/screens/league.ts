@@ -3,13 +3,11 @@
 import { getStandings } from "@/lib/fpl/api";
 import { resolveGameweek } from "@/lib/fpl/league-gameweek";
 import type { Standings } from "@/lib/fpl/schemas";
-import { fplId } from "@/lib/ids";
+import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
 import { SAMPLE_MARKET, marketView, type MarketView } from "./market";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import { startHref } from "./start";
 import { SAMPLE_TABLE, tableView, type TableView } from "./table";
-
-export const SAMPLE_LEAGUE = "sample";
 
 /** Where a real league's data comes from: live FPL, or a fake in tests. */
 export interface LeagueSource {
