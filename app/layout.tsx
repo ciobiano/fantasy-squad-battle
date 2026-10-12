@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { clsx } from "clsx";
+import { THEME_SCRIPT } from "@/lib/ui/remembered";
 import { rootBody, rootHtml } from "@/lib/variants";
 import "./globals.css";
 
@@ -14,9 +15,16 @@ export const metadata: Metadata = {
   description: "Weekly roast cards for your fantasy football mini-league.",
 };
 
+// The browser bar matches the top of the Mist sky.
+export const viewport: Viewport = { themeColor: "#143A53" };
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={clsx(inter.variable, rootHtml())}>
+    // data-theme is set before paint by THEME_SCRIPT when someone picked Light or Dark.
+    <html lang="en" className={clsx(inter.variable, rootHtml())} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className={rootBody()}>{children}</body>
     </html>
   );

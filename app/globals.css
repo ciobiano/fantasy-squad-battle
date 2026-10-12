@@ -47,7 +47,47 @@
   --text-micro--line-height: 1.27;
 }
 
+/* Named variants and utilities, so lib/variants.ts never needs arbitrary values. */
+@custom-variant current (&[aria-current="page"], &[aria-current="true"]);
+@custom-variant flagged (&[aria-invalid="true"]);
+
+@utility bg-sky {
+  background-image: var(--gradient-sky);
+}
+@utility bg-mark {
+  background-image: var(--gradient-mark);
+}
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@utility rounded-squircle {
+  border-radius: 30%;
+}
+@utility rounded-shield {
+  border-radius: 25% 25% 50% 50%;
+}
+@utility border-fine {
+  border-width: 1.5px;
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Start screen: the My team ID | League link radios swap the label, button and
+   help text without JavaScript. */
+[data-mode-switch]:has(input[value="league"]:checked) [data-show="team"],
+[data-mode-switch]:has(input[value="team"]:checked) [data-show="league"] {
+  display: none;
 }
