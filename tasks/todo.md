@@ -44,11 +44,19 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`, Runtime Cache), league 314 with 50 managers: cold load 634–988 ms, warm load 27–29 ms. An unknown league returns `league-not-found`.
 - [ ] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it
 
-## 1b. More FPL readers: `lib/fpl/`
-- [ ] Team ID input: accept a team ID or a team URL (`/entry/{id}/...`) alongside league links
-- [ ] `entry/{id}` reader: the manager's name and every classic league they're in (for "pick your league"), plus their squad, bank and team value for the planner
-- [ ] `element-summary/{id}` reader: one player's fixtures ahead and gameweek history (player pages)
-- [ ] Add the tool fields to the bootstrap schema: status, news, chance of playing, xG, xA, xGI, ICT, defensive contributions, transfers in and out, price changes, team strengths. Check the cached size stays well under 2 MB.
+## 1b. More FPL readers: `lib/fpl/` (done 2026-10-11)
+- [x] Start input (`lib/fpl/start-input.ts`, which replaces `league-input.ts`): a team ID, a team link (`/entry/{id}/…`), a league ID or a league link. A bare number follows the mode the person picked; links decide for themselves.
+- [x] `getEntry(teamId)`: team name, first name (surnames are never read) and every classic league. `null` for an unknown team.
+- [x] `getMyTeam(teamId)` (`lib/league/my-team.ts`): the league-picker list. Player-made leagues come first, smallest first, so friend groups lead; FPL's own leagues follow. Ranks of 0 become `null`.
+- [x] `getPlayerSummary(playerId)`: fixtures ahead and gameweek history for player pages
+- [x] Tool fields in the bootstrap schema: status, news, chance of playing, stats, form (`ep_next`), transfers, prices and team strengths.
+  - They're tolerant: a changed or missing tool field becomes `null` with one warning instead of breaking league pages.
+  - The trimmed bootstrap is 515 KB, down from 1.78 MB raw.
+- [x] The league bundle keeps slim player objects, so it stays about 145 KB.
+- [x] The relay allows `element-summary` (redeployed 2026-10-11). It still refuses login-only endpoints such as `my-team`.
+- [x] Local production check: `/api/team/{id}` takes 658 ms cold and 2 ms warm. An unknown team returns `team-not-found`. 113 tests pass.
+- [x] Vercel preview (`cdg1`): `/api/team/{id}` takes 167 ms cold and 11 ms warm. An unknown team returns `team-not-found`. The league bundle is still about 145 KB.
+- [ ] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it
 
 ## 2. Domain logic: `lib/league/` (pure functions, unit tested)
 - [ ] Net GW score and its breakdown

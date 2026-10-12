@@ -20,6 +20,18 @@ const CONCURRENCY = 6;
 
 type StandingsRow = Standings["standings"]["results"][number];
 
+/** The player fields the league views need; tool stats stay out of the bundle to keep it small. */
+export type BundlePlayer = Pick<Element, "id" | "web_name" | "first_name" | "second_name" | "team" | "element_type">;
+
+const toBundlePlayer = ({ id, web_name, first_name, second_name, team, element_type }: Element): BundlePlayer => ({
+  id,
+  web_name,
+  first_name,
+  second_name,
+  team,
+  element_type,
+});
+
 export interface ManagerGameweek {
   readonly entry: number;
   readonly entryName: string;
@@ -43,7 +55,7 @@ export interface LeagueGameweek {
   readonly livePoints: Readonly<Record<number, { readonly points: number; readonly minutes: number }>>;
   readonly dreamTeam: DreamTeam;
   /** Only the players that a manager picked or that made the dream team. */
-  readonly players: readonly Element[];
+  readonly players: readonly BundlePlayer[];
   readonly teams: readonly Team[];
 }
 
@@ -109,7 +121,7 @@ function assemble(
     managers,
     livePoints,
     dreamTeam,
-    players: bootstrap.elements.filter((e) => ids.has(e.id)),
+    players: bootstrap.elements.filter((e) => ids.has(e.id)).map(toBundlePlayer),
     teams: bootstrap.teams,
   };
 }

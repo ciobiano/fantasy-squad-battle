@@ -12,6 +12,7 @@ const ALLOWED_PATHS: readonly RegExp[] = [
   /^\/api\/entry\/\d{1,10}\/history\/$/,
   /^\/api\/entry\/\d{1,10}\/event\/\d{1,2}\/picks\/$/,
   /^\/api\/leagues-classic\/\d{1,10}\/standings\/$/,
+  /^\/api\/element-summary\/\d{1,6}\/$/,
 ];
 
 const ALLOWED_PARAMS: ReadonlySet<string> = new Set(["event", "future", "page_standings"]);

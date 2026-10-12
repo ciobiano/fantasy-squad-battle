@@ -4,18 +4,22 @@ import { FplHttpError, fplFetch } from "./http";
 import {
   type Bootstrap,
   type DreamTeam,
+  type Entry,
   type Fixture,
   type History,
   type Live,
   type Picks,
+  type PlayerSummary,
   type Standings,
   bootstrapSchema,
   dreamTeamSchema,
+  entrySchema,
   fixturesSchema,
   historySchema,
   liveSchema,
   parseFpl,
   picksSchema,
+  playerSummarySchema,
   standingsSchema,
 } from "./schemas";
 
@@ -38,7 +42,7 @@ async function read<T>(path: string, schema: z.ZodType<T>): Promise<T> {
   return parseFpl(schema, await fplFetch(path, { init: { cache: "no-store" } }), path);
 }
 
-/** Like read, but a 404 (no such league, or no picks that gameweek) is null. */
+/** Like read, but a 404 (no such league or team, or no picks that gameweek) is null. */
 async function readOrNull<T>(path: string, schema: z.ZodType<T>): Promise<T | null> {
   try {
     return await read(path, schema);
@@ -102,4 +106,20 @@ export async function getDreamTeam(gw: number, final: boolean): Promise<DreamTea
   cacheGameweek(final);
   cacheTag(`fpl:gw:${gw}`);
   return read(`dream-team/${gw}/`, dreamTeamSchema);
+}
+
+/** A manager's team and every classic league they're in. null: no such team. */
+export async function getEntry(teamId: number): Promise<Entry | null> {
+  "use cache: remote";
+  cacheLife("provisional");
+  cacheTag(`fpl:entry:${teamId}`);
+  return readOrNull(`entry/${teamId}/`, entrySchema);
+}
+
+/** One player's fixtures ahead and gameweek history. null: no such player. */
+export async function getPlayerSummary(playerId: number): Promise<PlayerSummary | null> {
+  "use cache: remote";
+  cacheLife("provisional");
+  cacheTag(`fpl:player:${playerId}`);
+  return readOrNull(`element-summary/${playerId}/`, playerSummarySchema);
 }

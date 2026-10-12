@@ -57,6 +57,7 @@ Rules:
 - Browsers can't call this API directly (no CORS), so all calls go through our server.
 - Cache aggressively: bootstrap-static once per hour, finished gameweeks forever. Don't hammer the API near deadlines.
 - The API is unofficial and may change, so keep all API access in one module.
+- Fields the league logic needs are validated strictly. Tool-only fields (injuries, stats, prices) are tolerant: if FPL changes one, it becomes `null` with a one-time warning instead of breaking the league pages.
 - Send browser-like headers (User-Agent, Accept, Referer) and retry 403 and 503 responses with backoff. Some developers report FPL blocking non-browser and cloud traffic.
 
 Verified API facts (2026-10-08):
@@ -100,7 +101,7 @@ Verified API facts (2026-10-08):
   - Plain curl works from a home connection.
   - So any single deployment can end up blocked. The fix is the **Cloudflare relay**: `relay/`, deployed as `fsb-fpl-relay` on workers.dev.
     - `lib/fpl/http.ts` calls FPL directly. On a 403 it switches to the relay and stays on it for 10 minutes.
-    - The relay forwards only the allowlisted FPL endpoints, and only to requests carrying the `x-relay-key` header.
+    - The relay forwards only the allowlisted FPL endpoints (`relay/src/allow.ts`), and only to requests carrying the `x-relay-key` header. After changing the list, redeploy the Worker. It never forwards login-only endpoints such as `my-team`.
     - Env vars: `FPL_RELAY_URL` and `FPL_RELAY_KEY` live in Vercel (all environments) and `.env.local`. `RELAY_SECRET` lives in Cloudflare.
     - Verified 2026-10-08: on a blocked preview, every probe came back through the relay in 103–342 ms.
     - Wrangler needs Node 22 or newer. Run it with nvm's Node 24 (`PATH=~/.nvm/versions/node/v24.13.1/bin:$PATH`); the project default is Node 20.
