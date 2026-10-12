@@ -137,8 +137,17 @@ Data isn't wired yet (`lib/league` is in the data session's branch), so cards re
 - [x] Route `app/cards/[league]/[gw]/[award]/route.tsx` (`award` = wrap or an award key; `?format=status|x&theme=dark|light&lang=pcm|en|fr&provisional=1`). Only `sample/5` until lib/league is wired; others 404. Final GWs: s-maxage 1 day; provisional: 5 minutes.
 - [x] Verified (2026-10-11): typecheck, lint, 108 tests, production build (assets traced into the route). All 36 cards (9 × 2 formats × 2 themes) rendered and checked by eye, plus French and provisional. Render 0.15–0.9 s warm.
   - **Size:** dark Status cards are about 400 KB, light about 170 KB, X cards 100–270 KB. The grain costs about 200 KB on a dark card (dense noise made it 1.3 MB; sparse 8% speckle keeps the look). Ralph to decide whether shared cards keep the grain.
-- [ ] Slice 2: app screens (Start, picker, League Market/Table, Fixtures, Players) on the tokens, with `lib/variants.ts`
 - [ ] Wire cards to `lib/league` awards once the data session exposes them (plus `entryId` on winners, per the handoff reply)
+
+## 5c. Build, slice 2 (started 2026-10-12): the app screens
+Real data where the data layer already has it (start input, `getMyTeam`, standings); typed samples where the logic belongs to the data session and isn't built yet (Market data, ticker, injuries). Screens take view models (`lib/screens/`), so wiring the real logic later swaps one function per screen.
+- [ ] Foundations: `lib/variants.ts` (CVA), `components/ui/` (Sky, TabBar, segmented links, theme toggle, language switch, down panel, badge, rank pill, emoji), theme with no flash (System / Light / Dark, `data-theme`), language from a cookie with the phone's language as the default (French phones → French, else Pidgin)
+- [ ] Start `/` (real, no client JS): My team ID | League link as radio segments, help as `<details>`, errors from `parseStartInput`; `/find` redirects to the picker or the league
+- [ ] Picker `/team/[teamId]` (real `getMyTeam`): your leagues, public folded, team not found → back to Start with the error, FPL down panel, loading skeleton
+- [ ] Remembered on the phone: `proxy.ts` keeps the last team and league in cookies and opens `/` straight into the last league (`/?start=1` skips it)
+- [ ] League `/league/[id]` (Market) and `/league/[id]/table`: shared header (Change league, Market | Table), Table on real standings, Market on the sample league until `lib/league` lands
+- [ ] Fixtures `/fixtures` and Players `/players` on the agreed `TickerRow` / `InjuryRow` shapes, from the 11 Oct snapshot until `lib/tools` lands
+- [ ] Tests for the view-model adapters; verify typecheck, lint, tests, build, first-load JS, and every screen in both themes
 
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
