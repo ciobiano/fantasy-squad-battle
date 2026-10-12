@@ -31,7 +31,7 @@ Two adapters sit beside the layers:
 | `lib/cards/render` | `renderCard(card, options) → Response` | Satori: sizes, fonts, emoji, cache headers, render errors |
 | `lib/cards/request` | `cardRequest(params, query)` | path and query checks |
 | `lib/i18n` | `copyFor(lang)`, `resolveLang`, `languageChoice` | one catalogue per language |
-| `lib/remembered` | `onVisit(path, query, cookies)` | which pages save what; opening the last league |
+| `lib/remembered` | `onVisit(path, query, cookies)` | which pages save what; opening the last league; 404s before render |
 | `lib/fpl/api` (data session) | one function per endpoint | caching, validation, the relay |
 
 ## Adding a screen
@@ -50,6 +50,10 @@ Two adapters sit beside the layers:
 - **Outcomes are values, not exceptions.**
   - Errors thrown inside `'use cache'` lose their class in production, so the app returns them as values instead.
   - We don't use Next's `error.tsx`. It must run in the browser, adding JavaScript against a tight budget. It can't read the language cookie. It would also hide real bugs.
+- **Real 404s come from the proxy.**
+  - A page that streams has already sent `200 OK`, so `notFound()` during render can't change the status.
+  - `lib/remembered`'s `onVisit` refuses `/league/{x}` paths with no valid ID before rendering starts.
+  - Redirects found during render, such as an unknown league sent back to Start, happen in the browser instead.
 - **No shared League layout.** Marking the active tab would need browser JavaScript. Both League pages call `app/league/[leagueId]/league-tab.tsx` instead.
 - **Typed catalogues, not next-intl.**
   - We have three languages, no language in the URL, and server rendering only.

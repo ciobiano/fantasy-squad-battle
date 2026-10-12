@@ -33,10 +33,14 @@ describe("onVisit", () => {
     expect(visit("/league/314")).toEqual({ kind: "continue", save: [{ name: LEAGUE_COOKIE, value: "314" }] });
     expect(visit("/league/314/table")).toEqual({ kind: "continue", save: [{ name: LEAGUE_COOKIE, value: "314" }] });
   });
-  it("saves nothing for the sample league or a bad ID", () => {
+  it("saves nothing for the sample league or a bad team ID", () => {
     expect(visit("/league/sample")).toEqual({ kind: "continue", save: [] });
     expect(visit("/team/0")).toEqual({ kind: "continue", save: [] });
-    expect(visit("/league/314/market")).toEqual({ kind: "continue", save: [] });
+  });
+  it("refuses a league page whose ID isn't one, before it renders", () => {
+    expect(visit("/league/abc")).toEqual({ kind: "not-found" });
+    expect(visit("/league/0/table")).toEqual({ kind: "not-found" });
+    expect(visit("/league/sample/table")).toEqual({ kind: "continue", save: [] });
   });
 });
 
