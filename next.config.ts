@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  images: {
+    // Only the two sample cards on the Start screen go through the image
+    // optimiser, with exactly this query, so it can't be pointed at anything else.
+    localPatterns: [{ pathname: "/cards/sample/5/**", search: "?format=x&theme=dark" }],
+  },
   cacheLife: {
     // A gameweek that is live or provisional: FPL data shifts until it's final.
     provisional: {
