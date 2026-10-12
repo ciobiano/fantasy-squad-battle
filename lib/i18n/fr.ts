@@ -5,6 +5,7 @@ export const fr: Copy = {
   theme: { system: "Thème : Système. Changer de thème", light: "Thème : Clair. Changer de thème", dark: "Thème : Sombre. Changer de thème" },
   languageLabel: "Langue",
   down: { title: "FPL ne répond pas.", body: "Le souci vient de chez eux. Réessayez bientôt.", retry: "Réessayer" },
+  notFound: { title: "Hors-jeu. Cette page n’existe pas.", body: "Le lien est peut-être cassé ou incomplet.", home: "Retour à l’accueil" },
   start: {
     headline: "Chambrez votre mini-ligue. Chaque journée.",
     modeLabel: "Comment trouver votre ligue",

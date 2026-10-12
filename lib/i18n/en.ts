@@ -5,6 +5,7 @@ export const en: Copy = {
   theme: { system: "Theme: System. Change theme", light: "Theme: Light. Change theme", dark: "Theme: Dark. Change theme" },
   languageLabel: "Language",
   down: { title: "FPL isn’t answering.", body: "It’s on their side. Try again soon.", retry: "Try again" },
+  notFound: { title: "Offside. This page doesn’t exist.", body: "The link may be broken or incomplete.", home: "Go home" },
   start: {
     headline: "Roast your mini-league. Every gameweek.",
     modeLabel: "How to find your league",

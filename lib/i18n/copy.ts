@@ -11,6 +11,8 @@ export interface Copy {
   readonly theme: { readonly system: string; readonly light: string; readonly dark: string };
   readonly languageLabel: string;
   readonly down: { readonly title: string; readonly body: string; readonly retry: string };
+  /** The 404 page. */
+  readonly notFound: { readonly title: string; readonly body: string; readonly home: string };
   readonly start: {
     readonly headline: string;
     readonly modeLabel: string;

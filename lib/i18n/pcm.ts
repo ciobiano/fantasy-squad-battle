@@ -5,6 +5,7 @@ export const pcm: Copy = {
   theme: { system: "Theme: System. Change theme", light: "Theme: Light. Change theme", dark: "Theme: Dark. Change theme" },
   languageLabel: "Language",
   down: { title: "FPL no dey answer.", body: "Na their wahala. Try again soon.", retry: "Try again" },
+  notFound: { title: "Offside! This page no dey.", body: "The link fit don cut, or e no complete.", home: "Go back home" },
   start: {
     headline: "Roast your league. Every gameweek.",
     modeLabel: "How you want enter",
