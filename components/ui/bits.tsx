@@ -1,7 +1,7 @@
 // Small shared pieces: team badge, rank pill, award emoji, FPL-down panel.
 import Image from "next/image";
 import Link from "next/link";
-import type { AwardKey } from "@/lib/cards/types";
+import { AWARD_EMOJI_CODE, type AwardKey } from "@/lib/awards";
 import type { Badge } from "@/lib/ui/badge";
 import type { Movement } from "@/lib/ui/format";
 import { badge, button, panel, panelBody, panelTitle, rankPill, visuallyHidden } from "@/lib/variants";
@@ -29,14 +29,9 @@ export function RankPill({ move, showPlaces = true, words }: { move: Movement; s
   );
 }
 
-const EMOJI_FILE: Record<AwardKey, string> = {
-  oga: "1f451", climber: "1f4c8", captain: "1fae0", bench: "1fa91",
-  hits: "1f4b8", middle: "1f6cb", faller: "1f4c9", spoon: "1f944",
-};
-
 /** Award emoji from the bundled Noto set (never the platform's), the same art as the cards. */
 export function AwardEmoji({ award, size = 28 }: { award: AwardKey; size?: number }) {
-  return <Image src={`/emoji/emoji_u${EMOJI_FILE[award]}.svg`} alt="" width={size} height={size} unoptimized />;
+  return <Image src={`/emoji/emoji_u${AWARD_EMOJI_CODE[award]}.svg`} alt="" width={size} height={size} unoptimized />;
 }
 
 export function DownPanel({ title, body, retry, retryHref }: { title: string; body: string; retry: string; retryHref: string }) {

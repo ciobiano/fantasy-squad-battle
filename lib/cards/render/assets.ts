@@ -7,7 +7,7 @@
 //   saves a network fetch per card.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { AwardKey } from "../types";
+import { AWARD_EMOJI_CODE, type AwardKey } from "@/lib/awards";
 
 const asset = (...parts: string[]) => readFile(join(process.cwd(), "assets", ...parts));
 
@@ -30,14 +30,9 @@ export const CARD_FONTS = files.map(({ weight, data }) => ({
 const grain = await asset("grain.png");
 export const GRAIN_URL = `data:image/png;base64,${grain.toString("base64")}`;
 
-const EMOJI_FILES: Record<AwardKey, string> = {
-  oga: "1f451", climber: "1f4c8", captain: "1fae0", bench: "1fa91",
-  hits: "1f4b8", middle: "1f6cb", faller: "1f4c9", spoon: "1f944",
-};
-
 export const AWARD_EMOJI_URL = Object.fromEntries(
   await Promise.all(
-    Object.entries(EMOJI_FILES).map(async ([award, code]) => {
+    Object.entries(AWARD_EMOJI_CODE).map(async ([award, code]) => {
       const svg = await asset("emoji", `emoji_u${code}.svg`);
       return [award, `data:image/svg+xml;base64,${svg.toString("base64")}`] as const;
     }),

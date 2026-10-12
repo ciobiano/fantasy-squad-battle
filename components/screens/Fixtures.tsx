@@ -2,9 +2,8 @@
 // sticky team column; colour plus the printed difficulty number, so colour is
 // never the only signal. Sorting is a pair of links (no JavaScript).
 import Link from "next/link";
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang } from "@/lib/i18n";
 import { tickerGameweeks, type TickerRow, type TickerSort } from "@/lib/screens/tools";
-import { copyFor } from "@/lib/ui/copy";
 import {
   column, fixture, fixtureBlank, fixtureOpponent, fixtureSub, legend, legendSwatch, onSkyRow, onSkyTitle, sectionAside,
   segment, segmented, ticker, tickerCell, tickerGw, tickerRow, tickerRun, tickerScroll, tickerShort, tickerTeam, visuallyHidden,
@@ -22,7 +21,7 @@ export function Fixtures({ rows, sort, lang }: { rows: readonly TickerRow[]; sor
     <div lang={lang} className={column({ gap: "md" })}>
       <header className={onSkyRow()}>
         <h1 className={onSkyTitle()}>{f.title}</h1>
-        <ThemeToggle labels={{ system: t.theme.label(t.theme.system), light: t.theme.label(t.theme.light), dark: t.theme.label(t.theme.dark) }} />
+        <ThemeToggle labels={t.theme} />
       </header>
 
       <nav aria-label={f.sortLabel} className={segmented()}>
@@ -35,14 +34,14 @@ export function Fixtures({ rows, sort, lang }: { rows: readonly TickerRow[]; sor
       </nav>
 
       <div className={tickerScroll()}>
-        <div role="table" aria-label={`${f.title}, GW ${gws[0]}–${gws.at(-1)}`} className={ticker()}>
+        <div role="table" aria-label={f.tableLabel(gws[0] ?? 0, gws.at(-1) ?? 0)} className={ticker()}>
           <div role="row" className={tickerRow()}>
             <span role="columnheader" className={tickerTeam()}>
-              <span className={visuallyHidden()}>Team</span>
+              <span className={visuallyHidden()}>{f.teamColumn}</span>
             </span>
             {gws.map((gw) => (
               <span key={gw} role="columnheader" className={tickerGw({ width })}>
-                GW{gw}
+                {f.column(gw)}
               </span>
             ))}
           </div>
@@ -59,8 +58,8 @@ export function Fixtures({ rows, sort, lang }: { rows: readonly TickerRow[]; sor
               {row.weeks.map((week) => {
                 const label =
                   week.matches.length === 0
-                    ? `GW ${week.gw}: ${f.noMatch}`
-                    : `GW ${week.gw}: ${week.matches.map((m) => `${m.opponent} ${m.home ? "home" : "away"}, difficulty ${m.difficulty}`).join("; ")}`;
+                    ? `${f.week(week.gw)}: ${f.noMatch}`
+                    : `${f.week(week.gw)}: ${week.matches.map((m) => f.match(m.opponent, m.home, m.difficulty)).join("; ")}`;
                 const layout = week.matches.length > 1 ? "double" : "single";
                 return (
                   <span key={week.gw} role="cell" aria-label={label} className={tickerCell({ width })}>

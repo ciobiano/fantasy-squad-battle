@@ -1,7 +1,6 @@
 // Generated team badges: initials in a shape, coloured from the team name.
 // No crests. The same team always gets the same badge, everywhere.
-import type { BadgeShape } from "@/lib/cards/types";
-
+export type BadgeShape = "circle" | "squircle" | "shield";
 export type BadgeColour = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export interface Badge {

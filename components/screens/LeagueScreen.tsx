@@ -3,11 +3,11 @@
 // lib/league (awards, gap series). The "sample" league shows both from the
 // design canvas's sample data.
 import Link from "next/link";
+import { copyFor } from "@/lib/i18n";
 import { notFound, redirect } from "next/navigation";
 import { loadLeagueStandings, type LeagueStandings } from "@/lib/screens/league-data";
 import { SAMPLE_MARKET } from "@/lib/screens/market";
 import { SAMPLE_TABLE, tableView } from "@/lib/screens/table";
-import { copyFor } from "@/lib/ui/copy";
 import { rememberedTeam, requestLang } from "@/lib/ui/request";
 import { button, column, panel, panelBody } from "@/lib/variants";
 import { DownPanel } from "../ui/bits";

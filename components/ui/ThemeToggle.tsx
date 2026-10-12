@@ -44,7 +44,7 @@ function save(choice: Choice) {
 }
 
 /** System → Light → Dark. The saved choice is applied before paint by THEME_SCRIPT in the layout. */
-export function ThemeToggle({ labels, tone = "sky" }: { labels: Record<Choice, string>; tone?: "sky" | "surface" }) {
+export function ThemeToggle({ labels, tone = "sky" }: { labels: Readonly<Record<Choice, string>>; tone?: "sky" | "surface" }) {
   const choice = useSyncExternalStore(subscribe, readChoice, () => "system" as const);
   const next = () => save(ORDER[(ORDER.indexOf(choice) + 1) % ORDER.length]);
   return (

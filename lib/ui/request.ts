@@ -2,8 +2,7 @@
 // These use cookies and headers (server only: next/headers fails in client code),
 // so callers sit inside <Suspense>.
 import { cookies, headers } from "next/headers";
-import type { Lang } from "@/lib/cards/types";
-import { LANG_COOKIE, resolveLang } from "./lang";
+import { LANG_COOKIE, resolveLang, type Lang } from "@/lib/i18n";
 import { TEAM_COOKIE, rememberedId } from "./remembered";
 
 export async function requestLang(): Promise<Lang> {

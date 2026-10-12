@@ -3,9 +3,8 @@
 // control, and CSS (globals.css, [data-mode-switch]) swaps the label, button
 // and help text. The form goes to /find.
 import Image from "next/image";
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang, type StartError } from "@/lib/i18n";
 import type { StartMode } from "@/lib/fpl/start-input";
-import { copyFor, type StartError } from "@/lib/ui/copy";
 import {
   button, column, fieldError, fieldLabel, form, help, helpSummary, helpUrl, helpUrlId, input, onSkyRow,
   previewCard, previewStack, segment, segmented, startFooter, startHeadline, visuallyHidden, wordmark, wordmarkSquare,
@@ -32,7 +31,7 @@ export function Start({ lang, mode, value, error }: StartProps) {
           <span aria-hidden="true" className={wordmarkSquare()} />
           Fantasy Squad Battle
         </span>
-        <ThemeToggle labels={{ system: t.theme.label(t.theme.system), light: t.theme.label(t.theme.light), dark: t.theme.label(t.theme.dark) }} />
+        <ThemeToggle labels={t.theme} />
       </header>
 
       <div aria-hidden="true" className={previewStack()}>

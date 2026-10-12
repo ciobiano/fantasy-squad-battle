@@ -1,15 +1,12 @@
 // The view model a share card renders from. The award logic (lib/league, data
 // session) produces facts; lib/cards turns them into words, numbers and shapes.
 // Keep this free of FPL API shapes.
+import type { AwardKey } from "@/lib/awards";
+import type { Lang } from "@/lib/i18n";
+import type { BadgeShape } from "@/lib/ui/badge";
 
 export type CardFormat = "status" | "x";
 export type CardTheme = "dark" | "light";
-export type Lang = "pcm" | "en" | "fr";
-
-export const AWARD_KEYS = ["oga", "climber", "captain", "bench", "hits", "middle", "faller", "spoon"] as const;
-export type AwardKey = (typeof AWARD_KEYS)[number];
-
-export type BadgeShape = "circle" | "squircle" | "shield";
 
 export interface Manager {
   /** First name only, never the surname. */

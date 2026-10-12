@@ -1,7 +1,9 @@
 // A sample league (the design canvas's "Ikeja Banter League", real GW 5 player
 // data) so the cards can be rendered and reviewed before lib/league is wired in.
 // Roast lines are drafts (tasks/todo.md, phase 3).
-import type { AwardCardModel, AwardFacts, AwardKey, CardMeta, Lang, Manager, WrapCardModel } from "./types";
+import type { AwardKey } from "@/lib/awards";
+import type { Lang } from "@/lib/i18n";
+import type { AwardCardModel, AwardFacts, CardMeta, Manager, WrapCardModel } from "./types";
 
 export const SAMPLE_LEAGUE_ID = "sample";
 export const SAMPLE_GW = 5;

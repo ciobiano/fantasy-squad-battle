@@ -3,9 +3,10 @@
 // winner on the mint, the big number with its context, one visual in a frame,
 // then the roast and the watermark at the bottom. See parts.tsx on why styles
 // are inline objects here.
-import { describe, labels, ordinal, title } from "../copy";
+import { copyFor, type Lang } from "@/lib/i18n";
+import { describe, ordinal } from "../copy";
 import { airAbove, barPercent, chartBox, rankChart, trendChart } from "../geometry";
-import type { AwardCardModel, AwardFacts, CardOptions, Lang } from "../types";
+import type { AwardCardModel, AwardFacts, CardOptions } from "../types";
 import { AWARD_EMOJI_URL } from "./assets";
 import { palette, type CardPalette } from "./palette";
 import { Badge, CardFrame, MetaRow, SIZES, Triangle, Watermark, em, frameStyle, type Sizes } from "./parts";
@@ -16,7 +17,8 @@ export function AwardCard({ model, options }: { model: AwardCardModel; options: 
   const { format, theme, lang } = options;
   const z = SIZES[format];
   const p = palette(theme);
-  const l = labels(lang);
+  const t = copyFor(lang);
+  const l = t.card;
   const award = model.facts.award;
   const named = model.winners.slice(0, MAX_NAMED);
   const others = model.winners.length - named.length;
@@ -32,7 +34,7 @@ export function AwardCard({ model, options }: { model: AwardCardModel; options: 
           <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: z.label, fontWeight: 600 }}>
             {/* eslint-disable-next-line @next/next/no-img-element -- next/og draws plain img; next/image doesn't exist there */}
             <img src={AWARD_EMOJI_URL[award]} width={z.labelEmoji} height={z.labelEmoji} alt="" />
-            <span>{title(award, lang)}</span>
+            <span>{t.awards[award]}</span>
           </div>
           {named.length === 1 ? (
             <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
@@ -92,7 +94,7 @@ interface VisualProps {
 
 function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
   const box = chartBox(format);
-  const l = labels(lang);
+  const l = copyFor(lang).card;
   switch (facts.award) {
     case "oga":
     case "spoon": {

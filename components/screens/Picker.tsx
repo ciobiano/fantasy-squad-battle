@@ -1,9 +1,8 @@
 // After a team ID: every classic league they're in. Your leagues open, public
 // ones folded behind a disclosure (no JavaScript: <details>).
 import Link from "next/link";
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang } from "@/lib/i18n";
 import type { PickerRow, PickerView } from "@/lib/screens/picker";
-import { copyFor } from "@/lib/ui/copy";
 import { badgeFor } from "@/lib/ui/badge";
 import {
   button, chevron, column, disclosure, disclosureChevron, disclosureSummary, group, groupHeading, listRow, listRowName,
@@ -17,7 +16,7 @@ function Row({ row, lang }: { row: PickerRow; lang: Lang }) {
   const words =
     row.rank === null
       ? t.unranked
-      : `rank ${row.rank}, ${row.move.direction === "up" ? `${t.up} ${row.move.places}` : row.move.direction === "down" ? `${t.down} ${row.move.places}` : t.same}`;
+      : `${t.rank(row.rank)}, ${row.move.direction === "up" ? `${t.up} ${row.move.places}` : row.move.direction === "down" ? `${t.down} ${row.move.places}` : t.same}`;
   return (
     <Link href={`/league/${row.id}`} className={listRow()}>
       <span className={listRowName()}>{row.name}</span>

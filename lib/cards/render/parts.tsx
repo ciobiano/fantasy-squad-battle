@@ -7,7 +7,8 @@
 import type { CSSProperties, ReactNode } from "react";
 import { WATERMARK } from "../copy";
 import { CARD_HEIGHT, CARD_WIDTH, sky } from "../geometry";
-import type { BadgeShape, CardFormat, CardTheme, Manager } from "../types";
+import type { BadgeShape } from "@/lib/ui/badge";
+import type { CardFormat, CardTheme, Manager } from "../types";
 import { GRAIN_URL } from "./assets";
 import type { CardPalette } from "./palette";
 

@@ -1,8 +1,7 @@
 // The top of the League tab: gameweek, league name (tap to change league),
 // theme, and the Market | Table switch. Sits on the sky.
 import Link from "next/link";
-import type { Lang } from "@/lib/cards/types";
-import { copyFor } from "@/lib/ui/copy";
+import { copyFor, type Lang } from "@/lib/i18n";
 import { onSkyKicker, onSkyRow, onSkyTitle, segment, segmented, titleLink } from "@/lib/variants";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { ChevronDown } from "../ui/icons";
@@ -31,7 +30,7 @@ export function LeagueHeader({ lang, leagueId, leagueName, gwLabel, view, change
             </Link>
           </h1>
         </div>
-        <ThemeToggle labels={{ system: t.theme.label(t.theme.system), light: t.theme.label(t.theme.light), dark: t.theme.label(t.theme.dark) }} />
+        <ThemeToggle labels={t.theme} />
       </header>
       <nav aria-label={t.league.viewLabel} className={segmented()}>
         <Link href={`/league/${leagueId}`} aria-current={view === "market" ? "page" : undefined} className={segment({ size: "sm" })}>

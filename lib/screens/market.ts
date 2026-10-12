@@ -1,7 +1,7 @@
 // The League tab's Market view, in the shapes of docs/design/brief.md §5.
 // lib/league (data session) will produce MarketRow and TeamOfTheWeek; until
 // then the sample league from the design canvas fills them.
-import { AWARD_KEYS, type AwardKey } from "@/lib/cards/types";
+import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
 
 export interface Score {

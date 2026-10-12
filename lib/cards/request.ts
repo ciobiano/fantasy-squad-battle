@@ -1,10 +1,11 @@
 // Reads a card request's path and query into checked values. Unknown values
 // fall back to the defaults; an unknown award is rejected by the caller.
-import { AWARD_KEYS, type AwardKey, type CardFormat, type CardOptions, type CardTheme, type Lang } from "./types";
+import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
+import { LANGS } from "@/lib/i18n";
+import type { CardFormat, CardOptions, CardTheme } from "./types";
 
 const FORMATS: readonly CardFormat[] = ["status", "x"];
 const THEMES: readonly CardTheme[] = ["dark", "light"];
-const LANGS: readonly Lang[] = ["pcm", "en", "fr"];
 
 const pick = <T extends string>(allowed: readonly T[], value: string | null, fallback: T): T =>
   value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : fallback;

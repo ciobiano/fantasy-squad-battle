@@ -1,4 +1,4 @@
-import type { Lang } from "@/lib/cards/types";
+import type { Lang } from "@/lib/i18n";
 import { segment, segmented } from "@/lib/variants";
 
 const NAMES: readonly { code: Lang; name: string }[] = [

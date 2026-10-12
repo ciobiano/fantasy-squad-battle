@@ -1,5 +1,5 @@
 import { describe as group, expect, it } from "vitest";
-import { decimal, describe, ordinal, signed, title } from "./copy";
+import { decimal, describe, ordinal, signed } from "./copy";
 
 group("ordinal", () => {
   it("uses st, nd, rd and th, with teens as th", () => {
@@ -51,13 +51,5 @@ group("describe", () => {
     const facts = { award: "captain", captain: { name: "João Pedro", points: 0 }, best: { name: "Groß", points: 28 } } as const;
     const values = (["pcm", "en", "fr"] as const).map((lang) => describe(facts, 1, lang).value);
     expect(new Set(values)).toEqual(new Set(["0"]));
-  });
-});
-
-group("title", () => {
-  it("translates titles, keeping Pidgin's Captain Wahala", () => {
-    expect(title("captain", "pcm")).toBe("Captain Wahala");
-    expect(title("captain", "en")).toBe("Captain Disaster");
-    expect(title("spoon", "fr")).toBe("Cuillère de bois");
   });
 });

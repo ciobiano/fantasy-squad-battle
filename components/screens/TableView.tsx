@@ -1,7 +1,6 @@
 // The classic season table, from FPL's standings (like the official app).
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang } from "@/lib/i18n";
 import type { TableView as TableModel } from "@/lib/screens/table";
-import { copyFor } from "@/lib/ui/copy";
 import {
   moveText, panel, personCell, rowName, rowTeam, rowText, table, tableCell, tableHead, tableRow, visuallyHidden, youTag,
 } from "@/lib/variants";

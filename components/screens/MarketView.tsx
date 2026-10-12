@@ -1,10 +1,8 @@
 // The Market view: award stories, Team of the Week, and the Market list.
 // Story circles open the card image for now; the story viewer comes later.
 import Link from "next/link";
-import { title } from "@/lib/cards/copy";
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang } from "@/lib/i18n";
 import { badgeOf, rowAward, spark, type MarketView as MarketModel } from "@/lib/screens/market";
-import { copyFor } from "@/lib/ui/copy";
 import {
   marketRow, pitch, pitchLine, pitchMark, rowEnd, rowName, rowScore, rowTeam, rowText, sectionAside, sectionHead,
   sectionHeading, sparkBase, sparkLine, story, storyFace, storyGap, storyRing, storyRow, token, tokenName, tokenOwners,
@@ -12,26 +10,22 @@ import {
 } from "@/lib/variants";
 import { AwardEmoji, RankPill, TeamBadge } from "../ui/bits";
 
-const SHORT: Record<string, string> = {
-  oga: "Oga", climber: "Climber", captain: "Captain", bench: "Bench", hits: "Hits", middle: "Middle", faller: "Faller", spoon: "Spoon",
-};
-
 export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) {
   const t = copyFor(lang);
   const cardHref = (award: string) => `/cards/${model.leagueId}/${model.gw}/${award}?lang=${lang}`;
   return (
     <>
-      <section aria-label="Award stories" className={storyRow()}>
+      <section aria-label={t.league.storiesLabel} className={storyRow()}>
         <Link href={cardHref("wrap")} className={story()}>
           <span className={storyRing()}>
             <span className={storyGap()}>
-              <span className={storyFace({ kind: "wrap" })}>GW {model.gw}</span>
+              <span className={storyFace({ kind: "wrap" })}>{t.league.storyGw(model.gw)}</span>
             </span>
           </span>
-          Wrapped
+          {t.league.wrapped}
         </Link>
         {model.awards.map((award) => (
-          <Link key={award} href={cardHref(award)} aria-label={title(award, lang)} className={story()}>
+          <Link key={award} href={cardHref(award)} aria-label={t.awards[award]} className={story()}>
             <span className={storyRing()}>
               <span className={storyGap()}>
                 <span className={storyFace({ kind: "award" })}>
@@ -39,7 +33,7 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
                 </span>
               </span>
             </span>
-            {SHORT[award]}
+            {t.awardsShort[award]}
           </Link>
         ))}
       </section>
@@ -87,7 +81,7 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
           const s = spark(row.gapSeries);
           const change = row.leagueRankChange;
           const move = { direction: change > 0 ? "up" : change < 0 ? "down" : "none", places: Math.abs(change) } as const;
-          const words = change > 0 ? `Up ${change} in the league` : change < 0 ? `Down ${-change} in the league` : "No change in the league";
+          const words = change > 0 ? t.league.moved.up(change) : change < 0 ? t.league.moved.down(-change) : t.league.moved.same;
           const body = (
             <>
               <TeamBadge value={badgeOf(row)} />

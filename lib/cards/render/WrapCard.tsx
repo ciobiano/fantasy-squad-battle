@@ -1,7 +1,8 @@
 // The "GW Wrapped" share card (Status or X, light or dark), for next/og.
 // Layout follows the design canvas's Main: sky with league and GW, the title and
 // league average on the mint, every award as one row in a frame, the watermark.
-import { decimal, labels, title } from "../copy";
+import { copyFor } from "@/lib/i18n";
+import { decimal } from "../copy";
 import type { CardOptions, WrapCardModel } from "../types";
 import { AWARD_EMOJI_URL } from "./assets";
 import { palette } from "./palette";
@@ -17,7 +18,8 @@ export function WrapCard({ model, options }: { model: WrapCardModel; options: Ca
   const z = SIZES[format];
   const w = WRAP[format];
   const p = palette(theme);
-  const l = labels(lang);
+  const t = copyFor(lang);
+  const l = t.card;
   const average = decimal(model.leagueAverage, lang);
 
   return (
@@ -89,7 +91,7 @@ export function WrapCard({ model, options }: { model: WrapCardModel; options: Ca
                   <img src={AWARD_EMOJI_URL[row.award]} width={w.tileEmoji} height={w.tileEmoji} alt="" />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2, flexGrow: 1, minWidth: 0 }}>
-                  <span style={{ fontSize: w.rowTitle, fontWeight: 600, letterSpacing: em(w.rowTitle, -0.01) }}>{title(row.award, lang)}</span>
+                  <span style={{ fontSize: w.rowTitle, fontWeight: 600, letterSpacing: em(w.rowTitle, -0.01) }}>{t.awards[row.award]}</span>
                   <span style={{ fontSize: w.rowWho, color: p.ink2 }}>{row.groupLine ?? row.winners.join(", ")}</span>
                 </div>
                 {row.value ? (

@@ -1,37 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
 import { age, compactRank, firstName, movement } from "./format";
-import { resolveLang, safeBackPath } from "./lang";
 import { rememberedId } from "./remembered";
-
-describe("resolveLang", () => {
-  it("keeps a saved choice", () => {
-    expect(resolveLang("en", "fr-FR,fr;q=0.9")).toBe("en");
-  });
-  it("gives French phones French and everyone else Pidgin", () => {
-    expect(resolveLang(undefined, "fr-CM,fr;q=0.9,en;q=0.8")).toBe("fr");
-    expect(resolveLang(undefined, "fr")).toBe("fr");
-    expect(resolveLang(undefined, "en-NG,en;q=0.9")).toBe("pcm");
-    expect(resolveLang(undefined, null)).toBe("pcm");
-  });
-  it("ignores a cookie that isn't a language we speak", () => {
-    expect(resolveLang("de", "en-GB")).toBe("pcm");
-    expect(resolveLang(undefined, "frisian")).toBe("pcm");
-  });
-});
-
-describe("safeBackPath", () => {
-  it("allows paths on this site", () => {
-    expect(safeBackPath("/league/314/table")).toBe("/league/314/table");
-    expect(safeBackPath("/?start=1")).toBe("/?start=1");
-  });
-  it("refuses anything that could leave the site", () => {
-    expect(safeBackPath("//evil.example")).toBe("/");
-    expect(safeBackPath("/\\evil.example")).toBe("/");
-    expect(safeBackPath("https://evil.example")).toBe("/");
-    expect(safeBackPath(null)).toBe("/");
-  });
-});
 
 describe("rememberedId", () => {
   it("accepts plain positive numbers only", () => {

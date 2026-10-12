@@ -2,9 +2,8 @@
 // Filters are links (?status=, ?team=), so they work without JavaScript and
 // can be shared.
 import Link from "next/link";
-import type { Lang } from "@/lib/cards/types";
+import { copyFor, type Lang } from "@/lib/i18n";
 import { filterInjuries, injuryCounts, type InjuryFilter, type InjuryRow } from "@/lib/screens/tools";
-import { copyFor } from "@/lib/ui/copy";
 import { age } from "@/lib/ui/format";
 import {
   column, filterChip, filterCount, filters, newsHead, newsMeta, newsRow, newsText, onSkyKicker, onSkyRow, onSkyTitle,
@@ -46,7 +45,7 @@ export function Players({ rows, status, team, teams, now, lang }: PlayersProps) 
           <h1 className={onSkyTitle()}>{p.title}</h1>
           <span className={onSkyKicker()}>{p.section}</span>
         </div>
-        <ThemeToggle labels={{ system: t.theme.label(t.theme.system), light: t.theme.label(t.theme.light), dark: t.theme.label(t.theme.dark) }} />
+        <ThemeToggle labels={t.theme} />
       </header>
 
       <nav aria-label={p.filterLabel} className={filters()}>
