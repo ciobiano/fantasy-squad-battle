@@ -5,7 +5,7 @@ import { Sky } from "@/components/ui/Sky";
 import { TabBar } from "@/components/ui/TabBar";
 import { sortTicker } from "@/lib/screens/tools";
 import { TICKER_SAMPLE } from "@/lib/screens/tools-sample";
-import { requestLang } from "@/lib/ui/request";
+import { requestLang } from "@/lib/request";
 import { page } from "@/lib/variants";
 
 // Reads the 12 Oct snapshot until lib/tools (data session) provides the live ticker.

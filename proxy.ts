@@ -1,31 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LEAGUE_COOKIE, TEAM_COOKIE, rememberedId } from "@/lib/ui/remembered";
+import { REMEMBER_FOR, onVisit } from "@/lib/remembered";
 
-// Remembered on the phone, with no accounts:
-// - visiting /team/{id} or /league/{id} saves that ID in a cookie;
-// - opening "/" goes straight to the last league, unless the link says ?start=1.
-const YEAR = 60 * 60 * 24 * 365;
-const TEAM_PATH = /^\/team\/(\d{1,10})$/;
-const LEAGUE_PATH = /^\/league\/(\d{1,10})(?:\/table)?$/;
-
+// Remembered on the phone, with no accounts (lib/remembered.ts decides):
+// "/" opens the last league, and team and league pages save their ID.
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
-
-  if (pathname === "/") {
-    const league = rememberedId(request.cookies.get(LEAGUE_COOKIE)?.value);
-    if (league !== null && !searchParams.has("start")) {
-      return NextResponse.redirect(new URL(`/league/${league}`, request.url), 307);
-    }
-    return NextResponse.next();
-  }
+  const visit = onVisit(pathname, searchParams, (name) => request.cookies.get(name)?.value);
+  if (visit.kind === "redirect") return NextResponse.redirect(new URL(visit.to, request.url), 307);
 
   const response = NextResponse.next();
-  const remember = (name: string, value: string) =>
-    response.cookies.set(name, value, { path: "/", maxAge: YEAR, sameSite: "lax" });
-  const team = TEAM_PATH.exec(pathname);
-  if (team) remember(TEAM_COOKIE, team[1]);
-  const league = LEAGUE_PATH.exec(pathname);
-  if (league) remember(LEAGUE_COOKIE, league[1]);
+  for (const { name, value } of visit.save) response.cookies.set(name, value, REMEMBER_FOR);
   return response;
 }
 

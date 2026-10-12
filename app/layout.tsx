@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { clsx } from "clsx";
-import { THEME_SCRIPT } from "@/lib/ui/remembered";
+import { THEME_SCRIPT } from "@/lib/remembered";
 import { rootBody, rootHtml } from "@/lib/variants";
 import "./globals.css";
 

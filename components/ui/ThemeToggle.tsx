@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { THEME_STORAGE_KEY } from "@/lib/ui/remembered";
+import { THEME_STORAGE_KEY } from "@/lib/remembered";
 import { iconButton } from "@/lib/variants";
 import { ThemeIcon } from "./icons";
 

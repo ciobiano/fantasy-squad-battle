@@ -1,17 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
 import { age, compactRank, firstName, movement } from "./format";
-import { rememberedId } from "./remembered";
-
-describe("rememberedId", () => {
-  it("accepts plain positive numbers only", () => {
-    expect(rememberedId("314159")).toBe(314159);
-    expect(rememberedId("0")).toBeNull();
-    expect(rememberedId("12a")).toBeNull();
-    expect(rememberedId("/evil")).toBeNull();
-    expect(rememberedId(undefined)).toBeNull();
-  });
-});
 
 describe("format", () => {
   it("shortens big ranks", () => {

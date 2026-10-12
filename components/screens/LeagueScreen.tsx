@@ -8,7 +8,7 @@ import { notFound, redirect } from "next/navigation";
 import { loadLeagueStandings, type LeagueStandings } from "@/lib/screens/league-data";
 import { SAMPLE_MARKET } from "@/lib/screens/market";
 import { SAMPLE_TABLE, tableView } from "@/lib/screens/table";
-import { rememberedTeam, requestLang } from "@/lib/ui/request";
+import { rememberedTeam, requestLang } from "@/lib/request";
 import { button, column, panel, panelBody } from "@/lib/variants";
 import { DownPanel } from "../ui/bits";
 import { LeagueHeader } from "./LeagueHeader";

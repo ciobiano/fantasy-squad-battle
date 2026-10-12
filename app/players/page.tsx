@@ -5,7 +5,7 @@ import { Sky } from "@/components/ui/Sky";
 import { TabBar } from "@/components/ui/TabBar";
 import type { InjuryFilter } from "@/lib/screens/tools";
 import { INJURY_SAMPLE, SNAPSHOT_TAKEN_AT, TICKER_SAMPLE } from "@/lib/screens/tools-sample";
-import { requestLang } from "@/lib/ui/request";
+import { requestLang } from "@/lib/request";
 import { page } from "@/lib/variants";
 
 const STATUSES: readonly InjuryFilter[] = ["all", "injured", "doubtful", "suspended", "unavailable"];

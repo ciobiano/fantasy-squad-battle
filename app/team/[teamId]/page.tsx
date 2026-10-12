@@ -7,7 +7,7 @@ import { parseStartInput } from "@/lib/fpl/start-input";
 import { getMyTeam, type MyTeamResult } from "@/lib/league/my-team";
 import { pickerView } from "@/lib/screens/picker";
 import { copyFor } from "@/lib/i18n";
-import { requestLang } from "@/lib/ui/request";
+import { requestLang } from "@/lib/request";
 import { column, page, skeleton } from "@/lib/variants";
 
 async function PickerForRequest({ params }: { params: PageProps<"/team/[teamId]">["params"] }) {

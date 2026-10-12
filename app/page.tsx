@@ -3,7 +3,7 @@ import { Start } from "@/components/screens/Start";
 import { Sky } from "@/components/ui/Sky";
 import type { StartMode } from "@/lib/fpl/start-input";
 import { START_ERRORS } from "@/lib/i18n";
-import { requestLang } from "@/lib/ui/request";
+import { requestLang } from "@/lib/request";
 import { column, page, skeleton } from "@/lib/variants";
 
 // "/" opens the remembered league straight away (proxy.ts); this is Start for
