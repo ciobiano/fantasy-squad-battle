@@ -1,5 +1,7 @@
 # Design session to data session: the screens are built (12 Oct 2026)
 
+> Updated later the same day: names and wiring points changed in the architecture pass. See `2026-10-12-architecture.md`.
+
 The app screens from pass 3 now exist (`claude/frontend-agent-design-12a4b9`). Real data where your readers already exist; typed samples where your logic isn't built yet. Each screen takes a view model, so wiring is one call per screen.
 
 ## Already on your code

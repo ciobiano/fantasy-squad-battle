@@ -152,6 +152,15 @@ Real data where the data layer already has it (start input, `getMyTeam`, standin
 - [ ] Wire the Market view to `lib/league`, Fixtures and Players to `lib/tools` (one call per screen; see docs/handoff/2026-10-12-screens-ready.md)
 - [ ] Story viewer and sharing (next slice)
 
+## 5d. Architecture pass (2026-10-12, agreed with Ralph): deep modules, clear layers
+Each step is one commit; the full suite runs once at the end.
+- [x] **i18n:** `lib/i18n` owns `Lang`, the language cookie and every word (app and cards), one catalogue per language; `lib/awards.ts` owns the award keys and emoji. Fix the English-only strings on the Market and Fixtures screens.
+- [x] **Remembered:** `lib/remembered.ts` owns the cookies and the proxy's decision (tested); `lib/ids.ts` checks an FPL ID once.
+- [x] **Screen loaders:** one module per screen in `lib/screens/` (raw input → ready view, redirect, not found or FPL down), the data source passed in; routes only switch on the outcome; components only draw. Tests go through the loaders.
+- [x] **Cards:** `renderCard` in `lib/cards` hides Satori (sizes, fonts, emoji, errors); `lib/screens/card.ts` loads the model.
+- [x] **Layers:** `docs/architecture.md` plus ESLint `no-restricted-imports` per folder; handoff to the data session for their side.
+- [x] Verified (2026-10-12): typecheck, lint (rules probed: each layer's forbidden import fails), 184 tests, production build (every screen still a partial prerender). On the production server: `/find`, bad team → Start with the reason, `/league/abc` → 404, picker on team 1, Table on league 314 (Top 50), Market-soon note, sample Market in French (stories, pills), Fixtures and Players in French with filters, `/prefs` (and refusing `//evil.example`), remembered league 307, cookies, card PNG and cache header, unknown cards 404.
+
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
 - [ ] Bundled font files, Noto or Twemoji emoji, generated team badges and the web address watermark
