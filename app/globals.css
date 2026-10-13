@@ -69,10 +69,6 @@
 @utility rounded-shield {
   border-radius: 25% 25% 50% 50%;
 }
-/* Small line glyphs (the share sheet's size icons): smaller than the Design System's xs radius. */
-@utility rounded-glyph {
-  border-radius: 4px;
-}
 @utility border-fine {
   border-width: 1.5px;
 }

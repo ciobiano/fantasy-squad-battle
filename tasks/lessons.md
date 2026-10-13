@@ -24,3 +24,12 @@ Patterns from Ralph's corrections, so the same mistake doesn't happen twice. Che
 - **Check an animation mid-flight.** Measure it twice while it runs (width at 1.5 s and at 2.5 s), and take one screenshot part of the way through.
 - **Treat press and hold on a phone as hostile ground.** On links, the browser claims a long press (drag, preview, callout) and cancels the pointer. Where a hold means something: `touch-action: none` on the area, `draggable={false}` and no user-drag or touch-callout on the links, and `contextmenu` prevented.
 - **Test gestures as touch.** Dispatch `pointerType: "touch"` press and release sequences: a hold should pause and not move on when released; a quick tap should still move on.
+
+## 2026-10-13: sharing sent a link instead of the card (found by Ralph, fixed with the data session)
+
+**What happened:** the share call sent the PNG with a title and a link. WhatsApp on iPhone keeps the link and drops the picture. The size icons (an abstract tall shape and a square) didn't read as WhatsApp or X.
+
+**Rules:**
+- **A file share carries the file alone.** No title, text or URL beside it; the card's watermark carries the address.
+- **Share targets get their real marks,** under each brand's rules: WhatsApp's glyph in its own green (never recoloured, never the most prominent thing), X's mark black or white only. Use the brand's official files where its rules require them.
+- **When testing clicks with stubs, dispatch click events.** Stubbing `HTMLAnchorElement.prototype.click` to block downloads also blocks `.click()` used as a tap.

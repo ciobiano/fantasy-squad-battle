@@ -115,6 +115,12 @@ export interface Copy {
     readonly save: string;
     readonly saveSub: string;
     readonly cancel: string;
+    /** The picture arrived after the tap went stale (phones only share inside a tap). */
+    readonly tapAgain: string;
+    readonly failed: string;
+    /** Saved instead of shared, where the browser can't share pictures (computers). */
+    readonly saved: string;
+    readonly savedForX: string;
   };
   /** The public share page and its link preview. */
   readonly sharePage: {

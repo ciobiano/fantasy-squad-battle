@@ -252,9 +252,14 @@ export const sheetOption = cva(
   { variants: { theme: { light: "dark:hidden", dark: "hidden dark:flex" } } },
 );
 export const sheetIcon = cva("flex size-11 shrink-0 items-center justify-center rounded-md bg-hairline");
-export const sheetShape = cva("block border-2 border-ink", {
-  variants: { shape: { tall: "h-6 w-3.5 rounded-glyph", square: "size-5 rounded-glyph", both: "h-3.5 w-5 rounded-glyph" } },
+/** Why the sheet is still open: the picture is ready (tap again) or didn't load. */
+export const sheetStatus = cva("m-0 mb-1 text-footnote empty:hidden", {
+  variants: { tone: { info: "text-ink-2", alert: "text-caution" } },
 });
+/** "Saved", after the sheet closes on a computer. Sits above the Share bar. */
+export const storyToast = cva(
+  "pointer-events-none fixed inset-x-0 bottom-24 z-50 mx-auto w-fit max-w-sm rounded-lg bg-surface px-4 py-3 text-center text-callout text-ink empty:hidden",
+);
 export const sheetText = cva("flex flex-1 flex-col gap-0.5");
 export const sheetOptionTitle = cva("text-headline font-semibold");
 export const sheetOptionSub = cva("text-footnote text-ink-2");
