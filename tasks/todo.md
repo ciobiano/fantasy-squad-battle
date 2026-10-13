@@ -117,7 +117,7 @@ The design session already built titles, language detection and the switcher in 
 
 ## Share fix (2026-10-13, Ralph found it)
 - [x] Sharing sent a link, not the image: the share call carried a URL beside the file, and WhatsApp on iPhone keeps the link and drops the image
-- [x] `lib/share/share.ts`: `shareCard` shares the PNG alone on phones, and saves it on computers (for X, the composer opens with the league's page). It prefetches so the share stays inside the tap, and reports `tap-again` when it couldn't. 9 tests.
+- [x] `lib/share/share.ts`: `shareCard` shares the PNG alone on phones, and saves it on computers (for X, the composer opens with the league's page). It prefetches so the share stays inside the tap, and reports `tap-again` when it couldn't. 8 tests.
 - [ ] Design session: redesign the sheet with real WhatsApp and X marks and wire `shareCard` ([handoff](../docs/handoff/2026-10-13-share-image.md))
 
 ## 4. Design exploration

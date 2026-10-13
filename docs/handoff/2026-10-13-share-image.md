@@ -13,7 +13,7 @@ He asked the data session to fix the logic and the design session to redesign th
 
 ## The logic: `lib/share/share.ts`
 
-On `feat/share-image`, with 9 tests. It merges to main with the view additions.
+On `feat/share-image`, with 8 tests. It merges to main with the view additions.
 
 ```ts
 const cache = createImageCache();                  // once per sheet
