@@ -134,7 +134,7 @@ Verified API facts (2026-10-08):
   - Award titles are translated per language.
 - **Score:** GW score = `points − event_transfers_cost`. Cards show the breakdown, e.g. "67 (71 −4)".
 - **Ties:** tied managers share the award. Show up to 3 names, then "+N others".
-  - Mass ties happen: in GW1, 42 of the top 50 Overall managers shared Captain Disaster after all captaining Fernandes (2 pts). Such awards get a group roast addressing everyone who shares them: the `crowd` lines, or `sameCaptain` when they all picked one captain.
+  - Mass ties happen: in GW1, 42 of the top 50 Overall managers shared Captain Disaster after all captaining Fernandes (2 pts). Such awards get a group roast addressing everyone who shares them: the `crowd` lines, or `sameCaptain` when they all, or most of a crowd, picked one captain. In GW1 the 43 split 32 on B.Fernandes and 11 on Haaland.
 - **Timing:** cards unlock once every fixture in the GW is `finished_provisional`. They carry a "provisional" tag until the event is `finished`. Any past finished GW can be picked.
 
 ### Scope update (2026-10-10)

@@ -88,11 +88,11 @@ The design session already built titles, language detection and the switcher in 
 - [x] Award keys match the design session's (`captain`, `bench`, `hits`, `middle`, `spoon`), so cards, URLs and lines share one vocabulary
 - [x] About 6 lines per award per language (EN, Pidgin, FR), as templates with placeholders. `book.ts` lists each pool and its placeholders.
 - [x] Pools fit the facts: one winner, 2–3 named, a crowd of 4+, plus special pools (captain didn't play, vice rescue, Triple Captain, one shared captain, new leader, fall from the top, last after a hit)
-- [x] **Group roast for mass ties:** the `crowd` pool, or `sameCaptain` when they all picked one captain (seen: 42 of 50 on Fernandes)
+- [x] **Group roast for mass ties:** the `crowd` pool, or `sameCaptain` when they all, or most of a crowd, picked one captain (GW1: 43 tied, 32 of them on B.Fernandes)
 - [x] Wrap group lines for skipped awards, with "too early" lines for Climber, Faller (GW1) and Middle Class (before GW3)
 - [x] Seeded pick by league + GW + award. A mistyped placeholder skips to the next line instead of breaking the card.
 - [x] Interface for the design session: `roastFor(award, ctx)`, `groupLineFor(id, ctx)`, `roastView(view, lang)`
-- [x] Tests (148 new, 291 in the suite):
+- [x] Tests (149 new, 292 in the suite):
   - every line in every language fills with the longest names a card can meet and stays within 100 characters
   - no guardrail words (appearance, tribe, religion, family, FPL)
   - pool choice, seeding, units, ordinals and lists
