@@ -94,6 +94,8 @@ describe("Captain Disaster (D4, D6)", () => {
       minutes: 0,
       tripleCaptain: false,
       viceRescued: true,
+      // The vice who came in counted, so he's the best of the rest.
+      best: { name: "Wood", points: 6 },
     });
   });
 
@@ -108,6 +110,27 @@ describe("Captain Disaster (D4, D6)", () => {
       }),
     );
     expect(awardOf(view, "captain")?.winners[0].captain).toMatchObject({ name: "Saka", tripleCaptain: true });
+  });
+
+  it("sets the captain against the best other player who counted, not the bench", () => {
+    const view = buildLeagueView(
+      makeBundle({
+        gw: 1,
+        managers: [
+          {
+            entry: 1,
+            name: "ade",
+            weeks: week,
+            captain: player(10, "Haaland", 1),
+            squad: [player(40, "Saka", 9), player(41, "Rice", 9), player(42, "Gabriel", 2)],
+            bench: [player(43, "Raya", 15)],
+          },
+          { entry: 2, name: "bola", weeks: week, captain: player(11, "Salah", 8) },
+        ],
+      }),
+    );
+    // Saka and Rice tie on 9: the earlier pick wins. Raya's 15 sat on the bench.
+    expect(awardOf(view, "captain")?.winners[0].captain?.best).toEqual({ name: "Saka", points: 9 });
   });
 
   it("is skipped when every captain scored 3 or more", () => {
@@ -152,6 +175,28 @@ describe("Bench Regret and Hit Merchant (D6)", () => {
       }),
     );
     expect(view.skipped).toEqual(expect.arrayContaining(["bench", "hits"]));
+  });
+
+  it("names who sat on the bench, in bench order", () => {
+    const view = buildLeagueView(
+      makeBundle({
+        gw: 1,
+        managers: [
+          {
+            entry: 1,
+            name: "ade",
+            weeks: [{ points: 60, bench: 14 }],
+            bench: [player(50, "Verbruggen", 6), player(51, "Cherki", 8), player(52, "Calafiori", 0, 0)],
+          },
+          { entry: 2, name: "bola", weeks: [{ points: 60, bench: 2 }] },
+        ],
+      }),
+    );
+    expect(awardOf(view, "bench")?.winners[0].bench).toEqual([
+      { name: "Verbruggen", points: 6 },
+      { name: "Cherki", points: 8 },
+      { name: "Calafiori", points: 0 },
+    ]);
   });
 });
 
@@ -272,6 +317,13 @@ describe("Market and Table views", () => {
       expect(gaps.reduce((a, b) => a + b, 0)).toBeCloseTo(0, 5);
     }
     expect(view.market.find((r) => r.manager.firstName === "Dayo")?.gapSeries).toEqual([null, null]);
+  });
+
+  it("gives each manager their league rank after every gameweek", () => {
+    const series = Object.fromEntries(view.market.map((r) => [r.manager.firstName, r.rankSeries]));
+    expect(series).toEqual({ Ade: [3, 2], Bola: [1, 3], Chidi: [2, 1], Dayo: [null, null] });
+    // The last point is the table's rank.
+    for (const row of view.table) expect(series[row.manager.firstName].at(-1)).toBe(row.rank);
   });
 
   it("marks the visitor's own team and tags award winners", () => {

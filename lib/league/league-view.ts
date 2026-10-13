@@ -8,13 +8,21 @@ import {
 import { type Contender, computeAwards } from "./awards";
 import { type Timeline, buildTimeline, competitionRanks, historyAt, round1, scoreAt, toManager } from "./standings";
 import { teamOfTheWeek } from "./team-of-the-week";
-import type { Award, AwardId, CaptainFact, LeagueView, MarketRow, TableRow } from "./types";
+import type { Award, AwardId, CaptainFact, LeagueView, MarketRow, PlayerPoints, TableRow } from "./types";
 
 // Turns one cached league bundle into everything the league screens and cards
 // show. Plain functions, run on every request (D1): the bundle is the single
 // source of truth, and pages and card images call this same function.
 
 type ContenderWithSource = Contender & { readonly source: ManagerGameweek };
+
+type Pick = NonNullable<ManagerGameweek["picks"]>["picks"][number];
+
+/** A pick's name and own live points (before the armband). */
+const playerPoints = (pick: Pick, bundle: LeagueGameweek, names: Map<number, string>): PlayerPoints => ({
+  name: names.get(pick.element) ?? "Unknown",
+  points: bundle.livePoints[pick.element]?.points ?? 0,
+});
 
 /** D4: judge the captain the manager chose, reading minutes from live points. */
 function captainOf(m: ManagerGameweek, bundle: LeagueGameweek, names: Map<number, string>): CaptainFact | null {
@@ -25,13 +33,28 @@ function captainOf(m: ManagerGameweek, bundle: LeagueGameweek, names: Map<number
   const live = bundle.livePoints[captain.element];
   const minutes = live?.minutes ?? 0;
   const viceMinutes = vice ? (bundle.livePoints[vice.element]?.minutes ?? 0) : 0;
+  // Everyone else who counted (multiplier > 0, after automatic substitutions); ties go to the earlier pick.
+  const others = picks.picks
+    .filter((p) => p.multiplier > 0 && p.element !== captain.element)
+    .map((p) => playerPoints(p, bundle, names));
+  const best = others.reduce<PlayerPoints | null>((top, p) => (!top || p.points > top.points ? p : top), null);
   return {
     name: names.get(captain.element) ?? "Unknown",
     points: live?.points ?? 0,
     minutes,
     tripleCaptain: picks.active_chip === "3xc",
     viceRescued: minutes === 0 && viceMinutes > 0,
+    best,
   };
+}
+
+/** Who sat on the bench (multiplier 0, after automatic substitutions), in bench order. */
+function benchOf(m: ManagerGameweek, bundle: LeagueGameweek, names: Map<number, string>): readonly PlayerPoints[] | null {
+  if (!m.picks) return null;
+  return m.picks.picks
+    .filter((p) => p.multiplier === 0)
+    .sort((a, b) => a.position - b.position)
+    .map((p) => playerPoints(p, bundle, names));
 }
 
 function buildContenders(bundle: LeagueGameweek, timeline: Timeline, youId?: number): ContenderWithSource[] {
@@ -42,6 +65,7 @@ function buildContenders(bundle: LeagueGameweek, timeline: Timeline, youId?: num
     manager: toManager(m, youId),
     score: scoreAt(m, gw),
     benchPoints: historyAt(m, gw)?.points_on_bench ?? null,
+    bench: benchOf(m, bundle, names),
     captain: captainOf(m, bundle, names),
     rank: timeline.rankAt(m.entry, gw),
     previousRank: gw > 1 ? timeline.rankAt(m.entry, gw - 1) : null,
@@ -77,6 +101,7 @@ function marketRows(cs: readonly ContenderWithSource[], timeline: Timeline, awar
         const average = timeline.averageTotalAt(i + 1);
         return total === undefined || average === null ? null : round1(total - average);
       }),
+      rankSeries: Array.from({ length: gw }, (_, i) => timeline.rankAt(c.manager.id, i + 1)),
       awards: won.get(c.manager.id) ?? [],
     }))
     .sort((a, b) => nullsLast(a.gwRank, b.gwRank) || byManagerName(a, b));

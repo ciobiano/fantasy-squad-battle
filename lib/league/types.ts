@@ -48,6 +48,12 @@ export interface Score {
   readonly hits: number;
 }
 
+/** A player and their own points this gameweek, before any captain multiplier. */
+export interface PlayerPoints {
+  readonly name: string;
+  readonly points: number;
+}
+
 export interface CaptainFact {
   readonly name: string;
   /** The captain's own points this gameweek, before the armband multiplier. */
@@ -56,6 +62,8 @@ export interface CaptainFact {
   readonly tripleCaptain: boolean;
   /** The captain didn't play and the vice-captain did, so the vice got the armband (D4). */
   readonly viceRescued: boolean;
+  /** The best other player who counted in this manager's team, for the card to set against the captain. */
+  readonly best: PlayerPoints | null;
 }
 
 export interface AwardWinner {
@@ -66,6 +74,8 @@ export interface AwardWinner {
   readonly captain?: CaptainFact;
   /** Climber, Faller and Middle Class: league rank before and now. */
   readonly ranks?: { readonly from: number; readonly to: number };
+  /** Bench Regret: who sat on the bench, in bench order. */
+  readonly bench?: readonly PlayerPoints[];
 }
 
 export interface Award {
@@ -91,6 +101,8 @@ export interface MarketRow {
   readonly leagueRankChange: number | null;
   /** Season total minus the league average, for each gameweek from 1 (null before they joined). */
   readonly gapSeries: readonly (number | null)[];
+  /** League rank after each gameweek from 1 (null before they joined). */
+  readonly rankSeries: readonly (number | null)[];
   readonly awards: readonly AwardId[];
 }
 
