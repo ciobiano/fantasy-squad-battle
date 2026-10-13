@@ -183,15 +183,15 @@ Each step is one commit; the full suite runs once at the end.
 
 ## 5e. Build, slice 3 (planned 2026-10-13): real Market, stories and sharing
 Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `getLeagueView` from the data session's `feat/league-logic` (not on main yet).
-- [ ] **Real Market:** `LeagueSource.market` maps `getLeagueView` → `MarketData` (award IDs → our keys, `null` scores and gaps handled, `isYou` row); the Market-soon note goes
-- [ ] **Real cards:** `loadCard` builds `AwardCardModel` / `WrapCardModel` from the league view (stat and winners → `AwardFacts`, "+N others" for big ties, skipped awards → Wrap group lines)
+- [x] **Real Market:** `LeagueSource.market` maps `getLeagueView` → `MarketData` (award IDs → our keys, `null` scores and gaps handled, `isYou` row); the Market-soon note goes
+- [x] **Real cards:** `loadCard` builds `AwardCardModel` / `WrapCardModel` from the league view (stat and winners → `AwardFacts`, "+N others" for big ties, skipped awards → Wrap group lines)
 - [x] **Story viewer** `/league/{id}/story/{card}`: works as plain links with no JavaScript (card, previous and next, close); a small client script adds 5 s auto-advance, progress segments, hold to pause, a visible Pause button, and no auto-advance under reduced motion
 - [x] **Watched circles:** grey once seen (localStorage), a tiny script on the Market's story row
 - [x] **Share sheet:** WhatsApp Status (tall), X (square), Save image. Web Share with the PNG file where the phone supports it; a download link otherwise
 - [x] **Share page** `/s/{league}/{gw}` (public): Wrapped card, award cards, standings, "Roast your own league"; link previews (Open Graph, X) use the dark Wrapped card
 - [x] Tests through the screen modules (201 in the suite); JS budget measured on the production build (compressed): the framework's shared chunks are ~170 KB on every page; on top, Start +14 KB (next/image previews, theme, language), League +14 KB (links, theme toggle, story circles 1.2 KB), the story viewer +16 KB on its own page only
 - [x] Verified (2026-10-13, dev and production): auto-advance and the URL following, pause, tap zones, last card closing to the league, the share sheet open and Cancel, light and dark cards (only the shown theme downloads, ~40 KB WebP each), watched circles, the share page and its preview tags; bad story and share links are real 404s
-- [ ] Real Market and real cards once PR #2 (`feat/league-logic`) is on main
+- [x] Real Market and real cards (2026-10-13, after PR #2): `getLeagueView` and `lib/roasts` through `lib/screens/from-view.ts`; checked on league 314 GW 6 (Market, stories, cards, share page). Waiting on the data session for the captain's best-in-team, the bench players and a rank series (docs/handoff/2026-10-13-market-wired.md)
 
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
