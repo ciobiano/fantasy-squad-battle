@@ -110,6 +110,7 @@ The design session already built titles, language detection and the switcher in 
 - [x] The fixtures schema reads `team_h_difficulty` and `team_a_difficulty`, tolerant like the other tool fields
 - [x] 14 new tests (306 in the suite), on a real 13 Oct snapshot (GW7 next; 197 flagged: 67 injured, 21 doubtful, 4 suspended, 105 unavailable) plus hand-made blanks and doubles
 - [x] `/api/tools?weeks=` returns both, for inspection
+- [x] Vercel preview (`cdg1`), live FPL: 585 ms cold, 36–63 ms warm. The window is GW7–12; Coventry and Spurs have the easiest run (16); 197 flagged players.
 - [ ] Before launch: remove `/api/tools`, or rate-limit it
 
 ## 4. Design exploration
