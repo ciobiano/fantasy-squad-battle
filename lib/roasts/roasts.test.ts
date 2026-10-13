@@ -22,6 +22,20 @@ describe("which lines fit the facts", () => {
     expect(poolFor(sampleAward("captain", "crowd"))).toBe("crowd");
   });
 
+  it("roasts the majority's captain when most of a crowd picked him", () => {
+    const crowd = sampleAward("captain", "crowd");
+    const picked = (shared: number, total: number) => ({
+      ...crowd,
+      winners: crowd.winners.slice(0, total).map((w, i) => (i < shared ? { ...w, captain: { ...w.captain!, name: "Fernandes" } } : w)),
+    });
+    const line = roastFor(picked(32, 43), { leagueId: 314, gw: 1, lang: "en" });
+    expect(line).toContain("Fernandes");
+    expect(line).toContain("32");
+    expect(poolFor(picked(2, 4))).toBe("crowd");
+    // 2 of 3 is not everyone, and all 3 are named on the card.
+    expect(poolFor(picked(2, 3))).toBe("few");
+  });
+
   it("picks the captain's story: didn't play, rescued by the vice, Triple Captain", () => {
     const one = sampleAward("captain", "one");
     const as = (captain: object) => ({ ...one, winners: [{ ...one.winners[0], captain: { ...one.winners[0].captain!, ...captain } }] });

@@ -8,8 +8,19 @@ import { nameList, ordinal, signed, unit, type Vars } from "./text";
 /** Cards name up to this many winners, then "+N others"; more than this is a crowd. */
 export const NAMED_MAX = 3;
 
-const sameCaptain = (winners: readonly AwardWinner[]) =>
-  new Set(winners.map((w) => w.captain?.name)).size === 1;
+/** The captain most winners picked, and how many picked him (ties go to the first name). */
+function topCaptain(winners: readonly AwardWinner[]): { readonly name: string; readonly count: number } {
+  const counts = new Map<string, number>();
+  for (const w of winners) if (w.captain) counts.set(w.captain.name, (counts.get(w.captain.name) ?? 0) + 1);
+  const [name, count] = [...counts].sort(([a, x], [b, y]) => y - x || a.localeCompare(b))[0] ?? ["", 0];
+  return { name, count };
+}
+
+/** Everyone picked one captain, or most of a crowd did (GW1: 32 of 43 on Fernandes). */
+function sharedCaptain(winners: readonly AwardWinner[]): boolean {
+  const { count } = topCaptain(winners);
+  return count === winners.length || (winners.length > NAMED_MAX && count * 2 > winners.length);
+}
 
 function soloPool(award: Award): Pool {
   const w = award.winners[0];
@@ -32,7 +43,7 @@ function soloPool(award: Award): Pool {
 
 export function poolFor(award: Award): Pool {
   const n = award.winners.length;
-  if (award.id === "captain" && n > 1 && sameCaptain(award.winners)) return "sameCaptain";
+  if (award.id === "captain" && n > 1 && sharedCaptain(award.winners)) return "sameCaptain";
   if (n > NAMED_MAX) return "crowd";
   if (n > 1) return "few";
   return soloPool(award);
@@ -95,8 +106,10 @@ function soloVars(award: Award, pool: Pool, lang: Lang): Vars {
 export function varsFor(award: Award, pool: Pool, lang: Lang, gw: number): Vars {
   const shared = { gw: String(gw), ...sharedVars(award, lang) };
   switch (pool) {
-    case "sameCaptain":
-      return { ...shared, count: String(award.winners.length), captain: award.winners[0].captain!.name };
+    case "sameCaptain": {
+      const top = topCaptain(award.winners);
+      return { ...shared, count: String(top.count), captain: top.name };
+    }
     case "crowd":
       return { ...shared, count: String(award.winners.length) };
     case "few":

@@ -26,7 +26,8 @@ export type Lang = "pcm" | "en" | "fr";
  *   climber `newLeader` (climbed to 1st) has {from}; faller `fromTop` (fell from 1st) has {to}.
  * - captain: {captainPoints} ("1 point"); solo pools add {captain} (the player).
  *   `noShow`: the captain didn't play. `rescued`: didn't play, the vice did.
- *   `triple`: Triple Captain. `sameCaptain`: 2+ winners, one captain: {count} {captain} {captainPoints}.
+ *   `triple`: Triple Captain. `sameCaptain`: 2+ winners who all picked one captain, or a crowd where
+ *   most did: {count} (how many picked him) {captain} {captainPoints}.
  * - bench: {bench} ("21 points").
  * - hits: {hits} ("8 points"); `one` adds {points} (before hits) and {score} (after).
  * - middle: nothing extra.
