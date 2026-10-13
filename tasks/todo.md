@@ -7,6 +7,11 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 **Waiting on Ralph:**
 - league IDs (Phase 2 testing uses public league 314 until then)
 
+**After the design branch and ours are both on main** (from the design session's 12 Oct handoff):
+- `lib/league` imports `AwardKey` (`lib/awards`) and `lib/roasts` imports `Lang` (`lib/i18n`), replacing our copies
+- move `start-input.ts` and `resolveGameweek` from `lib/fpl` into `lib/league`, and use `fplId` from `lib/ids.ts`
+- add ESLint import rules for `lib/fpl`, `lib/league`, `lib/roasts` and `lib/tools`
+
 ## 0. Setup and risk check
 - [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
 - [x] Next.js 16.3.8 with the App Router, TypeScript, Tailwind, CVA, clsx and Vitest. Inter and Instrument Serif come through `next/font`.
@@ -78,13 +83,21 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
 - [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
-## 3. Roasts and translation: `lib/roasts/` and `lib/i18n/`
-- [ ] About 6 lines per award per language (EN, Pidgin, FR), using variables
-- [ ] Seeded pick by league + GW + award
-- [ ] Translated award titles
-- [ ] Language detection from the phone, plus a switcher that remembers the choice
-- [ ] Guardrail review. Ralph edits EN and Pidgin; FR stays marked beta.
-- [ ] A group roast for mass ties, for when a large share of the league shares an award (seen: 42 of 50 on Captain Disaster)
+## 3. Roasts: `lib/roasts/` (done 2026-10-13)
+The design session already built titles, language detection and the switcher in its `lib/i18n`, so this phase is the roast lines.
+- [x] Award keys match the design session's (`captain`, `bench`, `hits`, `middle`, `spoon`), so cards, URLs and lines share one vocabulary
+- [x] About 6 lines per award per language (EN, Pidgin, FR), as templates with placeholders. `book.ts` lists each pool and its placeholders.
+- [x] Pools fit the facts: one winner, 2–3 named, a crowd of 4+, plus special pools (captain didn't play, vice rescue, Triple Captain, one shared captain, new leader, fall from the top, last after a hit)
+- [x] **Group roast for mass ties:** the `crowd` pool, or `sameCaptain` when they all picked one captain (seen: 42 of 50 on Fernandes)
+- [x] Wrap group lines for skipped awards, with "too early" lines for Climber, Faller (GW1) and Middle Class (before GW3)
+- [x] Seeded pick by league + GW + award. A mistyped placeholder skips to the next line instead of breaking the card.
+- [x] Interface for the design session: `roastFor(award, ctx)`, `groupLineFor(id, ctx)`, `roastView(view, lang)`
+- [x] Tests (148 new, 291 in the suite):
+  - every line in every language fills with the longest names a card can meet and stays within 100 characters
+  - no guardrail words (appearance, tribe, religion, family, FPL)
+  - pool choice, seeding, units, ordinals and lists
+- [x] `/api/league/{id}/view?lang=` returns the roasts and group lines, for reading real lines
+- [ ] **Ralph:** edit `lib/roasts/lines/en.ts` and `pcm.ts`. French stays beta until a native speaker reviews it.
 
 ## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
 - [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run

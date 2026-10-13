@@ -134,7 +134,7 @@ Verified API facts (2026-10-08):
   - Award titles are translated per language.
 - **Score:** GW score = `points − event_transfers_cost`. Cards show the breakdown, e.g. "67 (71 −4)".
 - **Ties:** tied managers share the award. Show up to 3 names, then "+N others".
-  - Mass ties happen: in GW1, 42 of the top 50 Overall managers shared Captain Disaster after all captaining Fernandes (2 pts). Such awards get a group roast addressing everyone who shares them (Phase 3).
+  - Mass ties happen: in GW1, 42 of the top 50 Overall managers shared Captain Disaster after all captaining Fernandes (2 pts). Such awards get a group roast addressing everyone who shares them: the `crowd` lines, or `sameCaptain` when they all picked one captain.
 - **Timing:** cards unlock once every fixture in the GW is `finished_provisional`. They carry a "provisional" tag until the event is `finished`. Any past finished GW can be picked.
 
 ### Scope update (2026-10-10)
@@ -162,8 +162,15 @@ Verified API facts (2026-10-08):
 - **Middle Class (updated 2026-10-10, D3):** managers in the middle third of the table whose league rank moved 1 place or less over the last 3 GWs. One group card. Needs 3 finished GWs.
 - **When nobody qualifies:** skip that card and put a group line in the Wrap instead, e.g. "Nobody take hit this week. Una too dey fear."
 - **Roast lines:** Claude drafts about 6 lines per award per language. Ralph edits English and Pidgin. French ships as "beta" until a native speaker reviews it.
+  - They live in `lib/roasts/lines/{pcm,en,fr}.ts`. `lib/roasts/book.ts` lists each pool and its placeholders.
+  - Each award picks the pool that fits its facts: `one` winner, `few` (2–3, all named), `crowd` (4+, the group roast), `nobody` (the Wrap's group line) and `early` (too early in the season).
+  - Some awards also have special pools: a captain who didn't play, a vice-captain rescue, Triple Captain, one shared captain, a new leader, a fall from the top, and last place after a hit.
+  - Tests fill every line with the longest names a card can meet. A filled line must fit 100 characters and avoid the guardrail words.
+  - A line with a mistyped placeholder is skipped for the next one in the pool, so an edit can't break a card.
 - **Stable picks:** the line is chosen with a seed of league + GW + award, so a card stays the same however often it's shared.
 - **Titles** for the top scorer and the middle class: decided as we go.
+  - Titles, language detection and the switcher live in the design session's `lib/i18n`.
+  - Award keys are shared with it: `oga`, `climber`, `captain`, `bench`, `hits`, `middle`, `faller`, `spoon`.
 
 ### League logic decisions (2026-10-10)
 
