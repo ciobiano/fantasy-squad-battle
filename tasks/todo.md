@@ -115,6 +115,11 @@ The design session already built titles, language detection and the switcher in 
 - [x] Vercel preview (`cdg1`), live FPL: 585 ms cold, 36–63 ms warm. The window is GW7–12; Coventry and Spurs have the easiest run (16); 197 flagged players.
 - [ ] Before launch: remove `/api/tools`, or rate-limit it
 
+## Share fix (2026-10-13, Ralph found it)
+- [x] Sharing sent a link, not the image: the share call carried a URL beside the file, and WhatsApp on iPhone keeps the link and drops the image
+- [x] `lib/share/share.ts`: `shareCard` shares the PNG alone on phones, and saves it on computers (for X, the composer opens with the league's page). It prefetches so the share stays inside the tap, and reports `tap-again` when it couldn't. 9 tests.
+- [ ] Design session: redesign the sheet with real WhatsApp and X marks and wire `shareCard` ([handoff](../docs/handoff/2026-10-13-share-image.md))
+
 ## 4. Design exploration
 - [ ] Claude Design canvas with the **Market** and **Editorial** directions, using Denizens of Olympus GW5 data
 - [ ] Show both directions in light and dark, including our own gradient palette (no purple, no glow)
