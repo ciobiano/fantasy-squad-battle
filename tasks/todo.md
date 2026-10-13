@@ -7,6 +7,11 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 **Waiting on Ralph:**
 - league IDs (Phase 2 testing uses public league 314 until then)
 
+**After the design branch and ours are both on main** (from the design session's 12 Oct handoff):
+- `lib/league` imports `AwardKey` (`lib/awards`) and `lib/roasts` imports `Lang` (`lib/i18n`), replacing our copies
+- move `start-input.ts` and `resolveGameweek` from `lib/fpl` into `lib/league`, and use `fplId` from `lib/ids.ts`
+- add ESLint import rules for `lib/fpl`, `lib/league`, `lib/roasts` and `lib/tools`
+
 ## 0. Setup and risk check
 - [x] `git init` and a private GitHub repo: github.com/ciobiano/fantasy-squad-battle
 - [x] Next.js 16.3.8 with the App Router, TypeScript, Tailwind, CVA, clsx and Vitest. Inter and Instrument Serif come through `next/font`.
@@ -58,27 +63,42 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`): `/api/team/{id}` takes 167 ms cold and 11 ms warm. An unknown team returns `team-not-found`. The league bundle is still about 145 KB.
 - [ ] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it
 
-## 2. Domain logic: `lib/league/` (pure functions, unit tested)
-- [ ] Net GW score and its breakdown
-- [ ] Rank at each GW, worked out from `history.total_points`
-- [ ] For the Market list: the league-average series, each manager's gap to it, and the rank change
-- [ ] Awards:
-  - Oga and Wooden Spoon
-  - Captain Disaster: the chosen captain's points; zero minutes counts, and Triple Captain counts (D4, D6)
-  - Bench Regret and Hit Merchant: read FPL's fields directly, with tests for chip weeks (D6)
-  - Climber and Faller: ranks per D5, skipping anyone with no previous GW
+## 2. Domain logic: `lib/league/` (done 2026-10-11)
+- [x] Language-free view types (`lib/league/types.ts`, D2). `getLeagueView(leagueId, { gw, now, youId })` runs on every request, straight from the cached bundle (D1).
+- [x] Net GW score and breakdown ("67 (71 −4)"); first names only ("valentine chukwu" → "Valentine")
+- [x] League rank at every GW from season totals; equal totals share a rank, 1, 2, 2, 4 (D5)
+- [x] Market list: GW rank, league rank change, gap to the league average for every GW, award tags, `isYou`
+- [x] Table view: rank, last rank, movement, total, GW score
+- [x] All 8 awards, ties shared, in story order. Awards nobody qualifies for go into `skipped`, for the Wrap's group lines.
+  - Oga and Wooden Spoon. The Spoon is skipped when everyone scored the same.
+  - Captain Disaster: the chosen captain on 2 points or fewer. Zero minutes counts, with `viceRescued`; Triple Captain counts (D4, D6).
+  - Bench Regret and Hit Merchant, read straight from FPL's fields (D6)
+  - Climber and Faller, skipping anyone with no previous GW (D5)
   - Middle Class: middle third of the table, rank moved 1 place or less over 3 GWs (D3)
-- [ ] Awards stay language-free; roast lines and titles are added last (D1, D2)
-- [ ] Ties (3 names, then "+N"). Skip awards nobody qualifies for and give the Wrap a group line.
-- [ ] GW state: provisional or final, based on `finished_provisional` and `finished`
-- [ ] Team of the Week ownership counts within the league
+- [x] Team of the Week, with ownership counted across the league's squads
+- [x] 30 new tests: 26 rule by rule and 4 end to end on real GW5 samples (143 in the suite)
+- [x] Real-data check (league 314, top 50):
+  - GW5 view: 4.8 s cold from Lagos, 17 ms warm
+  - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
+- [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
+- [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
-## 3. Roasts and translation: `lib/roasts/` and `lib/i18n/`
-- [ ] About 6 lines per award per language (EN, Pidgin, FR), using variables
-- [ ] Seeded pick by league + GW + award
-- [ ] Translated award titles
-- [ ] Language detection from the phone, plus a switcher that remembers the choice
-- [ ] Guardrail review. Ralph edits EN and Pidgin; FR stays marked beta.
+## 3. Roasts: `lib/roasts/` (done 2026-10-13)
+The design session already built titles, language detection and the switcher in its `lib/i18n`, so this phase is the roast lines.
+- [x] Award keys match the design session's (`captain`, `bench`, `hits`, `middle`, `spoon`), so cards, URLs and lines share one vocabulary
+- [x] About 6 lines per award per language (EN, Pidgin, FR), as templates with placeholders. `book.ts` lists each pool and its placeholders.
+- [x] Pools fit the facts: one winner, 2–3 named, a crowd of 4+, plus special pools (captain didn't play, vice rescue, Triple Captain, one shared captain, new leader, fall from the top, last after a hit)
+- [x] **Group roast for mass ties:** the `crowd` pool, or `sameCaptain` when they all, or most of a crowd, picked one captain (GW1: 43 tied, 32 of them on B.Fernandes)
+- [x] Wrap group lines for skipped awards, with "too early" lines for Climber, Faller (GW1) and Middle Class (before GW3)
+- [x] Seeded pick by league + GW + award. A mistyped placeholder skips to the next line instead of breaking the card.
+- [x] Interface for the design session: `roastFor(award, ctx)`, `groupLineFor(id, ctx)`, `roastView(view, lang)`
+- [x] Tests (149 new, 292 in the suite):
+  - every line in every language fills with the longest names a card can meet and stays within 100 characters
+  - no guardrail words (appearance, tribe, religion, family, FPL)
+  - pool choice, seeding, units, ordinals and lists
+- [x] `/api/league/{id}/view?lang=` returns the roasts and group lines, for reading real lines
+- [x] Vercel preview, league 314: real lines in all three languages, 43–69 ms warm and about 1 s cold. The GW1 crowd reads "32 managers captained B.Fernandes. B.Fernandes gave them 2 points. Group project failed."
+- [ ] **Ralph:** edit `lib/roasts/lines/en.ts` and `pcm.ts`. French stays beta until a native speaker reviews it.
 
 ## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
 - [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run

@@ -51,6 +51,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Other sessions' worktrees live here, with their own builds.
+    ".claude/**",
   ]),
 ]);
 
