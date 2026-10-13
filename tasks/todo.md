@@ -97,6 +97,7 @@ The design session already built titles, language detection and the switcher in 
   - no guardrail words (appearance, tribe, religion, family, FPL)
   - pool choice, seeding, units, ordinals and lists
 - [x] `/api/league/{id}/view?lang=` returns the roasts and group lines, for reading real lines
+- [x] Vercel preview, league 314: real lines in all three languages, 43–69 ms warm and about 1 s cold. The GW1 crowd reads "32 managers captained B.Fernandes. B.Fernandes gave them 2 points. Group project failed."
 - [ ] **Ralph:** edit `lib/roasts/lines/en.ts` and `pcm.ts`. French stays beta until a native speaker reviews it.
 
 ## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
