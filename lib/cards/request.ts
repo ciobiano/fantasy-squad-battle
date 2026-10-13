@@ -3,10 +3,9 @@
 // gameweek or award means there's no such card.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
 import { LANGS } from "@/lib/i18n";
-import type { CardFormat, CardOptions, CardTheme } from "./types";
+import { FORMATS, THEMES, cardQuery } from "./query";
+import type { CardOptions } from "./types";
 
-const FORMATS: readonly CardFormat[] = ["status", "x"];
-const THEMES: readonly CardTheme[] = ["dark", "light"];
 
 const pick = <T extends string>(allowed: readonly T[], value: string | null, fallback: T): T =>
   value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : fallback;
@@ -51,6 +50,18 @@ export function cardRequest(
   const kind = cardKind(params.award);
   if (gw === null || kind === null) return null;
   return { league: params.league, gw, kind, options: cardOptions(query), provisional: query.get("provisional") === "1" };
+}
+
+/** "wrap" or an award: the last path segment of a card URL. */
+export type CardKey = "wrap" | AwardKey;
+
+/**
+ * A card's URL, the inverse of cardRequest. Always the full query, in this
+ * order, so the image optimiser can be limited to exactly these URLs
+ * (next.config.ts, cardQueries in ./query).
+ */
+export function cardUrl(league: string, gw: number, key: CardKey, options: CardOptions): string {
+  return `/cards/${league}/${gw}/${key}${cardQuery(options)}`;
 }
 
 /** Final gameweeks change rarely (a roast edit); provisional ones change with the scores. */

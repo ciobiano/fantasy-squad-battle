@@ -69,8 +69,55 @@
 @utility rounded-shield {
   border-radius: 25% 25% 50% 50%;
 }
+/* Small line glyphs (the share sheet's size icons): smaller than the Design System's xs radius. */
+@utility rounded-glyph {
+  border-radius: 4px;
+}
 @utility border-fine {
   border-width: 1.5px;
+}
+
+/* The app's theme as the page shows it: a saved choice (data-theme on <html>), else the phone's.
+   Used to show the card image that matches; a forced-dark subtree (the story viewer) doesn't change it. */
+@custom-variant dark {
+  :root[data-theme="dark"] & {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) & {
+      @slot;
+    }
+  }
+}
+
+/* Story viewer: each card's progress segment fills in 5 s; the card advances when it ends. */
+@keyframes story-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@utility animate-story {
+  animation: story-fill 5s linear forwards;
+}
+@utility animation-paused {
+  animation-play-state: paused;
+}
+/* Paused by the button, a press and hold, or the share sheet. */
+@custom-variant story-paused (:where([data-paused="true"]) &);
+/* Fits the card (9:16) inside its stage, whichever side runs out first. */
+@utility container-size {
+  container-type: size;
+}
+@utility story-fit {
+  width: min(100cqw, calc(100cqh * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+/* No "save image" menu on a long press: holding a card pauses it. */
+@utility touch-callout-none {
+  -webkit-touch-callout: none;
 }
 
 :focus-visible {

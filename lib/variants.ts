@@ -202,6 +202,59 @@ export const tableCell = cva("h-14 align-middle", {
   defaultVariants: { align: "left" },
 });
 
+// ---------------------------------------------------------------- Story viewer
+// Always dark (the root sets data-theme="dark"), like the canvas's S-Story.
+
+export const storyViewer = cva(
+  "fixed inset-0 z-50 flex justify-center bg-black text-ink select-none touch-manipulation touch-callout-none",
+);
+export const storyColumn = cva("flex h-full w-full max-w-md flex-col px-3 pt-3 pb-6");
+export const storySegments = cva("flex gap-1 px-1");
+export const storySegment = cva("flex h-0.75 flex-1 overflow-hidden rounded-full bg-ink/30");
+export const storyFill = cva("block size-full origin-left bg-ink", {
+  variants: {
+    state: {
+      done: "scale-x-100",
+      active: "scale-x-0 animate-story story-paused:animation-paused motion-reduce:animate-none motion-reduce:scale-x-100",
+      todo: "scale-x-0",
+    },
+  },
+});
+export const storyTop = cva("flex justify-end py-1");
+export const storyClose = cva("inline-flex size-11 items-center justify-center rounded-full text-ink");
+export const storyStage = cva("flex min-h-0 flex-1 items-center justify-center px-2 container-size");
+export const storyCard = cva("relative overflow-hidden rounded-lg bg-surface story-fit");
+/** A card image for one theme: the other is hidden, so only the one shown downloads (lazy). */
+export const storyImage = cva("object-cover", {
+  variants: { theme: { light: "dark:hidden", dark: "hidden dark:block" } },
+});
+export const storyTap = cva("absolute inset-y-0", { variants: { side: { previous: "left-0 w-3/10", next: "right-0 w-7/10" } } });
+export const storyBar = cva("flex gap-3 px-2 pt-4");
+export const storyShareWrap = cva("flex-1");
+export const storyShare = cva(
+  "flex h-13 flex-1 cursor-pointer list-none items-center justify-center gap-2 rounded-lg bg-ink text-headline font-bold text-bg transition-transform duration-150 ease-out active:scale-97",
+);
+export const storyPause = cva("flex size-13 shrink-0 items-center justify-center rounded-lg bg-surface text-ink");
+
+export const sheetBackdrop = cva("fixed inset-0 z-50 bg-black/60");
+export const sheet = cva(
+  "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-md flex-col gap-1.5 rounded-t-sheet bg-surface px-5 pt-2.5 pb-8",
+);
+export const sheetGrabber = cva("mb-2.5 h-1.25 w-9 self-center rounded-full bg-hairline");
+export const sheetTitle = cva("m-0 mb-2 text-headline font-bold");
+export const sheetOption = cva(
+  "flex min-h-16 items-center gap-3.5 border-t border-hairline text-left text-ink no-underline",
+  { variants: { theme: { light: "dark:hidden", dark: "hidden dark:flex" } } },
+);
+export const sheetIcon = cva("flex size-11 shrink-0 items-center justify-center rounded-md bg-hairline");
+export const sheetShape = cva("block border-2 border-ink", {
+  variants: { shape: { tall: "h-6 w-3.5 rounded-glyph", square: "size-5 rounded-glyph", both: "h-3.5 w-5 rounded-glyph" } },
+});
+export const sheetText = cva("flex flex-1 flex-col gap-0.5");
+export const sheetOptionTitle = cva("text-headline font-semibold");
+export const sheetOptionSub = cva("text-footnote text-ink-2");
+export const sheetCancel = cva("mt-2.5 flex h-13 items-center justify-center rounded-lg bg-hairline text-headline font-semibold text-ink no-underline");
+
 // ---------------------------------------------------------------- Fixtures
 
 export const tickerScroll = cva("overflow-x-auto scrollbar-none");

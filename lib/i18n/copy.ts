@@ -97,6 +97,25 @@ export interface Copy {
     readonly ago: (age: string) => string;
     readonly snapshot: string;
   };
+  /** The story viewer and its share sheet. */
+  readonly story: {
+    readonly label: (gw: number) => string;
+    readonly position: (n: number, total: number) => string;
+    readonly close: string;
+    readonly previous: string;
+    readonly next: string;
+    readonly share: string;
+    readonly pause: string;
+    readonly play: string;
+    readonly sheetTitle: (title: string) => string;
+    readonly status: string;
+    readonly statusSub: string;
+    readonly x: string;
+    readonly xSub: string;
+    readonly save: string;
+    readonly saveSub: string;
+    readonly cancel: string;
+  };
   /** Award titles, on the cards and for the story circles. */
   readonly awards: Readonly<Record<AwardKey, string>>;
   /** One-word award names under the story circles. */

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fplId } from "./ids";
-import { LEAGUE_COOKIE, TEAM_COOKIE, onVisit, rememberedTeamId } from "./remembered";
+import { LEAGUE_COOKIE, TEAM_COOKIE, onVisit, readWatched, rememberedTeamId, watchedKey, withWatched } from "./remembered";
 
 const jar = (cookies: Record<string, string>) => (name: string) => cookies[name];
 const visit = (path: string, cookies: Record<string, string> = {}) => {
@@ -42,11 +42,32 @@ describe("onVisit", () => {
     expect(visit("/league/0/table")).toEqual({ kind: "not-found" });
     expect(visit("/league/sample/table")).toEqual({ kind: "continue", save: [] });
   });
+  it("refuses a story link for a card that doesn't exist, and remembers a real one's league", () => {
+    expect(visit("/league/314/story/banana")).toEqual({ kind: "not-found" });
+    expect(visit("/league/abc/story/oga")).toEqual({ kind: "not-found" });
+    expect(visit("/league/314/story/spoon")).toEqual({ kind: "continue", save: [{ name: LEAGUE_COOKIE, value: "314" }] });
+  });
 });
 
 describe("rememberedTeamId", () => {
   it("reads a valid saved team only", () => {
     expect(rememberedTeamId(jar({ [TEAM_COOKIE]: "22" }))).toBe(22);
     expect(rememberedTeamId(jar({ [TEAM_COOKIE]: "x" }))).toBeNull();
+  });
+});
+
+describe("watched stories", () => {
+  it("adds a card once and reads it back", () => {
+    const once = withWatched(null, "oga");
+    expect([...readWatched(withWatched(once, "oga"))]).toEqual(["oga"]);
+    expect([...readWatched(withWatched(once, "spoon"))]).toEqual(["oga", "spoon"]);
+  });
+  it("treats anything unreadable as nothing watched", () => {
+    expect(readWatched("not json").size).toBe(0);
+    expect(readWatched('{"oga":true}').size).toBe(0);
+    expect([...readWatched('["oga", 3]')]).toEqual(["oga"]);
+  });
+  it("keeps each league's gameweek apart", () => {
+    expect(watchedKey("314", 5)).not.toBe(watchedKey("314", 6));
   });
 });

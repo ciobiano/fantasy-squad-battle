@@ -4,7 +4,7 @@ import { getStandings } from "@/lib/fpl/api";
 import { resolveGameweek } from "@/lib/fpl/league-gameweek";
 import type { Standings } from "@/lib/fpl/schemas";
 import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
-import { SAMPLE_MARKET, marketView, type MarketView } from "./market";
+import { SAMPLE_MARKET, marketView, type MarketData, type MarketView } from "./market";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import { startHref } from "./start";
 import { SAMPLE_TABLE, tableView, type TableView } from "./table";
@@ -15,6 +15,8 @@ export interface LeagueSource {
   readonly standings: (leagueId: number) => Promise<Standings | null>;
   /** The newest gameweek with unlocked cards; null before the season starts. */
   readonly latestGameweek: () => Promise<number | null>;
+  /** The Market and its awards; null until the award logic (lib/league) is wired in. */
+  readonly market: (leagueId: number) => Promise<MarketData | null>;
 }
 
 export const liveLeague: LeagueSource = {
@@ -23,6 +25,7 @@ export const liveLeague: LeagueSource = {
     const choice = await resolveGameweek(undefined, Date.now());
     return choice.ok ? choice.id : null;
   },
+  market: async () => null,
 };
 
 export type LeagueTab = "market" | "table";
@@ -67,10 +70,15 @@ export async function loadLeague(
 
   const retry = tab === "table" ? `/league/${leagueId}/table` : `/league/${leagueId}`;
   return guard("league", retry, async () => {
-    const [standings, gw] = await Promise.all([source.standings(leagueId), source.latestGameweek()]);
+    const [standings, gw, market] = await Promise.all([
+      source.standings(leagueId),
+      source.latestGameweek(),
+      tab === "market" ? source.market(leagueId) : null,
+    ]);
     if (standings === null) return redirectTo(startHref("league", String(leagueId), "league-not-found"));
     const table = tableView(standings, team);
-    const body: LeagueView["body"] = tab === "table" ? { kind: "table", table } : { kind: "market-soon" };
+    const body: LeagueView["body"] =
+      tab === "table" ? { kind: "table", table } : market ? { kind: "market", market: marketView(market) } : { kind: "market-soon" };
     return ready({ leagueId: String(leagueId), leagueName: table.leagueName, tab, gw, changeHref, body });
   });
 }

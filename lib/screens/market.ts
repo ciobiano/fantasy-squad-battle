@@ -2,6 +2,7 @@
 // MarketData, in the shapes of docs/design/brief.md §5; until then the design
 // canvas's sample league fills it. marketView turns it into what the screen draws.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
+import type { CardKey } from "@/lib/cards/request";
 import { SAMPLE_LEAGUE } from "@/lib/ids";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
 import { movedBy, type Movement } from "@/lib/ui/format";
@@ -48,6 +49,9 @@ export interface Spark {
   readonly direction: "up" | "down";
 }
 
+/** A card's page in the story viewer. */
+export const storyHref = (leagueId: string, key: CardKey): string => `/league/${leagueId}/story/${key}`;
+
 export interface MarketLine {
   readonly id: number;
   readonly firstName: string;
@@ -55,6 +59,8 @@ export interface MarketLine {
   readonly badge: Badge;
   /** The one emoji the row shows (its first award in story order); a row with one opens that card. */
   readonly award: AwardKey | null;
+  /** That award's story, or null: a row with no award isn't a link. */
+  readonly href: string | null;
   readonly net: number;
   readonly move: Movement;
   readonly spark: Spark;
@@ -63,7 +69,8 @@ export interface MarketLine {
 export interface MarketView {
   readonly leagueId: string;
   readonly gw: number;
-  readonly awards: readonly AwardKey[];
+  /** The story circles: the Wrap, then each award with a winner, in story order. */
+  readonly stories: readonly { readonly key: CardKey; readonly href: string }[];
   readonly teamOfTheWeek: TeamOfTheWeek;
   readonly rows: readonly MarketLine[];
 }
@@ -81,19 +88,30 @@ function spark(gaps: readonly number[]): Spark {
   return { points, baseY, direction: (values.at(-1) ?? 0) >= 0 ? "up" : "down" };
 }
 
-const toLine = (row: MarketRow): MarketLine => ({
-  id: row.manager.id,
-  firstName: row.manager.firstName,
-  teamName: row.manager.teamName,
-  badge: badgeFor(row.manager.teamName),
-  award: AWARD_KEYS.find((key) => row.awards.includes(key)) ?? null,
-  net: row.score.net,
-  move: movedBy(row.leagueRankChange),
-  spark: spark(row.gapSeries),
-});
+function toLine(leagueId: string, row: MarketRow): MarketLine {
+  const award = AWARD_KEYS.find((key) => row.awards.includes(key)) ?? null;
+  return {
+    id: row.manager.id,
+    firstName: row.manager.firstName,
+    teamName: row.manager.teamName,
+    badge: badgeFor(row.manager.teamName),
+    award,
+    href: award ? storyHref(leagueId, award) : null,
+    net: row.score.net,
+    move: movedBy(row.leagueRankChange),
+    spark: spark(row.gapSeries),
+  };
+}
 
 export function marketView(data: MarketData): MarketView {
-  return { leagueId: data.leagueId, gw: data.gw, awards: data.awards, teamOfTheWeek: data.teamOfTheWeek, rows: data.rows.map(toLine) };
+  const keys: readonly CardKey[] = ["wrap", ...data.awards];
+  return {
+    leagueId: data.leagueId,
+    gw: data.gw,
+    stories: keys.map((key) => ({ key, href: storyHref(data.leagueId, key) })),
+    teamOfTheWeek: data.teamOfTheWeek,
+    rows: data.rows.map((row) => toLine(data.leagueId, row)),
+  };
 }
 
 const m = (id: number, firstName: string, teamName: string) => ({ id, firstName, teamName });

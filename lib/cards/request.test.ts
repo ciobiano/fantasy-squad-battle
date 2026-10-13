@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { cacheControl, cardRequest } from "./request";
+import { cardQueries } from "./query";
+import { cacheControl, cardRequest, cardUrl } from "./request";
 
 const params = (gw: string, award: string) => ({ league: "314", gw, award });
 const query = (text = "") => new URLSearchParams(text);
@@ -29,6 +30,20 @@ describe("cardRequest", () => {
   it("accepts gameweeks 1 to 38 only", () => {
     expect(cardRequest(params("38", "wrap"), query())?.gw).toBe(38);
     for (const gw of ["0", "39", "5a", "005"]) expect(cardRequest(params(gw, "wrap"), query())).toBeNull();
+  });
+});
+
+describe("cardUrl", () => {
+  it("builds the URL cardRequest reads back", () => {
+    const url = new URL(cardUrl("314", 5, "spoon", { format: "x", theme: "light", lang: "fr" }), "https://example.test");
+    const [, , league, gw, award] = url.pathname.split("/");
+    expect(cardRequest({ league, gw, award }, url.searchParams)).toMatchObject({
+      league: "314", gw: 5, kind: { kind: "award", award: "spoon" }, options: { format: "x", theme: "light", lang: "fr" },
+    });
+  });
+  it("only ever produces one of the queries the image optimiser allows", () => {
+    expect(cardQueries()).toHaveLength(12);
+    expect(cardQueries()).toContain(new URL(cardUrl("sample", 5, "wrap", { format: "status", theme: "dark", lang: "pcm" }), "https://x.test").search);
   });
 });
 

@@ -1,42 +1,29 @@
 // The Market view: award stories, Team of the Week, and the Market list.
-// Story circles open the card image for now; the story viewer comes later.
+// Story circles and rows with an award open the story viewer.
 import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
 import { SPARK_HEIGHT, SPARK_WIDTH, type MarketView as MarketModel } from "@/lib/screens/market";
 import {
   marketRow, pitch, pitchLine, pitchMark, rowEnd, rowName, rowScore, rowTeam, rowText, sectionAside, sectionHead,
-  sectionHeading, sparkBase, sparkLine, story, storyFace, storyGap, storyRing, storyRow, token, tokenName, tokenOwners,
+  sectionHeading, sparkBase, sparkLine, token, tokenName, tokenOwners,
   tokenPoints,
 } from "@/lib/variants";
 import { AwardEmoji, RankPill, TeamBadge } from "../ui/bits";
+import { StoryCircles } from "./StoryCircles";
 
 export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) {
   const t = copyFor(lang);
-  const cardHref = (award: string) => `/cards/${model.leagueId}/${model.gw}/${award}?lang=${lang}`;
   return (
     <>
-      <section aria-label={t.league.storiesLabel} className={storyRow()}>
-        <Link href={cardHref("wrap")} className={story()}>
-          <span className={storyRing()}>
-            <span className={storyGap()}>
-              <span className={storyFace({ kind: "wrap" })}>{t.league.storyGw(model.gw)}</span>
-            </span>
-          </span>
-          {t.league.wrapped}
-        </Link>
-        {model.awards.map((award) => (
-          <Link key={award} href={cardHref(award)} aria-label={t.awards[award]} className={story()}>
-            <span className={storyRing()}>
-              <span className={storyGap()}>
-                <span className={storyFace({ kind: "award" })}>
-                  <AwardEmoji award={award} />
-                </span>
-              </span>
-            </span>
-            {t.awardsShort[award]}
-          </Link>
-        ))}
-      </section>
+      <StoryCircles
+        leagueId={model.leagueId}
+        gw={model.gw}
+        stories={model.stories}
+        label={t.league.storiesLabel}
+        captions={model.stories.map(({ key }) => (key === "wrap" ? t.league.wrapped : t.awardsShort[key]))}
+        names={model.stories.map(({ key }) => (key === "wrap" ? t.card.wrapTitle(model.gw) : t.awards[key]))}
+        wrapFace={t.league.storyGw(model.gw)}
+      />
 
       <section aria-labelledby="totw">
         <div className={sectionHead()}>
@@ -99,8 +86,8 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
               </span>
             </>
           );
-          return award ? (
-            <Link key={row.id} href={cardHref(award)} className={marketRow()}>
+          return row.href ? (
+            <Link key={row.id} href={row.href} className={marketRow()}>
               {body}
             </Link>
           ) : (

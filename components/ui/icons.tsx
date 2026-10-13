@@ -57,6 +57,40 @@ export const TAB_ICONS = {
   players: "M13 12.5a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5zM4.5 22.5c.6-4.6 4.1-7.5 8.5-7.5s7.9 2.9 8.5 7.5",
 } as const;
 
+/** Story viewer icons, as drawn on the canvas (S-Story). */
+export function CloseIcon({ size = 22 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden="true" {...stroke}>
+      <path d="M5 5l12 12M17 5L5 17" />
+    </svg>
+  );
+}
+
+export function ShareIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" {...stroke} strokeWidth={1.9}>
+      <path d="M10 13V3M6 7l4-4 4 4" />
+      <path d="M4 11v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" />
+    </svg>
+  );
+}
+
+export function PauseIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" {...stroke} strokeWidth={2.2}>
+      <path d="M7 4v12M13 4v12" />
+    </svg>
+  );
+}
+
+export function PlayIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M6 4.5v11l9-5.5z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function TabIcon({ name }: { name: keyof typeof TAB_ICONS }) {
   return (
     <svg width={26} height={26} viewBox="0 0 26 26" aria-hidden="true" {...stroke}>

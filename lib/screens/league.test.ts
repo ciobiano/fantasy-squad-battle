@@ -14,7 +14,7 @@ const standings: Standings = {
   },
 };
 
-const live: LeagueSource = { standings: async () => standings, latestGameweek: async () => 7 };
+const live: LeagueSource = { standings: async () => standings, latestGameweek: async () => 7, market: async () => null };
 
 async function view(...args: Parameters<typeof loadLeague>): Promise<LeagueView> {
   const screen = await loadLeague(...args);
@@ -60,6 +60,8 @@ describe("loadLeague, Market", () => {
     expect(rows.map((r) => r.net)).toEqual(rows.map((r) => r.net).toSorted((a, b) => b - a));
     expect(rows.find((r) => r.firstName === "Bayo")?.award).toBe("captain");
     expect(rows.find((r) => r.firstName === "Tobi")?.award).toBeNull();
+    expect(rows.find((r) => r.firstName === "Bayo")?.href).toBe("/league/sample/story/captain");
+    expect(v.body.market.stories.map((s) => s.key)).toEqual(["wrap", "oga", "climber", "captain", "bench", "hits", "middle", "faller", "spoon"]);
   });
   it("draws a positive gap above the zero line and turns rank change into a move", async () => {
     const v = await view("sample", "market", null, live);
