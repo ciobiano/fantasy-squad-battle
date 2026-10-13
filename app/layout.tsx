@@ -17,8 +17,10 @@ export const metadata: Metadata = {
   description: "Weekly roast cards for your fantasy football mini-league.",
 };
 
-// The browser bar matches the top of the Mist sky.
-export const viewport: Viewport = { themeColor: "#143A53" };
+// The browser bar matches the top of the Mist sky (theme-color; Safari 26 reads
+// the strip in Sky instead). viewport-fit=cover lets the page run under the
+// status bar where browsers allow it; safe-area padding keeps content clear.
+export const viewport: Viewport = { themeColor: "#143A53", viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

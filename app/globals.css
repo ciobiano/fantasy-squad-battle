@@ -69,6 +69,32 @@
 @utility rounded-shield {
   border-radius: 25% 25% 50% 50%;
 }
+/* Safe areas (viewport-fit=cover): content stays clear of the Dynamic Island,
+   notch and home bar wherever the browser lets the page run under them. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pb-with-tabs {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+}
+@utility pb-end {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+}
+@utility pb-sheet {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+}
+@utility pb-cta {
+  padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
+}
+/* The status-bar strip. Safari 26 on iPhone ignores theme-color and tints the
+   status bar from a full-width fixed element at the top edge (else the page
+   background, white in light mode). At least 1px so there's always one to sample. */
+@utility h-status {
+  height: max(1px, env(safe-area-inset-top));
+}
 @utility border-fine {
   border-width: 1.5px;
 }

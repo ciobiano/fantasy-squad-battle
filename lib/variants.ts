@@ -11,8 +11,8 @@ export const rootHtml = cva("h-full antialiased");
 export const rootBody = cva("min-h-full flex flex-col bg-bg text-ink font-sans text-body");
 
 /** A screen: room at the bottom for the tab bar when there is one. */
-export const page = cva("relative isolate flex min-h-dvh flex-col overflow-x-clip", {
-  variants: { tabs: { true: "pb-28", false: "pb-8" } },
+export const page = cva("relative isolate flex min-h-dvh flex-col overflow-x-clip pt-safe", {
+  variants: { tabs: { true: "pb-with-tabs", false: "pb-end" } },
   defaultVariants: { tabs: true },
 });
 export const column = cva("relative mx-auto flex w-full max-w-md flex-col px-5 pt-14", {
@@ -25,6 +25,8 @@ export const visuallyHidden = cva("sr-only");
 // ---------------------------------------------------------------- The Mist sky
 
 /** The sky behind a screen's header, fading into the page. Height per screen. */
+/** Paints the iPhone status bar in the sky's top colour (see h-status in globals.css). */
+export const statusTint = cva("pointer-events-none fixed inset-x-0 top-0 z-30 h-status bg-brand-deep");
 export const sky = cva("pointer-events-none absolute inset-x-0 top-0 -z-10 bg-sky", {
   variants: {
     height: { start: "h-108", picker: "h-80", league: "h-118", fixtures: "h-48", players: "h-84" },
@@ -207,7 +209,7 @@ export const tableCell = cva("h-14 align-middle", {
 // Always dark (the root sets data-theme="dark"), like the canvas's S-Story.
 
 export const storyViewer = cva(
-  "fixed inset-0 z-50 flex justify-center bg-black text-ink select-none touch-manipulation touch-callout-none",
+  "fixed inset-0 z-50 flex justify-center bg-black pt-safe pb-safe text-ink select-none touch-manipulation touch-callout-none",
 );
 export const storyColumn = cva("flex h-full w-full max-w-md flex-col px-3 pt-3 pb-6");
 export const storySegments = cva("flex gap-1 px-1");
@@ -243,7 +245,7 @@ export const storyPause = cva("flex size-13 shrink-0 items-center justify-center
 
 export const sheetBackdrop = cva("fixed inset-0 z-50 bg-black/60");
 export const sheet = cva(
-  "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-md flex-col gap-1.5 rounded-t-sheet bg-surface px-5 pt-2.5 pb-8",
+  "fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-md flex-col gap-1.5 rounded-t-sheet bg-surface px-5 pt-2.5 pb-sheet",
 );
 export const sheetGrabber = cva("mb-2.5 h-1.25 w-9 self-center rounded-full bg-hairline");
 export const sheetTitle = cva("m-0 mb-2 text-headline font-bold");
@@ -273,7 +275,7 @@ export const shareWrap = cva("relative mx-auto aspect-square w-full max-w-90 ove
 export const shareAwards = cva("-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 scrollbar-none");
 export const shareAward = cva("relative size-55 shrink-0 snap-start overflow-hidden rounded-xl border border-hairline bg-surface");
 export const shareNote = cva("m-0 text-footnote text-ink-2");
-export const shareCta = cva("sticky bottom-0 -mx-5 mt-auto flex flex-col gap-2 bg-linear-to-b from-transparent to-bg to-30% px-5 pt-6 pb-7");
+export const shareCta = cva("sticky bottom-0 -mx-5 mt-auto flex flex-col gap-2 bg-linear-to-b from-transparent to-bg to-30% px-5 pt-6 pb-cta");
 export const shareCtaSub = cva("self-center text-footnote text-ink-2");
 
 // ---------------------------------------------------------------- Fixtures
@@ -335,7 +337,7 @@ export const teamMenuItem = cva("flex h-10 items-center justify-center rounded-m
 
 // ---------------------------------------------------------------- Tab bar
 
-export const tabBar = cva("fixed inset-x-0 bottom-0 z-20 border-t border-hairline bg-tabbar-bg backdrop-blur-md");
+export const tabBar = cva("fixed inset-x-0 bottom-0 z-20 border-t border-hairline bg-tabbar-bg pb-safe backdrop-blur-md");
 export const tabBarInner = cva("mx-auto flex h-21 max-w-md pt-1.5");
 export const tab = cva("flex flex-1 flex-col items-center gap-0.75 pt-1 text-micro font-semibold text-ink-2 no-underline current:text-ink");
 
