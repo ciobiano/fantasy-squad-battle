@@ -21,6 +21,9 @@ export interface Contender {
 /** Captain Disaster: the chosen captain scored this many points or fewer. */
 export const CAPTAIN_DISASTER_MAX = 2;
 
+/** Middle Class looks back this many gameweeks, so it starts at this gameweek (D3). */
+export const MIDDLE_CLASS_WEEKS = 3;
+
 const byName = (a: AwardWinner, b: AwardWinner) =>
   a.manager.firstName.localeCompare(b.manager.firstName) ||
   a.manager.teamName.localeCompare(b.manager.teamName) ||
@@ -62,24 +65,24 @@ function woodenSpoon(cs: readonly Contender[]): Award | null {
   const top = leaders(cs, net, "highest");
   // Nobody is last when everyone scored the same.
   if (!bottom || !top || bottom.best === top.best) return null;
-  return award("woodenSpoon", bottom.best, bottom.who.map((c) => ({ manager: c.manager, score: c.score! })));
+  return award("spoon", bottom.best, bottom.who.map((c) => ({ manager: c.manager, score: c.score! })));
 }
 
 function captainDisaster(cs: readonly Contender[]): Award | null {
   const worst = leaders(cs, (c) => c.captain?.points ?? null, "lowest");
   if (!worst || worst.best > CAPTAIN_DISASTER_MAX) return null;
-  return award("captainDisaster", worst.best, worst.who.map((c) => ({ manager: c.manager, captain: c.captain! })));
+  return award("captain", worst.best, worst.who.map((c) => ({ manager: c.manager, captain: c.captain! })));
 }
 
 function benchRegret(cs: readonly Contender[]): Award | null {
   const most = leaders(cs, (c) => c.benchPoints, "highest");
-  return most && most.best > 0 ? award("benchRegret", most.best, most.who.map((c) => ({ manager: c.manager }))) : null;
+  return most && most.best > 0 ? award("bench", most.best, most.who.map((c) => ({ manager: c.manager }))) : null;
 }
 
 function hitMerchant(cs: readonly Contender[]): Award | null {
   const most = leaders(cs, (c) => c.score?.hits ?? null, "highest");
   if (!most || most.best <= 0) return null;
-  return award("hitMerchant", most.best, most.who.map((c) => ({ manager: c.manager, score: c.score! })));
+  return award("hits", most.best, most.who.map((c) => ({ manager: c.manager, score: c.score! })));
 }
 
 const withRanks = (c: Contender): AwardWinner => ({
@@ -99,7 +102,7 @@ function faller(cs: readonly Contender[]): Award | null {
 
 /** D3: the middle third of the table, with league rank moved 1 place or less over the last 3 gameweeks. */
 function middleClass(cs: readonly Contender[], gw: number): Award | null {
-  if (gw < 3) return null;
+  if (gw < MIDDLE_CLASS_WEEKS) return null;
   const ranked = cs.filter((c) => c.rank !== null);
   const third = Math.floor(ranked.length / 3);
   if (third < 1) return null;
@@ -112,7 +115,7 @@ function middleClass(cs: readonly Contender[], gw: number): Award | null {
   });
   if (!steady.length) return null;
   return award(
-    "middleClass",
+    "middle",
     steady.length,
     steady.map((c) => ({ manager: c.manager, ranks: { from: c.recentRanks[0]!, to: c.rank! } })),
   );
@@ -125,12 +128,12 @@ export function computeAwards(
   const results: Record<AwardId, Award | null> = {
     oga: oga(contenders),
     climber: climber(contenders),
-    captainDisaster: captainDisaster(contenders),
-    benchRegret: benchRegret(contenders),
-    hitMerchant: hitMerchant(contenders),
-    middleClass: middleClass(contenders, gw),
+    captain: captainDisaster(contenders),
+    bench: benchRegret(contenders),
+    hits: hitMerchant(contenders),
+    middle: middleClass(contenders, gw),
     faller: faller(contenders),
-    woodenSpoon: woodenSpoon(contenders),
+    spoon: woodenSpoon(contenders),
   };
   return {
     awards: AWARD_ORDER.flatMap((id) => (results[id] ? [results[id]!] : [])),

@@ -42,8 +42,8 @@ describe("Oga of the Week and Wooden Spoon", () => {
   });
 
   it("gives the lowest net score the Wooden Spoon", () => {
-    expect(awardOf(view, "woodenSpoon")).toMatchObject({ stat: 40 });
-    expect(winnerNames(view, "woodenSpoon")).toEqual(["Chidi"]);
+    expect(awardOf(view, "spoon")).toMatchObject({ stat: 40 });
+    expect(winnerNames(view, "spoon")).toEqual(["Chidi"]);
   });
 
   it("skips the Wooden Spoon when everyone scored the same", () => {
@@ -56,8 +56,8 @@ describe("Oga of the Week and Wooden Spoon", () => {
         ],
       }),
     );
-    expect(awardOf(same, "woodenSpoon")).toBeUndefined();
-    expect(same.skipped).toContain("woodenSpoon");
+    expect(awardOf(same, "spoon")).toBeUndefined();
+    expect(same.skipped).toContain("spoon");
   });
 });
 
@@ -74,8 +74,8 @@ describe("Captain Disaster (D4, D6)", () => {
         ],
       }),
     );
-    expect(awardOf(view, "captainDisaster")).toMatchObject({ stat: 1 });
-    expect(awardOf(view, "captainDisaster")?.winners[0].captain).toMatchObject({ name: "Haaland", points: 1 });
+    expect(awardOf(view, "captain")).toMatchObject({ stat: 1 });
+    expect(awardOf(view, "captain")?.winners[0].captain).toMatchObject({ name: "Haaland", points: 1 });
   });
 
   it("counts a captain who didn't play, even when the vice-captain stepped in", () => {
@@ -88,7 +88,7 @@ describe("Captain Disaster (D4, D6)", () => {
         ],
       }),
     );
-    expect(awardOf(view, "captainDisaster")?.winners[0].captain).toEqual({
+    expect(awardOf(view, "captain")?.winners[0].captain).toEqual({
       name: "Isak",
       points: 0,
       minutes: 0,
@@ -107,7 +107,7 @@ describe("Captain Disaster (D4, D6)", () => {
         ],
       }),
     );
-    expect(awardOf(view, "captainDisaster")?.winners[0].captain).toMatchObject({ name: "Saka", tripleCaptain: true });
+    expect(awardOf(view, "captain")?.winners[0].captain).toMatchObject({ name: "Saka", tripleCaptain: true });
   });
 
   it("is skipped when every captain scored 3 or more", () => {
@@ -120,7 +120,7 @@ describe("Captain Disaster (D4, D6)", () => {
         ],
       }),
     );
-    expect(view.skipped).toContain("captainDisaster");
+    expect(view.skipped).toContain("captain");
   });
 });
 
@@ -135,10 +135,10 @@ describe("Bench Regret and Hit Merchant (D6)", () => {
         ],
       }),
     );
-    expect(awardOf(view, "benchRegret")).toMatchObject({ stat: 12 });
-    expect(winnerNames(view, "benchRegret")).toEqual(["Ade"]);
-    expect(awardOf(view, "hitMerchant")).toMatchObject({ stat: 8 });
-    expect(awardOf(view, "hitMerchant")?.winners[0].score).toEqual({ net: 52, points: 60, hits: 8 });
+    expect(awardOf(view, "bench")).toMatchObject({ stat: 12 });
+    expect(winnerNames(view, "bench")).toEqual(["Ade"]);
+    expect(awardOf(view, "hits")).toMatchObject({ stat: 8 });
+    expect(awardOf(view, "hits")?.winners[0].score).toEqual({ net: 52, points: 60, hits: 8 });
   });
 
   it("are skipped when nobody left points on the bench or took a hit (as FPL reports on chip weeks)", () => {
@@ -151,7 +151,7 @@ describe("Bench Regret and Hit Merchant (D6)", () => {
         ],
       }),
     );
-    expect(view.skipped).toEqual(expect.arrayContaining(["benchRegret", "hitMerchant"]));
+    expect(view.skipped).toEqual(expect.arrayContaining(["bench", "hits"]));
   });
 });
 
@@ -212,8 +212,8 @@ describe("Middle Class (D3)", () => {
         ],
       }),
     );
-    expect(awardOf(view, "middleClass")).toMatchObject({ stat: 2 });
-    expect(winnerNames(view, "middleClass")).toEqual(["Chidi", "Dayo"]);
+    expect(awardOf(view, "middle")).toMatchObject({ stat: 2 });
+    expect(winnerNames(view, "middle")).toEqual(["Chidi", "Dayo"]);
   });
 
   it("leaves out a middle-table manager who moved 2 places", () => {
@@ -231,14 +231,14 @@ describe("Middle Class (D3)", () => {
         ],
       }),
     );
-    expect(winnerNames(view, "middleClass")).toEqual(["Dayo"]);
+    expect(winnerNames(view, "middle")).toEqual(["Dayo"]);
   });
 
   it("needs 3 gameweeks", () => {
     const view = buildLeagueView(
       makeBundle({ gw: 2, managers: [1, 2, 3, 4, 5, 6].map((n) => ({ entry: n, name: `m${n}`, weeks: [{ points: n }, { points: n }] })) }),
     );
-    expect(view.skipped).toContain("middleClass");
+    expect(view.skipped).toContain("middle");
   });
 });
 
@@ -276,7 +276,7 @@ describe("Market and Table views", () => {
 
   it("marks the visitor's own team and tags award winners", () => {
     expect(view.market.find((r) => r.manager.isYou)?.manager.firstName).toBe("Bola");
-    expect(view.market.find((r) => r.manager.firstName === "Bola")?.awards).toContain("woodenSpoon");
+    expect(view.market.find((r) => r.manager.firstName === "Bola")?.awards).toContain("spoon");
   });
 
   it("carries the provisional flag and both averages", () => {

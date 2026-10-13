@@ -4,26 +4,31 @@ import type { GameweekStatus } from "@/lib/fpl/gameweek";
 // titles are added per language afterwards (lib/roasts), so the facts on a
 // card can never differ between English, Pidgin and French.
 
+/**
+ * The same keys as the design session's AwardKey (lib/awards.ts on its branch),
+ * which the cards, URLs and word catalogues use. Once both branches are on
+ * main, this becomes that import.
+ */
 export type AwardId =
   | "oga"
   | "climber"
-  | "captainDisaster"
-  | "benchRegret"
-  | "hitMerchant"
-  | "middleClass"
+  | "captain"
+  | "bench"
+  | "hits"
+  | "middle"
   | "faller"
-  | "woodenSpoon";
+  | "spoon";
 
 /** Story order after the Wrap: the Wooden Spoon comes last, as the punchline. */
 export const AWARD_ORDER: readonly AwardId[] = [
   "oga",
   "climber",
-  "captainDisaster",
-  "benchRegret",
-  "hitMerchant",
-  "middleClass",
+  "captain",
+  "bench",
+  "hits",
+  "middle",
   "faller",
-  "woodenSpoon",
+  "spoon",
 ];
 
 export interface Manager {

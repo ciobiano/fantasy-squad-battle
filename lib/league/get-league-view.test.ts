@@ -78,7 +78,7 @@ describe("getLeagueView", () => {
     const result = await getLeagueView(314, { gw: 5, now: CAPTURED_AT });
     if (!result.ok) throw new Error(result.reason);
     expect(result.data.market[0].score).toEqual({ net: 67, points: 71, hits: 4 });
-    expect(result.data.awards.find((a) => a.id === "hitMerchant")?.stat).toBe(4);
+    expect(result.data.awards.find((a) => a.id === "hits")?.stat).toBe(4);
   });
 
   it("reports an unknown league and a gameweek that hasn't started", async () => {
