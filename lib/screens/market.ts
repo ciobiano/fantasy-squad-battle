@@ -27,9 +27,20 @@ export interface MarketRow {
   readonly awards: readonly AwardKey[];
 }
 
+export interface TeamOfTheWeekPlayer {
+  readonly name: string;
+  /** FPL's short club name, e.g. "BHA": the shirt's colours. */
+  readonly club: string;
+  readonly points: number;
+  /** How many managers in the league have this player. */
+  readonly ownedBy: number;
+  /** The week's top scorer. */
+  readonly top: boolean;
+}
+
 export interface TeamOfTheWeek {
   /** Goalkeeper line first, as FPL shows it. */
-  readonly lines: readonly (readonly { readonly name: string; readonly points: number; readonly ownedBy: number; readonly top: boolean }[])[];
+  readonly lines: readonly (readonly TeamOfTheWeekPlayer[])[];
 }
 
 /** What the award logic hands the Market: one league's gameweek. */
@@ -129,7 +140,7 @@ const r = (manager: MarketRow["manager"], points: number, hits: number, change: 
   gapSeries: gaps,
   awards,
 });
-const p = (name: string, points: number, ownedBy = 0, top = false) => ({ name, points, ownedBy, top });
+const p = (name: string, club: string, points: number, ownedBy = 0, top = false): TeamOfTheWeekPlayer => ({ name, club, points, ownedBy, top });
 
 /** The design canvas's sample league (real GW 5 players), ranked by net GW score. */
 export const SAMPLE_MARKET: MarketData = {
@@ -140,10 +151,10 @@ export const SAMPLE_MARKET: MarketData = {
   awards: ["oga", "climber", "captain", "bench", "hits", "middle", "faller", "spoon"],
   teamOfTheWeek: {
     lines: [
-      [p("Rushworth", 11)],
-      [p("Dasilva", 15), p("Schuster", 14), p("Tarkowski", 14, 1), p("Hall", 13, 2)],
-      [p("Semenyo", 17, 3), p("Groß", 14, 6), p("Manzambi", 13), p("Buendía", 12)],
-      [p("Brobbey", 17, 1, true), p("Kostoulas", 10)],
+      [p("Rushworth", "BHA", 11)],
+      [p("Dasilva", "BRE", 15), p("Schuster", "FUL", 14), p("Tarkowski", "EVE", 14, 1), p("Hall", "NEW", 13, 2)],
+      [p("Semenyo", "BOU", 17, 3), p("Groß", "BHA", 14, 6), p("Manzambi", "ARS", 13), p("Buendía", "AVL", 12)],
+      [p("Brobbey", "SUN", 17, 1, true), p("Kostoulas", "MCI", 10)],
     ],
   },
   rows: [

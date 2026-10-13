@@ -23,6 +23,7 @@ describe("marketFromView", () => {
   it("lines Team of the Week up from the goalkeeper and marks the top player", () => {
     const lines = marketFromView(testView()).teamOfTheWeek.lines;
     expect(lines[0].map((p) => p.name)).toEqual(["Rushworth"]);
+    expect(lines.flat().every((p) => p.club === "TST")).toBe(true);
     expect(lines.flat().filter((p) => p.top).map((p) => p.name)).toEqual(["Brobbey"]);
   });
 });

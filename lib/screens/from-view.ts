@@ -33,7 +33,7 @@ function teamOfTheWeek(view: LeagueView): TeamOfTheWeek {
     lines: POSITIONS.map((position) =>
       players
         .filter((p) => p.position === position)
-        .map((p) => ({ name: p.name, points: p.points, ownedBy: p.ownedBy, top: isTop(p.name, p.points) })),
+        .map((p) => ({ name: p.name, club: p.club, points: p.points, ownedBy: p.ownedBy, top: isTop(p.name, p.points) })),
     ).filter((line) => line.length > 0),
   };
 }

@@ -4,11 +4,13 @@ import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
 import { SPARK_HEIGHT, SPARK_WIDTH, type MarketView as MarketModel } from "@/lib/screens/market";
 import {
-  marketRow, pitch, pitchLine, pitchMark, rowEnd, rowName, rowScore, rowTeam, rowText, sectionAside, sectionHead,
-  sectionHeading, sparkBase, sparkLine, token, tokenName, tokenOwners,
+  marketRow, pitch, pitchLine, pitchLines, rowEnd, rowName, rowScore, rowTeam, rowText, sectionAside, sectionHead,
+  sectionHeading, sparkBase, sparkLine, token, tokenKit, tokenName, tokenOwners,
   tokenPoints, youTag,
 } from "@/lib/variants";
+import { stripedClubs } from "@/lib/ui/kits";
 import { AwardEmoji, RankPill, TeamBadge } from "../ui/bits";
+import { PitchMarkings, Shirt } from "../ui/Pitch";
 import { StoryCircles } from "./StoryCircles";
 
 export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) {
@@ -32,27 +34,27 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
           </h2>
         </div>
         <div className={pitch()}>
-          <span aria-hidden="true" className={pitchMark({ at: "topBox" })} />
-          <span aria-hidden="true" className={pitchMark({ at: "halfway" })} />
-          <span aria-hidden="true" className={pitchMark({ at: "circle" })} />
-          <span aria-hidden="true" className={pitchMark({ at: "bottomBox" })} />
-          {model.teamOfTheWeek.lines.map((line, i) => (
-            <div key={i} className={pitchLine()}>
-              {line.map((player) => (
-                <div key={player.name} className={token()}>
-                  <span className={tokenPoints({ top: player.top })}>
-                    {player.points}
-                    {player.ownedBy > 0 ? (
-                      <span className={tokenOwners()} aria-label={`${player.ownedBy} ${t.league.owners}`}>
-                        {player.ownedBy}
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className={tokenName()}>{player.name}</span>
-                </div>
-              ))}
-            </div>
-          ))}
+          <PitchMarkings stripedClubs={stripedClubs(model.teamOfTheWeek.lines.flat().map((player) => player.club))} />
+          <div className={pitchLines()}>
+            {model.teamOfTheWeek.lines.map((line, i) => (
+              <div key={i} className={pitchLine()}>
+                {line.map((player) => (
+                  <div key={`${player.name}-${player.club}`} className={token()}>
+                    <span className={tokenKit()}>
+                      <Shirt club={player.club} />
+                      {player.ownedBy > 0 ? (
+                        <span className={tokenOwners()} aria-label={`${player.ownedBy} ${t.league.owners}`}>
+                          {player.ownedBy}
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className={tokenPoints({ top: player.top })}>{player.points}</span>
+                    <span className={tokenName()}>{player.name}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

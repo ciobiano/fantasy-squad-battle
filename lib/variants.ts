@@ -153,26 +153,26 @@ export const sectionHeading = cva("m-0 text-title");
 export const sectionHead = cva("flex items-baseline justify-between pb-2");
 export const sectionAside = cva("text-footnote font-semibold text-ink-2");
 
-export const pitch = cva("relative flex h-101 flex-col justify-between overflow-hidden rounded-2xl bg-pitch px-1.5 py-4");
-export const pitchLine = cva("relative flex justify-evenly");
-export const pitchMark = cva("absolute border-fine border-pitch-line", {
-  variants: {
-    at: {
-      topBox: "left-1/2 top-0 h-14 w-38 -translate-x-1/2 border-t-0",
-      halfway: "inset-x-0 top-1/2 h-0 border-x-0 border-b-0",
-      circle: "left-1/2 top-1/2 size-21 -translate-x-1/2 -translate-y-1/2 rounded-full",
-      bottomBox: "bottom-0 left-1/2 h-14 w-38 -translate-x-1/2 border-b-0",
-    },
-  },
+/** Matchday grass at 6:7 (the markings' proportions), the same in both themes. */
+export const pitch = cva("relative aspect-6/7 w-full overflow-hidden rounded-2xl bg-pitch");
+export const pitchMarkings = cva("absolute inset-0 size-full");
+/** Paint for the pitch drawing's parts. */
+export const pitchPaint = cva("", {
+  variants: { part: { ground: "fill-pitch", stripe: "fill-pitch-stripe", line: "fill-none stroke-pitch-line", spot: "fill-pitch-line" } },
 });
-/** Players share their line equally (up to 80px each), so a five-man midfield still fits a phone. */
-export const token = cva("flex min-w-0 max-w-20 flex-1 flex-col items-center gap-1.5");
-export const tokenPoints = cva("relative flex h-8 min-w-10 items-center justify-center rounded-sm px-2.5 text-headline font-bold tabular-nums", {
-  variants: { top: { true: "bg-accent text-on-accent", false: "bg-surface text-ink" } },
+export const pitchLines = cva("absolute inset-0 flex flex-col justify-around px-1 py-4.5");
+export const pitchLine = cva("flex justify-evenly");
+/** Players share their line equally (up to 96px each): a five-man midfield fits a phone, a lone keeper gets his full name. */
+export const token = cva("flex min-w-0 max-w-24 flex-1 flex-col items-center gap-0.75");
+export const tokenKit = cva("relative");
+export const tokenOwners = cva(
+  "absolute -right-2.25 -top-1.25 flex h-4.25 min-w-4.25 items-center justify-center rounded-full bg-pitch-badge px-0.75 text-micro font-bold text-on-pitch-badge",
+);
+export const tokenPoints = cva("rounded-sm px-2 py-1 text-footnote font-bold leading-none tabular-nums", {
+  variants: { top: { true: "bg-pitch-top text-on-pitch-top", false: "bg-pitch-chip text-on-pitch-chip" } },
   defaultVariants: { top: false },
 });
-export const tokenOwners = cva("absolute -right-2.5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.25 text-micro font-bold text-bg");
-export const tokenName = cva("max-w-full truncate px-0.5 text-caption font-semibold");
+export const tokenName = cva("max-w-full truncate px-0.5 text-caption font-semibold text-on-pitch");
 
 export const marketRow = cva("flex min-h-15 items-center gap-3 border-t border-hairline text-ink no-underline", {
   variants: { you: { true: "-mx-5 bg-you-tint px-5", false: "" } },

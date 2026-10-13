@@ -56,6 +56,7 @@ Loading (skeletons, not spinners), invalid ID, private league, league over 50 (t
 | Score with breakdown | Cards, rows | "67 (71 −4)": the net score big, the breakdown small |
 | Rank pill | Market rows, Climber and Faller | ▲ green or ▼ red. Always pair the glyph with the colour, never colour alone |
 | Sparkline | Market rows | Season total minus league average, per GW, over a dashed zero line |
+| Team of the Week pitch | Market tab | Matchday grass (Ralph, 13 Oct): muted mowing stripes and full chalk markings at 6:7, the same in both themes. Players wear their club's colours as small shirts (no crests), with a white points pill (mint for the top scorer) and a dark badge for how many in the league own them. Mock: docs/design/mocks/team-of-the-week-directions.png |
 | Story circle | Market tab | Gradient ring when unwatched, grey when watched |
 | Progress segments | Story viewer | One per card, 5 s each. Static when reduced motion is on |
 | Emoji chip | Cards, rows | Noto Color Emoji, never Apple |
