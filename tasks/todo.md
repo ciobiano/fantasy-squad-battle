@@ -82,6 +82,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
 - [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
 - [x] **Asked by the design session (13 Oct):** Captain Disaster's best other player (`captain.best`), Bench Regret's bench players (`bench`), and each manager's league rank after every GW (`MarketRow.rankSeries`). 3 new tests.
+  - Checked on league 314, GW1, GW5 and GW6 (preview): every bench list adds up to FPL's own bench total (22, 26 and 26); each rank series ends on the Table rank.
 - [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
 ## 3. Roasts: `lib/roasts/` (done 2026-10-13)
