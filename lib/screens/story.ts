@@ -28,20 +28,29 @@ export interface StoryView {
   /** The card the link opened. */
   readonly index: number;
   readonly closeHref: string;
+  /** The league's public page for this gameweek, sent along with a shared card. */
+  readonly pageHref: string;
 }
 
+/** A card's image URLs: both formats, both themes, in one language. */
+export function cardImages(leagueId: string, gw: number, key: CardKey, lang: Lang): CardImages {
+  return Object.fromEntries(
+    FORMATS.map((format) => [format, Object.fromEntries(THEMES.map((theme) => [theme, cardUrl(leagueId, gw, key, { format, theme, lang })]))]),
+  ) as CardImages;
+}
+
+/** The public page for a league's gameweek, whose link previews with the Wrapped card. */
+export const sharePageHref = (leagueId: string, gw: number): string => `/s/${leagueId}/${gw}`;
+
 function storyView(leagueId: string, market: MarketData, lang: Lang): Omit<StoryView, "index"> {
-  const images = (key: CardKey): CardImages =>
-    Object.fromEntries(
-      FORMATS.map((format) => [format, Object.fromEntries(THEMES.map((theme) => [theme, cardUrl(leagueId, market.gw, key, { format, theme, lang })]))]),
-    ) as CardImages;
   const keys: readonly CardKey[] = ["wrap", ...market.awards];
   return {
     leagueId,
     leagueName: market.leagueName,
     gw: market.gw,
-    cards: keys.map((key) => ({ key, href: storyHref(leagueId, key), images: images(key) })),
+    cards: keys.map((key) => ({ key, href: storyHref(leagueId, key), images: cardImages(leagueId, market.gw, key, lang) })),
     closeHref: `/league/${leagueId}`,
+    pageHref: sharePageHref(leagueId, market.gw),
   };
 }
 

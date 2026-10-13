@@ -7,16 +7,17 @@
 // next card's page. With JavaScript, cards change in place (the URL follows),
 // each plays for 5 s (the CSS animation on its segment), a press and hold
 // pauses, and under reduced motion nothing advances on its own.
-import Image, { getImageProps } from "next/image";
+import { getImageProps } from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { preload } from "react-dom";
 import type { StoryView } from "@/lib/screens/story";
 import {
-  storyBar, storyCard, storyClose, storyColumn, storyFill, storyImage, storyPause, storySegment, storySegments, storyStage,
+  storyBar, storyCard, storyClose, storyColumn, storyFill, storyPause, storySegment, storySegments, storyStage,
   storyTap, storyTop, storyViewer,
 } from "@/lib/variants";
+import { CardImage } from "../ui/CardImage";
 import { CloseIcon, PauseIcon, PlayIcon } from "../ui/icons";
 import { shownTheme } from "../ui/theme";
 import { markWatched } from "../ui/watched";
@@ -150,18 +151,7 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
           onContextMenu={(event) => event.preventDefault()}
         >
           <div className={storyCard()}>
-            {(["light", "dark"] as const).map((theme) => (
-              <Image
-                key={`${card.key}-${theme}`}
-                src={card.images.status[theme]}
-                alt={labels.titles[index]}
-                fill
-                sizes={SIZES}
-                fetchPriority="high"
-                draggable={false}
-                className={storyImage({ theme })}
-              />
-            ))}
+            <CardImage key={card.key} images={card.images.status} alt={labels.titles[index]} sizes={SIZES} main />
             <Link
               href={cards[index - 1]?.href ?? card.href}
               aria-label={labels.previous}
@@ -182,6 +172,7 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
             images={card.images}
             filename={`squad-battle-gw${view.gw}-${card.key}`}
             cardHref={card.href}
+            pageHref={view.pageHref}
             labels={labels.share[index]}
             open={sharing}
             onOpenChange={setSharing}

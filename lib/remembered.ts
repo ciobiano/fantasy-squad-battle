@@ -2,7 +2,7 @@
 // cookies, the theme in localStorage. Pure, so it's safe in the proxy, the
 // server and the browser; proxy.ts and lib/request.ts are the Next adapters.
 import { isAwardKey } from "@/lib/awards";
-import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
+import { SAMPLE_LEAGUE, fplId, gameweekNumber } from "@/lib/ids";
 
 export const TEAM_COOKIE = "fsb-team";
 export const LEAGUE_COOKIE = "fsb-league";
@@ -13,6 +13,7 @@ export const REMEMBER_FOR = { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "
 
 const TEAM_PAGE = /^\/team\/([^/]+)$/;
 const LEAGUE_PAGE = /^\/league\/([^/]+)(?:\/table|\/story\/([^/]+))?$/;
+const SHARE_PAGE = /^\/s\/([^/]+)\/([^/]+)$/;
 
 /** Pages that carry an ID worth remembering. The sample league isn't one: it has no number. */
 const REMEMBERS: readonly { readonly path: RegExp; readonly cookie: string }[] = [
@@ -31,6 +32,7 @@ export type Visit =
  * - "/" opens the last league straight away, unless the link says ?start=1;
  * - /league/{x}(/table, /story/{card}) is a 404 unless x is a league ID or the
  *   sample league, and the card is the Wrap or an award;
+ * - /s/{league}/{gw} is a 404 unless both are well formed;
  * - /team/{id} and /league/{id}(/table) save that ID.
  */
 export function onVisit(pathname: string, search: URLSearchParams, saved: (cookie: string) => string | undefined): Visit {
@@ -41,6 +43,10 @@ export function onVisit(pathname: string, search: URLSearchParams, saved: (cooki
   const [, league, card] = LEAGUE_PAGE.exec(pathname) ?? [];
   if (league !== undefined && league !== SAMPLE_LEAGUE && fplId(league) === null) return { kind: "not-found" };
   if (card !== undefined && card !== "wrap" && !isAwardKey(card)) return { kind: "not-found" };
+  const [, shareLeague, shareGw] = SHARE_PAGE.exec(pathname) ?? [];
+  if (shareLeague !== undefined && ((shareLeague !== SAMPLE_LEAGUE && fplId(shareLeague) === null) || gameweekNumber(shareGw) === null)) {
+    return { kind: "not-found" };
+  }
   const save = REMEMBERS.flatMap(({ path, cookie }) => {
     const id = fplId(path.exec(pathname)?.[1]);
     return id === null ? [] : [{ name: cookie, value: String(id) }];

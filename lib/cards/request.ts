@@ -3,6 +3,7 @@
 // gameweek or award means there's no such card.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
 import { LANGS } from "@/lib/i18n";
+import { gameweekNumber } from "@/lib/ids";
 import { FORMATS, THEMES, cardQuery } from "./query";
 import type { CardOptions } from "./types";
 
@@ -25,13 +26,6 @@ function cardKind(segment: string): CardKind | null {
   return (AWARD_KEYS as readonly string[]).includes(segment) ? { kind: "award", award: segment as AwardKey } : null;
 }
 
-/** A gameweek number from the path: 1–38, digits only. */
-function gameweek(segment: string): number | null {
-  if (!/^\d{1,2}$/.test(segment)) return null;
-  const gw = Number(segment);
-  return gw >= 1 && gw <= 38 ? gw : null;
-}
-
 export interface CardRequest {
   /** The league segment as given: an ID or "sample"; the loader checks it. */
   readonly league: string;
@@ -46,7 +40,7 @@ export function cardRequest(
   params: { readonly league: string; readonly gw: string; readonly award: string },
   query: URLSearchParams,
 ): CardRequest | null {
-  const gw = gameweek(params.gw);
+  const gw = gameweekNumber(params.gw);
   const kind = cardKind(params.award);
   if (gw === null || kind === null) return null;
   return { league: params.league, gw, kind, options: cardOptions(query), provisional: query.get("provisional") === "1" };

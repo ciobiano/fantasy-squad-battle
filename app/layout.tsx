@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { clsx } from "clsx";
 import { THEME_SCRIPT } from "@/lib/remembered";
+import { SITE_URL } from "@/lib/site";
 import { rootBody, rootHtml } from "@/lib/variants";
 import "./globals.css";
 
@@ -11,6 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
   title: "Fantasy Squad Battle",
   description: "Weekly roast cards for your fantasy football mini-league.",
 };

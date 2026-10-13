@@ -225,7 +225,7 @@ export const storyClose = cva("inline-flex size-11 items-center justify-center r
 export const storyStage = cva("flex min-h-0 flex-1 items-center justify-center px-2 container-size");
 export const storyCard = cva("relative overflow-hidden rounded-lg bg-surface story-fit");
 /** A card image for one theme: the other is hidden, so only the one shown downloads (lazy). */
-export const storyImage = cva("object-cover", {
+export const cardImage = cva("object-cover", {
   variants: { theme: { light: "dark:hidden", dark: "hidden dark:block" } },
 });
 export const storyTap = cva("absolute inset-y-0", { variants: { side: { previous: "left-0 w-3/10", next: "right-0 w-7/10" } } });
@@ -254,6 +254,17 @@ export const sheetText = cva("flex flex-1 flex-col gap-0.5");
 export const sheetOptionTitle = cva("text-headline font-semibold");
 export const sheetOptionSub = cva("text-footnote text-ink-2");
 export const sheetCancel = cva("mt-2.5 flex h-13 items-center justify-center rounded-lg bg-hairline text-headline font-semibold text-ink no-underline");
+
+// ---------------------------------------------------------------- Share page (public)
+
+export const shareTop = cva("flex min-h-13 items-center justify-between");
+export const shareMake = cva("flex min-h-11 items-center text-callout font-semibold text-on-sky-2 no-underline");
+export const shareWrap = cva("relative mx-auto aspect-square w-full max-w-90 overflow-hidden rounded-2xl border border-hairline bg-surface");
+export const shareAwards = cva("-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 scrollbar-none");
+export const shareAward = cva("relative size-55 shrink-0 snap-start overflow-hidden rounded-xl border border-hairline bg-surface");
+export const shareNote = cva("m-0 text-footnote text-ink-2");
+export const shareCta = cva("sticky bottom-0 -mx-5 mt-auto flex flex-col gap-2 bg-linear-to-b from-transparent to-bg to-30% px-5 pt-6 pb-7");
+export const shareCtaSub = cva("self-center text-footnote text-ink-2");
 
 // ---------------------------------------------------------------- Fixtures
 

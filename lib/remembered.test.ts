@@ -42,6 +42,11 @@ describe("onVisit", () => {
     expect(visit("/league/0/table")).toEqual({ kind: "not-found" });
     expect(visit("/league/sample/table")).toEqual({ kind: "continue", save: [] });
   });
+  it("refuses a share page link that isn't well formed, and saves nothing for a good one", () => {
+    expect(visit("/s/abc/5")).toEqual({ kind: "not-found" });
+    expect(visit("/s/314/0")).toEqual({ kind: "not-found" });
+    expect(visit("/s/314/5")).toEqual({ kind: "continue", save: [] });
+  });
   it("refuses a story link for a card that doesn't exist, and remembers a real one's league", () => {
     expect(visit("/league/314/story/banana")).toEqual({ kind: "not-found" });
     expect(visit("/league/abc/story/oga")).toEqual({ kind: "not-found" });

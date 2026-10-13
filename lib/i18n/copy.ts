@@ -116,6 +116,16 @@ export interface Copy {
     readonly saveSub: string;
     readonly cancel: string;
   };
+  /** The public share page and its link preview. */
+  readonly sharePage: {
+    readonly makeYourOwn: string;
+    readonly awards: string;
+    readonly disclaimer: string;
+    readonly cta: string;
+    readonly ctaSub: string;
+    readonly metaTitle: (league: string, gw: number) => string;
+    readonly metaDescription: string;
+  };
   /** Award titles, on the cards and for the story circles. */
   readonly awards: Readonly<Record<AwardKey, string>>;
   /** One-word award names under the story circles. */

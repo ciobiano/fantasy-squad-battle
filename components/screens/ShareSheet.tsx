@@ -33,6 +33,8 @@ interface ShareSheetProps {
   readonly filename: string;
   /** Where Cancel goes with no JavaScript: this card's page. */
   readonly cardHref: string;
+  /** The league's public page, sent with the image (a Status caption, the post's text on X). */
+  readonly pageHref: string;
   readonly labels: ShareLabels;
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -52,7 +54,7 @@ function download(url: string, name: string) {
   link.click();
 }
 
-export function ShareSheet({ images, filename, cardHref, labels, open, onOpenChange }: ShareSheetProps) {
+export function ShareSheet({ images, filename, cardHref, pageHref, labels, open, onOpenChange }: ShareSheetProps) {
   // The PNGs are fetched when the sheet opens, so sharing starts straight from
   // the tap: phones only allow the share sheet right after a tap.
   const files = useRef(new Map<string, Promise<Blob>>());
@@ -72,7 +74,7 @@ export function ShareSheet({ images, filename, cardHref, labels, open, onOpenCha
       const blob = await (files.current.get(url) ?? fetch(url).then((response) => response.blob()));
       const file = new File([blob], name(format), { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: labels.title });
+        await navigator.share({ files: [file], title: labels.title, text: new URL(pageHref, window.location.origin).href });
         onOpenChange(false);
         return;
       }

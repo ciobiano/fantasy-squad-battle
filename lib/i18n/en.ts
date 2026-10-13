@@ -114,6 +114,15 @@ export const en: Copy = {
     saveSub: "Both sizes",
     cancel: "Cancel",
   },
+  sharePage: {
+    makeYourOwn: "Make your own",
+    awards: "The awards",
+    disclaimer: "A fan project. Not affiliated with the Premier League.",
+    cta: "Roast your own league",
+    ctaSub: "Free. No sign-up.",
+    metaTitle: (league, gw) => `${league}: GW ${gw} roast`,
+    metaDescription: "Who carried the league this week, and who's holding the Wooden Spoon.",
+  },
   awards: {
     oga: "Oga of the Week",
     climber: "Biggest Climber",

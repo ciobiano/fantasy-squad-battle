@@ -114,6 +114,15 @@ export const fr: Copy = {
     saveSub: "Les deux formats",
     cancel: "Annuler",
   },
+  sharePage: {
+    makeYourOwn: "Créer la vôtre",
+    awards: "Les récompenses",
+    disclaimer: "Un projet de fans. Sans lien avec la Premier League.",
+    cta: "Chambrez votre ligue",
+    ctaSub: "Gratuit. Sans inscription.",
+    metaTitle: (league, gw) => `${league} : chambrage J${gw}`,
+    metaDescription: "Qui a porté la ligue cette semaine, et qui tient la cuillère de bois.",
+  },
   awards: {
     oga: "Patron de la semaine",
     climber: "Plus belle remontée",
