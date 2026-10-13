@@ -90,13 +90,15 @@
   }
 }
 
-/* Story viewer: each card's progress segment fills in 5 s; the card advances when it ends. */
+/* Story viewer: each card's progress segment fills in 5 s; the card advances when it ends.
+   Animates `scale`, the property Tailwind's scale-x-* utilities set: animating transform
+   instead would combine with their scale-x-0 and keep the segment empty. */
 @keyframes story-fill {
   from {
-    transform: scaleX(0);
+    scale: 0 1;
   }
   to {
-    transform: scaleX(1);
+    scale: 1 1;
   }
 }
 @utility animate-story {
@@ -118,6 +120,9 @@
 /* No "save image" menu on a long press: holding a card pauses it. */
 @utility touch-callout-none {
   -webkit-touch-callout: none;
+}
+@utility no-drag {
+  -webkit-user-drag: none;
 }
 
 :focus-visible {

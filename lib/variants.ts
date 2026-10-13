@@ -223,13 +223,17 @@ export const storyFill = cva("block size-full origin-left bg-ink", {
 });
 export const storyTop = cva("flex justify-end py-1");
 export const storyClose = cva("inline-flex size-11 items-center justify-center rounded-full text-ink");
-export const storyStage = cva("flex min-h-0 flex-1 items-center justify-center px-2 container-size");
+/** touch-none: the browser doesn't claim a held finger for scrolling or zooming, so a hold stays a pause. */
+export const storyStage = cva("flex min-h-0 flex-1 touch-none items-center justify-center px-2 container-size");
 export const storyCard = cva("relative overflow-hidden rounded-lg bg-surface story-fit");
 /** A card image for one theme: the other is hidden, so only the one shown downloads (lazy). */
 export const cardImage = cva("object-cover", {
   variants: { theme: { light: "dark:hidden", dark: "hidden dark:block" } },
 });
-export const storyTap = cva("absolute inset-y-0", { variants: { side: { previous: "left-0 w-3/10", next: "right-0 w-7/10" } } });
+/** Tap zones are links (they work without JavaScript), kept from starting a link drag or preview on a long press. */
+export const storyTap = cva("absolute inset-y-0 select-none touch-callout-none no-drag", {
+  variants: { side: { previous: "left-0 w-3/10", next: "right-0 w-7/10" } },
+});
 export const storyBar = cva("flex gap-3 px-2 pt-4");
 export const storyShareWrap = cva("flex-1");
 export const storyShare = cva(

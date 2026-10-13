@@ -155,12 +155,14 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
             <Link
               href={cards[index - 1]?.href ?? card.href}
               aria-label={labels.previous}
+              draggable={false}
               onClick={tap(index - 1)}
               className={storyTap({ side: "previous" })}
             />
             <Link
               href={cards[index + 1]?.href ?? closeHref}
               aria-label={labels.next}
+              draggable={false}
               onClick={tap(index + 1)}
               className={storyTap({ side: "next" })}
             />
