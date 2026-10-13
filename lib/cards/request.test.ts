@@ -11,7 +11,7 @@ describe("cardRequest", () => {
       league: "314",
       gw: 5,
       kind: { kind: "wrap" },
-      options: { format: "status", theme: "dark", lang: "pcm" },
+      options: { format: "status", theme: "dark", lang: "pcm", preview: false },
       provisional: false,
     });
   });
@@ -21,7 +21,7 @@ describe("cardRequest", () => {
       options: { format: "x", theme: "light", lang: "fr" },
       provisional: true,
     });
-    expect(cardRequest(params("5", "oga"), query("format=gif&theme=pink&lang=de"))?.options).toEqual({ format: "status", theme: "dark", lang: "pcm" });
+    expect(cardRequest(params("5", "oga"), query("format=gif&theme=pink&lang=de"))?.options).toEqual({ format: "status", theme: "dark", lang: "pcm", preview: false });
   });
   it("accepts the Wrap and the eight awards only", () => {
     expect(cardRequest(params("5", "toString"), query())).toBeNull();
@@ -35,15 +35,17 @@ describe("cardRequest", () => {
 
 describe("cardUrl", () => {
   it("builds the URL cardRequest reads back", () => {
-    const url = new URL(cardUrl("314", 5, "spoon", { format: "x", theme: "light", lang: "fr" }), "https://example.test");
+    const url = new URL(cardUrl("314", 5, "spoon", { format: "x", theme: "light", lang: "fr", preview: true }), "https://example.test");
     const [, , league, gw, award] = url.pathname.split("/");
     expect(cardRequest({ league, gw, award }, url.searchParams)).toMatchObject({
-      league: "314", gw: 5, kind: { kind: "award", award: "spoon" }, options: { format: "x", theme: "light", lang: "fr" },
+      league: "314", gw: 5, kind: { kind: "award", award: "spoon" }, options: { format: "x", theme: "light", lang: "fr", preview: true },
     });
   });
-  it("only ever produces one of the queries the image optimiser allows", () => {
+  it("lets only in-app previews through the image optimiser, never the shared images", () => {
+    const query = (preview: boolean) => new URL(cardUrl("sample", 5, "wrap", { format: "status", theme: "dark", lang: "pcm", preview }), "https://x.test").search;
     expect(cardQueries()).toHaveLength(12);
-    expect(cardQueries()).toContain(new URL(cardUrl("sample", 5, "wrap", { format: "status", theme: "dark", lang: "pcm" }), "https://x.test").search);
+    expect(cardQueries()).toContain(query(true));
+    expect(cardQueries()).not.toContain(query(false));
   });
 });
 

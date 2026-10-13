@@ -16,6 +16,7 @@ function cardOptions(query: URLSearchParams): CardOptions {
     format: pick(FORMATS, query.get("format"), "status"),
     theme: pick(THEMES, query.get("theme"), "dark"),
     lang: pick(LANGS, query.get("lang"), "pcm"),
+    preview: query.get("preview") === "1",
   };
 }
 

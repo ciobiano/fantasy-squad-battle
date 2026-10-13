@@ -10,7 +10,7 @@ import { page } from "@/lib/variants";
 // everyone else, and for "Change team" / errors (?start=1).
 async function StartForRequest({ searchParams }: { searchParams: PageProps<"/">["searchParams"] }) {
   const [lang, query] = await Promise.all([requestLang(), searchParams]);
-  return <Start view={startView(query)} lang={lang} />;
+  return <Start view={startView(query, lang)} lang={lang} />;
 }
 
 export default function StartPage({ searchParams }: PageProps<"/">) {

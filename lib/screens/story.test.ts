@@ -29,6 +29,7 @@ describe("loadStory", () => {
     const card = (await view_("sample", "wrap", "fr", none)).cards[0];
     expect(card.images.status.light).toBe("/cards/sample/5/wrap?format=status&theme=light&lang=fr");
     expect(card.images.x.dark).toBe("/cards/sample/5/wrap?format=x&theme=dark&lang=fr");
+    expect(card.preview.dark).toBe("/cards/sample/5/wrap?format=status&theme=dark&lang=fr&preview=1");
   });
   it("only has cards for awards somebody won", async () => {
     expect((await view_("314", "spoon", "en", real)).cards.map((c) => c.key)).toEqual(["wrap", "oga", "spoon"]);

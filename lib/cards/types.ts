@@ -104,4 +104,10 @@ export interface CardOptions {
   readonly format: CardFormat;
   readonly theme: CardTheme;
   readonly lang: Lang;
+  /**
+   * Shown in the app (story viewer, share page): no grain. The grain is noise,
+   * slow to draw and impossible to compress, and invisible at phone size.
+   * Shared and saved images keep it.
+   */
+  readonly preview: boolean;
 }

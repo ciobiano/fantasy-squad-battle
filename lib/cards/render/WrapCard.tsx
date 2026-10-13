@@ -23,7 +23,7 @@ export function WrapCard({ model, options }: { model: WrapCardModel; options: Ca
   const average = decimal(model.leagueAverage, lang);
 
   return (
-    <CardFrame format={format} theme={theme} p={p}>
+    <CardFrame format={format} theme={theme} p={p} grain={!options.preview}>
       <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: w.gap }}>
         <MetaRow league={model.meta.leagueName} gw={l.gw(model.meta.gw)} provisional={model.meta.provisional ? l.provisional : null} z={z} p={p} />
         <div style={{ display: "flex", height: w.air, flexShrink: 0 }} />

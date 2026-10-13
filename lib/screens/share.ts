@@ -15,6 +15,7 @@ import { SAMPLE_TABLE, type TableView } from "./table";
 export interface ShareCard {
   /** Opens this card in the story viewer. */
   readonly href: string;
+  /** The square card as shown on the page (the in-app copy, no grain). */
   readonly images: CardImages["x"];
 }
 
@@ -32,7 +33,7 @@ export interface ShareView {
 function shareView(leagueId: string, market: MarketData, table: TableView, lang: Lang): ShareView {
   const card = (key: AwardKey | "wrap"): ShareCard => ({
     href: storyHref(leagueId, key),
-    images: cardImages(leagueId, market.gw, key, lang).x,
+    images: cardImages(leagueId, market.gw, key, lang, true).x,
   });
   return {
     leagueId,
@@ -41,7 +42,7 @@ function shareView(leagueId: string, market: MarketData, table: TableView, lang:
     wrap: card("wrap"),
     awards: market.awards.map((key) => ({ key, ...card(key) })),
     table,
-    previewImage: cardUrl(leagueId, market.gw, "wrap", { format: "x", theme: "dark", lang }),
+    previewImage: cardUrl(leagueId, market.gw, "wrap", { format: "x", theme: "dark", lang, preview: false }),
   };
 }
 

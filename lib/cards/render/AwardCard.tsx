@@ -25,7 +25,7 @@ export function AwardCard({ model, options }: { model: AwardCardModel; options: 
   const { value, arrow, note, message } = describe(model.facts, model.winners.length, lang);
 
   return (
-    <CardFrame format={format} theme={theme} p={p}>
+    <CardFrame format={format} theme={theme} p={p} grain={!options.preview}>
       <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: z.gap }}>
         <MetaRow league={model.meta.leagueName} gw={l.gw(model.meta.gw)} provisional={model.meta.provisional ? l.provisional : null} z={z} p={p} />
         <div style={{ display: "flex", height: airAbove(format, model.winners.length), flexShrink: 0 }} />

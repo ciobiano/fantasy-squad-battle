@@ -41,6 +41,8 @@ export interface StoryLabels {
 /** A press longer than this pauses instead of moving on. */
 const HOLD_MS = 250;
 const SIZES = "(max-width: 448px) 92vw, 420px";
+/** How many cards ahead start downloading. */
+const PRELOAD_AHEAD = 2;
 
 export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLabels }) {
   const router = useRouter();
@@ -68,12 +70,14 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
     markWatched(view.leagueId, view.gw, card.key);
   }, [view.leagueId, view.gw, card.key]);
 
-  // The next card starts downloading while this one plays, in the theme on screen.
+  // The next cards start downloading while this one plays, in the theme on screen
+  // (about 26 KB each), so quick taps don't wait.
   useEffect(() => {
-    const next = cards[index + 1];
-    if (!next) return;
-    const { props } = getImageProps({ src: next.images.status[shownTheme()], alt: "", fill: true, sizes: SIZES });
-    if (props.srcSet) preload(props.src, { as: "image", imageSrcSet: props.srcSet, imageSizes: props.sizes, fetchPriority: "low" });
+    const theme = shownTheme();
+    for (const next of cards.slice(index + 1, index + 1 + PRELOAD_AHEAD)) {
+      const { props } = getImageProps({ src: next.preview[theme], alt: "", fill: true, sizes: SIZES });
+      if (props.srcSet) preload(props.src, { as: "image", imageSrcSet: props.srcSet, imageSizes: props.sizes, fetchPriority: "low" });
+    }
   }, [cards, index]);
 
   useEffect(() => {
@@ -151,7 +155,7 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
           onContextMenu={(event) => event.preventDefault()}
         >
           <div className={storyCard()}>
-            <CardImage key={card.key} images={card.images.status} alt={labels.titles[index]} sizes={SIZES} main />
+            <CardImage key={card.key} images={card.preview} alt={labels.titles[index]} sizes={SIZES} main />
             <Link
               href={cards[index - 1]?.href ?? card.href}
               aria-label={labels.previous}

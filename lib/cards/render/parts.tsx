@@ -39,11 +39,13 @@ interface CardFrameProps {
   readonly format: CardFormat;
   readonly theme: CardTheme;
   readonly p: CardPalette;
+  /** Shared images only; previews leave it out (CardOptions.preview). */
+  readonly grain: boolean;
   readonly children: ReactNode;
 }
 
 /** The card ground, the Mist sky with its grain, and the padded layout. */
-export function CardFrame({ format, theme, p, children }: CardFrameProps) {
+export function CardFrame({ format, theme, p, grain, children }: CardFrameProps) {
   const s = sky(theme, format);
   const root: CSSProperties = {
     position: "relative",
@@ -60,7 +62,8 @@ export function CardFrame({ format, theme, p, children }: CardFrameProps) {
   return (
     <div style={root}>
       <div style={{ position: "absolute", left: 0, top: 0, display: "flex", width: CARD_WIDTH, height: s.height, backgroundImage: s.background }}>
-        <div
+        {grain ? (
+          <div
           style={{
             position: "absolute",
             left: 0,
@@ -71,9 +74,10 @@ export function CardFrame({ format, theme, p, children }: CardFrameProps) {
             backgroundImage: `url(${GRAIN_URL})`,
             backgroundRepeat: "repeat",
             backgroundSize: "128px 128px",
-            maskImage: "linear-gradient(to bottom, #000 40%, transparent 100%)",
-          }}
-        />
+              maskImage: "linear-gradient(to bottom, #000 40%, transparent 100%)",
+            }}
+          />
+        ) : null}
       </div>
       {children}
     </div>

@@ -29,12 +29,11 @@ export function Start({ view, lang }: { view: StartView; lang: Lang }) {
       </header>
 
       <div aria-hidden="true" className={previewStack()}>
-        <span className={previewCard({ tilt: "left" })}>
-          <Image src="/cards/sample/5/oga?format=x&theme=dark" alt="" width={152} height={152} priority />
-        </span>
-        <span className={previewCard({ tilt: "right" })}>
-          <Image src="/cards/sample/5/spoon?format=x&theme=dark" alt="" width={152} height={152} />
-        </span>
+        {view.previews.map((src, i) => (
+          <span key={src} className={previewCard({ tilt: i === 0 ? "left" : "right" })}>
+            <Image src={src} alt="" width={152} height={152} preload={i === 0} />
+          </span>
+        ))}
       </div>
 
       <h1 className={startHeadline()}>{s.headline}</h1>

@@ -21,7 +21,7 @@ describe("loadSharePage", () => {
     const v = await view("sample", "5", "en", none);
     expect(v.awards.map((a) => a.key)).toEqual(SAMPLE_MARKET.awards);
     expect(v.awards[0].href).toBe("/league/sample/story/oga");
-    expect(v.wrap.images.light).toBe("/cards/sample/5/wrap?format=x&theme=light&lang=en");
+    expect(v.wrap.images.light).toBe("/cards/sample/5/wrap?format=x&theme=light&lang=en&preview=1");
     expect(v.table.rows).toHaveLength(12);
   });
   it("previews links with the dark, square Wrapped card", async () => {

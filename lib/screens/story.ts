@@ -18,7 +18,10 @@ export interface StoryCard {
   readonly key: CardKey;
   /** This card's story page. */
   readonly href: string;
+  /** The shared images, at full size with their grain. */
   readonly images: CardImages;
+  /** What the viewer shows: the tall card without grain, lighter to draw and to send. */
+  readonly preview: CardImages["status"];
 }
 
 export interface StoryView {
@@ -33,10 +36,13 @@ export interface StoryView {
   readonly pageHref: string;
 }
 
-/** A card's image URLs: both formats, both themes, in one language. */
-export function cardImages(leagueId: string, gw: number, key: CardKey, lang: Lang): CardImages {
+/** A card's image URLs: both formats, both themes, in one language; `preview` for the in-app copies. */
+export function cardImages(leagueId: string, gw: number, key: CardKey, lang: Lang, preview = false): CardImages {
   return Object.fromEntries(
-    FORMATS.map((format) => [format, Object.fromEntries(THEMES.map((theme) => [theme, cardUrl(leagueId, gw, key, { format, theme, lang })]))]),
+    FORMATS.map((format) => [
+      format,
+      Object.fromEntries(THEMES.map((theme) => [theme, cardUrl(leagueId, gw, key, { format, theme, lang, preview })])),
+    ]),
   ) as CardImages;
 }
 
@@ -49,7 +55,12 @@ function storyView(leagueId: string, market: MarketData, lang: Lang): Omit<Story
     leagueId,
     leagueName: market.leagueName,
     gw: market.gw,
-    cards: keys.map((key) => ({ key, href: storyHref(leagueId, key), images: cardImages(leagueId, market.gw, key, lang) })),
+    cards: keys.map((key) => ({
+      key,
+      href: storyHref(leagueId, key),
+      images: cardImages(leagueId, market.gw, key, lang),
+      preview: cardImages(leagueId, market.gw, key, lang, true).status,
+    })),
     closeHref: `/league/${leagueId}`,
     pageHref: sharePageHref(leagueId, market.gw),
   };
