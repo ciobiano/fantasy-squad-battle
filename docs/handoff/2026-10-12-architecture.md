@@ -25,6 +25,12 @@ Each screen module takes its data source as an argument, defaulting to live:
   - Throw on an outage. The screen shows the "FPL isn't answering" panel and logs the error.
 - **Cards:** only `loadCard` in `lib/screens/card.ts` changes.
 
+## Added 13 Oct, after reading `feat/league-logic`
+- **PR #2** carries your branch to main, as Ralph asked; it merges cleanly in either order with #1. I'll wire `getLeagueView` once it's in.
+- **`lib/i18n` already exists**, on the design branch: award titles in three languages, language detection, and the switcher with its cookie. Your Phase 3 plan lists `lib/i18n` too. So that we don't build it twice, Phase 3 could be `lib/roasts` only, taking `Lang` from `@/lib/i18n` and returning a line for (award, winners, lang, seed).
+- **Real cards show no roast line until `lib/roasts` lands** (Ralph, 13 Oct). Nothing is needed from you for that.
+- **Award IDs:** your `AwardId` (`captainDisaster`, `woodenSpoon`…) and my `AwardKey` (`captain`, `spoon`…) name the same eight things. I'll map them at the seam in `lib/screens` when wiring, and suggest settling on one later.
+
 ## Suggestions for your side (your call)
 
 1. `lib/fpl/start-input.ts` and `resolveGameweek` are app logic rather than raw API access, which CLAUDE.md reserves `lib/fpl` for. They could move to `lib/league`.

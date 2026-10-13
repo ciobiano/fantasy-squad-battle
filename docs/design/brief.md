@@ -95,7 +95,7 @@ Both share Inter for UI and numbers, the same components and the same data. They
 - **Grain:** fine monochrome noise at 16%, fading out with the sky. Check that `next/og` renders it (or ship it as a PNG tile).
 - **Clear of the Premier League palette.** The PL's own stylesheet (premierleague.com, read 2026-10-10) uses cyan `#05F0FF`, green `#00FF87`, purple `#37003C`, lilac `#953BFF`, pink `#FF2882`, orange `#FF6900`, yellow `#EBFF00`, all at full chroma. Every sky and accent colour is ΔE2000 ≥ 16 from all of them, at chroma ≤ 19. The bright Mint (`#35E1E5` → `#28E4A3`) was ΔE 4.7 and 9.7 from PL cyan and green, so it is retired. Movement green `#2FD27A` is ΔE 10 from PL green; it stays, because it is a status colour on small pills, never a brand fill.
 - **Retired:** bright Mint, Harmattan (gold to apricot) and Lagoon (aqua to cornflower).
-- **Cards in both themes:** a card renders in light or dark. Proposal (Ralph to confirm): the shared image follows the app's theme at the moment of sharing; link previews use dark.
+- **Cards in both themes:** a card renders in light or dark. Confirmed by Ralph (2026-10-13): the shared image follows the app's theme at the moment of sharing; link previews use dark.
 
 **Learned in pass 1 (2026-10-09):**
 - Bright green and red pills need dark ink. White on #2FD27A is only 2.0:1.
