@@ -6,7 +6,7 @@ import { SPARK_HEIGHT, SPARK_WIDTH, type MarketView as MarketModel } from "@/lib
 import {
   marketRow, pitch, pitchLine, pitchMark, rowEnd, rowName, rowScore, rowTeam, rowText, sectionAside, sectionHead,
   sectionHeading, sparkBase, sparkLine, token, tokenName, tokenOwners,
-  tokenPoints,
+  tokenPoints, youTag,
 } from "@/lib/variants";
 import { AwardEmoji, RankPill, TeamBadge } from "../ui/bits";
 import { StoryCircles } from "./StoryCircles";
@@ -73,6 +73,7 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
                 <span className={rowName()}>
                   {row.firstName}
                   {award ? <AwardEmoji award={award} size={14} /> : null}
+                  {row.you ? <span className={youTag()}>{t.league.you}</span> : null}
                 </span>
                 <span className={rowTeam()}>{row.teamName}</span>
               </span>
@@ -81,7 +82,7 @@ export function MarketView({ model, lang }: { model: MarketModel; lang: Lang }) 
                 <polyline points={spark.points} className={sparkLine({ direction: spark.direction })} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span className={rowEnd()}>
-                <span className={rowScore()}>{row.net}</span>
+                <span className={rowScore()}>{row.net ?? "–"}</span>
                 <RankPill move={move} words={words} />
               </span>
             </>

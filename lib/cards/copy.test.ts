@@ -48,7 +48,7 @@ group("describe", () => {
   });
 
   it("keeps the same facts in every language (D2)", () => {
-    const facts = { award: "captain", captain: { name: "João Pedro", points: 0 }, best: { name: "Groß", points: 28 } } as const;
+    const facts = { award: "captain", captain: { name: "João Pedro", points: 0 }, best: { name: "Groß", points: 28, scope: "team" } } as const;
     const values = (["pcm", "en", "fr"] as const).map((lang) => describe(facts, 1, lang).value);
     expect(new Set(values)).toEqual(new Set(["0"]));
   });

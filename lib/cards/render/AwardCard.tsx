@@ -150,10 +150,12 @@ function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
       );
     }
     case "captain": {
+      if (!facts.best) return null;
       const max = Math.max(facts.captain.points, facts.best.points, 1);
+      const bestLabel = facts.best.scope === "team" ? l.best(facts.best.name) : l.topThisWeek(facts.best.name);
       const bars = [
         { label: l.captain(facts.captain.name), value: facts.captain.points, colour: p.down },
-        { label: l.best(facts.best.name), value: facts.best.points, colour: p.neutral },
+        { label: bestLabel, value: facts.best.points, colour: p.neutral },
       ];
       return (
         <div style={{ ...frameStyle(z, p), gap: z.barGap }}>
@@ -172,6 +174,7 @@ function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
       );
     }
     case "bench":
+      if (facts.players.length === 0) return null;
       return (
         <div style={{ display: "flex", gap: 16 }}>
           {facts.players.map((player) => (

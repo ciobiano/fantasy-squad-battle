@@ -8,6 +8,7 @@ import { FORMATS, THEMES } from "@/lib/cards/query";
 import { cardUrl, type CardKey } from "@/lib/cards/request";
 import type { CardFormat, CardTheme } from "@/lib/cards/types";
 import { liveLeague, type LeagueSource } from "./league";
+import { marketFromView } from "./from-view";
 import { SAMPLE_MARKET, storyHref, type MarketData } from "./market";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 
@@ -54,7 +55,7 @@ function storyView(leagueId: string, market: MarketData, lang: Lang): Omit<Story
   };
 }
 
-/** A card that isn't in this gameweek's stories is a 404; a league without stories yet goes back to its page. */
+/** The newest unlocked gameweek's stories. A card nobody won is a 404; a league with no gameweek yet goes back to its page. */
 export async function loadStory(
   leagueSegment: string,
   cardSegment: string,
@@ -69,7 +70,7 @@ export async function loadStory(
   const leagueId = fplId(leagueSegment);
   if (leagueId === null) return notFound();
   return guard("story", `/league/${leagueId}/story/${cardSegment}`, async () => {
-    const market = await source.market(leagueId);
-    return market ? open(storyView(String(leagueId), market, lang)) : redirectTo(`/league/${leagueId}`);
+    const result = await source.view(leagueId, {});
+    return result.ok ? open(storyView(String(leagueId), marketFromView(result.data), lang)) : redirectTo(`/league/${leagueId}`);
   });
 }

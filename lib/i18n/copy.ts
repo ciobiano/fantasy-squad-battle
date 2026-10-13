@@ -144,6 +144,7 @@ export interface Copy {
     readonly below: (points: number) => string;
     readonly captain: (name: string) => string;
     readonly best: (name: string) => string;
+    readonly topThisWeek: (name: string) => string;
     readonly kept: string;
     readonly paid: string;
     readonly others: (count: number) => string;

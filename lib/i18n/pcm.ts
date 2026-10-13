@@ -147,6 +147,7 @@ export const pcm: Copy = {
     below: (points) => `${points} under league average`,
     captain: (name) => `Captain · ${name}`,
     best: (name) => `Best for team · ${name}`,
+    topThisWeek: (name) => `Best this week · ${name}`,
     kept: "kept",
     paid: "paid",
     others: (count) => `+${count} others`,

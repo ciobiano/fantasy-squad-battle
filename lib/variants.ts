@@ -165,13 +165,14 @@ export const pitchMark = cva("absolute border-fine border-pitch-line", {
     },
   },
 });
-export const token = cva("flex w-20 flex-col items-center gap-1.5");
+/** Players share their line equally (up to 80px each), so a five-man midfield still fits a phone. */
+export const token = cva("flex min-w-0 max-w-20 flex-1 flex-col items-center gap-1.5");
 export const tokenPoints = cva("relative flex h-8 min-w-10 items-center justify-center rounded-sm px-2.5 text-headline font-bold tabular-nums", {
   variants: { top: { true: "bg-accent text-on-accent", false: "bg-surface text-ink" } },
   defaultVariants: { top: false },
 });
 export const tokenOwners = cva("absolute -right-2.5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.25 text-micro font-bold text-bg");
-export const tokenName = cva("max-w-19.5 truncate text-caption font-semibold");
+export const tokenName = cva("max-w-full truncate px-0.5 text-caption font-semibold");
 
 export const marketRow = cva("flex min-h-15 items-center gap-3 border-t border-hairline text-ink no-underline", {
   variants: { you: { true: "-mx-5 bg-you-tint px-5", false: "" } },

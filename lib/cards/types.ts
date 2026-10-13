@@ -54,11 +54,16 @@ export type AwardFacts =
   | {
       readonly award: "captain";
       readonly captain: { readonly name: string; readonly points: number };
-      readonly best: { readonly name: string; readonly points: number };
+      /**
+       * What the captain is set against: the best player in the manager's team,
+       * or the gameweek's top player when the team's isn't known. null: no bars.
+       */
+      readonly best: { readonly name: string; readonly points: number; readonly scope: "team" | "gameweek" } | null;
     }
   | {
       readonly award: "bench";
       readonly total: number;
+      /** The benched players and their points; empty draws no tiles. */
       readonly players: readonly { readonly name: string; readonly points: number }[];
     }
   | {

@@ -4,7 +4,9 @@ import { getStandings } from "@/lib/fpl/api";
 import { resolveGameweek } from "@/lib/fpl/league-gameweek";
 import type { Standings } from "@/lib/fpl/schemas";
 import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
-import { SAMPLE_MARKET, marketView, type MarketData, type MarketView } from "./market";
+import { getLeagueView, type LeagueViewResult } from "@/lib/league/league-view";
+import { marketFromView } from "./from-view";
+import { SAMPLE_MARKET, marketView, type MarketView } from "./market";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import { startHref } from "./start";
 import { SAMPLE_TABLE, tableView, type TableView } from "./table";
@@ -15,8 +17,12 @@ export interface LeagueSource {
   readonly standings: (leagueId: number) => Promise<Standings | null>;
   /** The newest gameweek with unlocked cards; null before the season starts. */
   readonly latestGameweek: () => Promise<number | null>;
-  /** The Market and its awards; null until the award logic (lib/league) is wired in. */
-  readonly market: (leagueId: number) => Promise<MarketData | null>;
+  /**
+   * The league's computed gameweek (lib/league): awards, Market, Table, Team of
+   * the Week. The newest unlocked gameweek unless one is asked for; `youId` marks
+   * the visitor's row. Slower than standings when cold (one FPL read per manager).
+   */
+  readonly view: (leagueId: number, options: { readonly gw?: number; readonly youId?: number }) => Promise<LeagueViewResult>;
 }
 
 export const liveLeague: LeagueSource = {
@@ -25,7 +31,7 @@ export const liveLeague: LeagueSource = {
     const choice = await resolveGameweek(undefined, Date.now());
     return choice.ok ? choice.id : null;
   },
-  market: async () => null,
+  view: (leagueId, { gw, youId }) => getLeagueView(leagueId, { gw, youId, now: Date.now() }),
 };
 
 export type LeagueTab = "market" | "table";
@@ -40,7 +46,7 @@ export interface LeagueView {
   readonly changeHref: string;
   readonly body:
     | { readonly kind: "market"; readonly market: MarketView }
-    /** A real league before lib/league lands: a note and a link to the Table. */
+    /** No awards to show yet (before the season's first unlocked gameweek): a note and a link to the Table. */
     | { readonly kind: "market-soon" }
     | { readonly kind: "table"; readonly table: TableView };
 }
@@ -69,16 +75,21 @@ export async function loadLeague(
   if (leagueId === null) return notFound();
 
   const retry = tab === "table" ? `/league/${leagueId}/table` : `/league/${leagueId}`;
+  const unknownLeague = () => redirectTo<LeagueView>(startHref("league", String(leagueId), "league-not-found"));
   return guard("league", retry, async () => {
-    const [standings, gw, market] = await Promise.all([
-      source.standings(leagueId),
-      source.latestGameweek(),
-      tab === "market" ? source.market(leagueId) : null,
-    ]);
-    if (standings === null) return redirectTo(startHref("league", String(leagueId), "league-not-found"));
+    if (tab === "market") {
+      const result = await source.view(leagueId, { youId: team ?? undefined });
+      if (result.ok) {
+        const market = marketFromView(result.data);
+        return ready({ leagueId: String(leagueId), leagueName: market.leagueName, tab, gw: market.gw, changeHref, body: { kind: "market", market: marketView(market) } });
+      }
+      if (result.reason === "league-not-found") return unknownLeague();
+    }
+    // The Table, or a Market with no gameweek to show yet: FPL's standings.
+    const [standings, gw] = await Promise.all([source.standings(leagueId), source.latestGameweek()]);
+    if (standings === null) return unknownLeague();
     const table = tableView(standings, team);
-    const body: LeagueView["body"] =
-      tab === "table" ? { kind: "table", table } : market ? { kind: "market", market: marketView(market) } : { kind: "market-soon" };
+    const body: LeagueView["body"] = tab === "table" ? { kind: "table", table } : { kind: "market-soon" };
     return ready({ leagueId: String(leagueId), leagueName: table.leagueName, tab, gw, changeHref, body });
   });
 }

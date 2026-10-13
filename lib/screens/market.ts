@@ -1,6 +1,6 @@
-// The League tab's Market view. lib/league (data session) will produce
-// MarketData, in the shapes of docs/design/brief.md §5; until then the design
-// canvas's sample league fills it. marketView turns it into what the screen draws.
+// The League tab's Market view. MarketData comes from lib/league's league view
+// (from-view.ts) or, for /league/sample, the design canvas's sample league;
+// marketView turns it into what the screen draws.
 import { AWARD_KEYS, type AwardKey } from "@/lib/awards";
 import type { CardKey } from "@/lib/cards/request";
 import { SAMPLE_LEAGUE } from "@/lib/ids";
@@ -16,7 +16,10 @@ export interface Score {
 
 export interface MarketRow {
   readonly manager: { readonly id: number; readonly firstName: string; readonly teamName: string };
-  readonly score: Score;
+  /** The visitor's own team (they came in with their team ID). */
+  readonly you: boolean;
+  /** null: the manager hadn't started playing FPL by this gameweek. */
+  readonly score: Score | null;
   /** + up, − down in the league table this GW. */
   readonly leagueRankChange: number;
   /** Season total minus the league average, per GW. */
@@ -61,7 +64,9 @@ export interface MarketLine {
   readonly award: AwardKey | null;
   /** That award's story, or null: a row with no award isn't a link. */
   readonly href: string | null;
-  readonly net: number;
+  /** null: no score this gameweek (not playing yet). */
+  readonly net: number | null;
+  readonly you: boolean;
   readonly move: Movement;
   readonly spark: Spark;
 }
@@ -97,7 +102,8 @@ function toLine(leagueId: string, row: MarketRow): MarketLine {
     badge: badgeFor(row.manager.teamName),
     award,
     href: award ? storyHref(leagueId, award) : null,
-    net: row.score.net,
+    net: row.score?.net ?? null,
+    you: row.you,
     move: movedBy(row.leagueRankChange),
     spark: spark(row.gapSeries),
   };
@@ -117,6 +123,7 @@ export function marketView(data: MarketData): MarketView {
 const m = (id: number, firstName: string, teamName: string) => ({ id, firstName, teamName });
 const r = (manager: MarketRow["manager"], points: number, hits: number, change: number, gaps: number[], awards: AwardKey[]): MarketRow => ({
   manager,
+  you: false,
   score: { net: points - hits, points, hits },
   leagueRankChange: change,
   gapSeries: gaps,

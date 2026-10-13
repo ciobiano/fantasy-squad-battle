@@ -49,7 +49,7 @@ const AWARDS: Record<AwardKey, { winners: Manager[]; facts: AwardFacts; roast: R
   },
   captain: {
     winners: [M.bayo],
-    facts: { award: "captain", captain: { name: "João Pedro", points: 0 }, best: { name: "Groß", points: 28 } },
+    facts: { award: "captain", captain: { name: "João Pedro", points: 0 }, best: { name: "Groß", points: 28, scope: "team" } },
     roast: {
       pcm: "Bayo give João Pedro armband. João Pedro give Bayo zero.",
       en: "Bayo gave João Pedro the armband. João Pedro gave nothing back.",

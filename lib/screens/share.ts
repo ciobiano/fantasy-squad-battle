@@ -5,11 +5,12 @@ import type { AwardKey } from "@/lib/awards";
 import { cardUrl } from "@/lib/cards/request";
 import type { Lang } from "@/lib/i18n";
 import { SAMPLE_LEAGUE, fplId, gameweekNumber } from "@/lib/ids";
+import { marketFromView, tableFromView } from "./from-view";
 import { liveLeague, type LeagueSource } from "./league";
 import { SAMPLE_MARKET, storyHref, type MarketData } from "./market";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import { cardImages, type CardImages } from "./story";
-import { SAMPLE_TABLE, tableView, type TableView } from "./table";
+import { SAMPLE_TABLE, type TableView } from "./table";
 
 export interface ShareCard {
   /** Opens this card in the story viewer. */
@@ -44,7 +45,7 @@ function shareView(leagueId: string, market: MarketData, table: TableView, lang:
   };
 }
 
-/** Only the gameweek the league's awards are for has a page, until older gameweeks are wired in. */
+/** Any gameweek with unlocked cards has a page; one still to be played sends you to the league. */
 export async function loadSharePage(
   leagueSegment: string,
   gwSegment: string,
@@ -59,8 +60,9 @@ export async function loadSharePage(
   const leagueId = fplId(leagueSegment);
   if (leagueId === null) return notFound();
   return guard("share", `/s/${leagueId}/${gw}`, async () => {
-    const [market, standings] = await Promise.all([source.market(leagueId), source.standings(leagueId)]);
-    if (!market || !standings) return redirectTo(`/league/${leagueId}`);
-    return market.gw === gw ? ready(shareView(String(leagueId), market, tableView(standings, null), lang)) : notFound();
+    const result = await source.view(leagueId, { gw });
+    if (result.ok) return ready(shareView(String(leagueId), marketFromView(result.data), tableFromView(result.data), lang));
+    // A league that exists but has nothing for that gameweek yet goes to its page.
+    return result.reason === "league-not-found" || result.reason === "no-such-gameweek" ? notFound() : redirectTo(`/league/${leagueId}`);
   });
 }

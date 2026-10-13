@@ -147,6 +147,7 @@ export const fr: Copy = {
     below: (points) => `${points} sous la moyenne`,
     captain: (name) => `Capitaine · ${name}`,
     best: (name) => `Meilleur de l’équipe · ${name}`,
+    topThisWeek: (name) => `Meilleur de la journée · ${name}`,
     kept: "gardés",
     paid: "payés",
     others: (count) => `+${count} autres`,
