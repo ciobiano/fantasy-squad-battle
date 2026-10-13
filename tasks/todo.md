@@ -100,10 +100,17 @@ The design session already built titles, language detection and the switcher in 
 - [x] Vercel preview, league 314: real lines in all three languages, 43–69 ms warm and about 1 s cold. The GW1 crowd reads "32 managers captained B.Fernandes. B.Fernandes gave them 2 points. Group project failed."
 - [ ] **Ralph:** edit `lib/roasts/lines/en.ts` and `pcm.ts`. French stays beta until a native speaker reviews it.
 
-## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
-- [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run
-- [ ] Injuries & bans: flagged players with status, news, chance of playing and date reported, newest first, filterable by team
-- [ ] Unit tests on real bootstrap and fixtures samples
+## 3b. Tools logic: `lib/tools/` (done 2026-10-13)
+- [x] Shapes as agreed with the design session (`TickerRow`, `InjuryRow`, `InjuryReport`)
+- [x] Fixture ticker, `getTicker(weeks = 6)`:
+  - FPL difficulty (1–5) per team from the next deadline, fewer weeks at the end of the season
+  - blank weeks (`[]`) and doubles (two matches, in kickoff order)
+  - `runScore`: a blank counts 6, a double its easier match minus 1. The UI sorts.
+- [x] Injuries & bans, `getInjuryReport(now)`: every flagged player, newest first, with status, chance, news and date; every club for the filter
+- [x] The fixtures schema reads `team_h_difficulty` and `team_a_difficulty`, tolerant like the other tool fields
+- [x] 14 new tests (306 in the suite), on a real 13 Oct snapshot (GW7 next; 197 flagged: 67 injured, 21 doubtful, 4 suspended, 105 unavailable) plus hand-made blanks and doubles
+- [x] `/api/tools?weeks=` returns both, for inspection
+- [ ] Before launch: remove `/api/tools`, or rate-limit it
 
 ## 4. Design exploration
 - [ ] Claude Design canvas with the **Market** and **Editorial** directions, using Denizens of Olympus GW5 data

@@ -1,6 +1,6 @@
-# Data session to design session: roast lines are ready (13 Oct 2026)
+# Data session to design session: roast lines and tools are ready (13 Oct 2026)
 
-On branch `feat/roasts`, which is stacked on `feat/league-logic` (Phase 2). Neither is on main yet.
+Phases 2 (league logic) and 3 (roasts) are on main. Phase 3b (tools) is on `feat/tools`; see the last section.
 
 This answers [2026-10-12-architecture.md](2026-10-12-architecture.md) and fills `AwardCardModel.roast` and `WrapRow.groupLine`.
 
@@ -38,3 +38,22 @@ roastView(view: LeagueView, lang): { roasts, groupLines }      // both, keyed by
   - move `start-input.ts` and `resolveGameweek` into `lib/league`;
   - use `fplId` from `lib/ids.ts`;
   - add import rules for our folders.
+
+## Tools (Phase 3b): your `ToolsSource`, live
+
+```ts
+import { getTicker } from "@/lib/tools/ticker";          // (weeks = 6) → TickerRow[]
+import { getInjuryReport } from "@/lib/tools/injuries";  // (now) → InjuryReport
+
+const liveTools: ToolsSource = { ticker: () => getTicker(), injuries: () => getInjuryReport(Date.now()) };
+```
+
+- **Shapes:** exactly your `TickerRow`, `InjuryRow` and `InjuryReport`. `lib/tools/types.ts` declares them; after the merge, `lib/screens/tools.ts` can import them from there.
+- **Outages:** both throw when FPL can't be read, so your outage panel shows.
+- **Time:** `getInjuryReport` takes `now`, so read the time where your page is dynamic.
+- **Ticker:**
+  - The window starts at the next deadline. It is 6 weeks long, with fewer at the end of the season.
+  - Teams come in FPL's order (alphabetical). Your Easiest and A–Z sorts stay yours.
+  - `runScore` counts a blank week as 6 and a double as its easier match minus 1, so a lower score is still easier.
+- **Injuries:** 197 flagged players on 13 Oct, with `unavailable` kept as you asked. Every doubtful player has a `chance`. Rows are sorted newest first.
+- **Try it:** `/api/tools?weeks=6` on any preview.

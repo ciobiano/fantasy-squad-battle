@@ -149,6 +149,10 @@ Verified API facts (2026-10-08):
   4. The planner, as its own phase.
 - **Player stats v1 columns:** price, ownership, form (FPL's number), points, xG, xA, xGI, defensive contributions and minutes. These are Opta-derived stats that FPL publishes for free; Opta's own data feed is a paid licence and out of scope.
 - **Fixture difficulty:** FPL's official ratings and colours first. Later, as something extra, our own attack and defence split built from team strength ratings.
+  - **Ticker (decided 2026-10-13):** the 6 gameweeks from the next deadline, fewer at the end of the season.
+  - The "easiest run" score sums each week's cost: a match counts its difficulty, a double counts its easier match minus 1, and a blank counts 6 (worse than any fixture).
+  - A fixture without FPL's difficulty stops the ticker with an error rather than guessing a colour.
+- **Injuries & bans (2026-10-13):** every player FPL flags (statuses i, d, s, u and n), newest news first. `u` and `n` both read as "unavailable"; they're mostly loans and transfers out, and the UI gives them their own filter.
 - **Projections (decided 2026-10-10, D7):** our own model, as its own phase after player stats.
   - Inputs, all free: expected minutes × (goals from xG, assists from xA, clean-sheet chance, appearance and bonus points), adjusted for opponent strength over the next 1–5 gameweeks.
   - FPL's `ep_next` is recent form, not a projection, so the stats table shows it as **Form**. The word "projection" is used only for our own model.
