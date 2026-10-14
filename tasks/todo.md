@@ -155,8 +155,14 @@ The design session already built titles, language detection and the switcher in 
 4. Planner, as its own phase: your squad from your team ID, future fixtures and projections. Selling prices are estimates, labelled, because exact ones need an FPL login.
 5. Our own attack and defence fixture difficulty, from team strength ratings
 
-## 7. Analytics
-- [ ] PostHog through the Vercel Marketplace: cookieless, EU region, loaded late, the 5 agreed events
+## 7. Analytics (built 2026-10-15)
+- [x] PostHog EU, free plan, signed up directly (the Marketplace plan needed a card)
+- [x] `lib/analytics`: server-side capture after the response, daily-rotating anonymous visitors, no cookies, no IP sent, bots and prefetches skipped, the 5 events with strict properties
+- [x] `/api/signal`: shares and downloads from the browser (same origin only, ≤ 1 KB, client events only); `track()` is a ~300-byte beacon
+- [x] `ANALYTICS_SALT` in Vercel (Production, Preview). 12 new tests (329 in the suite).
+- [ ] `POSTHOG_KEY` (the `phc_` project key) from Ralph
+- [ ] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
+- [ ] Before launch: rate-limit `/api/signal` with Vercel Firewall
 
 ## 8. Ship
 - [ ] Unit tests for parsing, awards and roasts
