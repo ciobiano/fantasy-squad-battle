@@ -63,6 +63,7 @@ describe("getLeagueView", () => {
     expect(view.market.filter((r) => r.manager.isYou)).toHaveLength(1);
     expect([...view.awards.map((a) => a.id), ...view.skipped].sort()).toEqual([...AWARD_ORDER].sort());
     expect(view.teamOfTheWeek.players).toHaveLength(dreamTeam.team.length);
+    expect(view.market.every((r) => r.rankSeries.length === 5)).toBe(true);
   });
 
   it("uses first names only", async () => {

@@ -1,4 +1,13 @@
-import { AWARD_ORDER, type Award, type AwardId, type AwardWinner, type CaptainFact, type Manager, type Score } from "./types";
+import {
+  AWARD_ORDER,
+  type Award,
+  type AwardId,
+  type AwardWinner,
+  type CaptainFact,
+  type Manager,
+  type PlayerPoints,
+  type Score,
+} from "./types";
 
 // The 8 awards (CLAUDE.md: "Awards and cards" and decisions D3–D6). Ties share
 // the award. An award nobody qualifies for is skipped, and the Wrap gets a
@@ -10,6 +19,8 @@ export interface Contender {
   /** null: hadn't started playing FPL by this gameweek. */
   readonly score: Score | null;
   readonly benchPoints: number | null;
+  /** Who sat on the bench, in bench order; null without picks. */
+  readonly bench: readonly PlayerPoints[] | null;
   readonly captain: CaptainFact | null;
   /** League rank now, and one gameweek ago. */
   readonly rank: number | null;
@@ -76,7 +87,9 @@ function captainDisaster(cs: readonly Contender[]): Award | null {
 
 function benchRegret(cs: readonly Contender[]): Award | null {
   const most = leaders(cs, (c) => c.benchPoints, "highest");
-  return most && most.best > 0 ? award("bench", most.best, most.who.map((c) => ({ manager: c.manager }))) : null;
+  return most && most.best > 0
+    ? award("bench", most.best, most.who.map((c) => ({ manager: c.manager, bench: c.bench ?? [] })))
+    : null;
 }
 
 function hitMerchant(cs: readonly Contender[]): Award | null {

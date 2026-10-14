@@ -29,6 +29,8 @@ export interface TestManager {
   readonly vice?: TestPlayer;
   readonly chip?: string | null;
   readonly squad?: readonly TestPlayer[];
+  /** Benched players (multiplier 0), in bench order. */
+  readonly bench?: readonly TestPlayer[];
 }
 
 export const player = (id: number, name: string, points: number, minutes = 90): TestPlayer => ({
@@ -64,6 +66,7 @@ function picks(m: TestManager, gw: number): ManagerGameweek["picks"] {
     ...(m.captain ? [{ p: m.captain, multiplier: captainMultiplier, is_captain: true, is_vice_captain: false }] : []),
     ...(m.vice ? [{ p: m.vice, multiplier: 1, is_captain: false, is_vice_captain: true }] : []),
     ...(m.squad ?? []).map((p) => ({ p, multiplier: 1, is_captain: false, is_vice_captain: false })),
+    ...(m.bench ?? []).map((p) => ({ p, multiplier: 0, is_captain: false, is_vice_captain: false })),
   ];
   const total = history(m, gw).current.at(-1)?.total_points ?? 0;
   return {
@@ -94,7 +97,7 @@ export function makeBundle(input: {
 }): LeagueGameweek {
   const { gw, managers } = input;
   const everyone = [
-    ...managers.flatMap((m) => [m.captain, m.vice, ...(m.squad ?? [])]),
+    ...managers.flatMap((m) => [m.captain, m.vice, ...(m.squad ?? []), ...(m.bench ?? [])]),
     ...(input.dreamTeam?.team ?? []),
     input.dreamTeam?.top,
   ].filter((p): p is TestPlayer => Boolean(p));

@@ -107,6 +107,9 @@ export const fixtureSchema = z.object({
   finished_provisional: z.boolean(),
   team_h: id,
   team_a: id,
+  // Fixture ticker: FPL's difficulty (1–5) for the home and the away team.
+  team_h_difficulty: toolNumber("fixture.team_h_difficulty"),
+  team_a_difficulty: toolNumber("fixture.team_a_difficulty"),
 });
 
 export const fixturesSchema = z.array(fixtureSchema);

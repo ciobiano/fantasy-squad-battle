@@ -21,6 +21,7 @@ const captain = (fact: Partial<CaptainFact> = {}, name = CAPTAIN): CaptainFact =
   minutes: 90,
   tripleCaptain: false,
   viceRescued: false,
+  best: { name: "Mbeumo", points: 14 },
   ...fact,
 });
 

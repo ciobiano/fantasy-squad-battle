@@ -26,6 +26,8 @@ const fixture = (gw: number, overrides: Partial<Fixture> = {}): Fixture => ({
   finished_provisional: false,
   team_h: 1,
   team_a: 2,
+  team_h_difficulty: 3,
+  team_a_difficulty: 3,
   ...overrides,
 });
 

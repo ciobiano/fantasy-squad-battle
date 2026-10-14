@@ -81,6 +81,8 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - GW5 view: 4.8 s cold from Lagos, 17 ms warm
   - GW1: **42 of 50 managers shared Captain Disaster** (all captained Fernandes, 2 pts), so Phase 3 needs a group roast for mass ties
 - [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
+- [x] **Asked by the design session (13 Oct):** Captain Disaster's best other player (`captain.best`), Bench Regret's bench players (`bench`), and each manager's league rank after every GW (`MarketRow.rankSeries`). 3 new tests.
+  - Checked on league 314, GW1, GW5 and GW6 (preview): every bench list adds up to FPL's own bench total (22, 26 and 26); each rank series ends on the Table rank.
 - [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
 
 ## 3. Roasts: `lib/roasts/` (done 2026-10-13)
@@ -100,10 +102,23 @@ The design session already built titles, language detection and the switcher in 
 - [x] Vercel preview, league 314: real lines in all three languages, 43–69 ms warm and about 1 s cold. The GW1 crowd reads "32 managers captained B.Fernandes. B.Fernandes gave them 2 points. Group project failed."
 - [ ] **Ralph:** edit `lib/roasts/lines/en.ts` and `pcm.ts`. French stays beta until a native speaker reviews it.
 
-## 3b. Tools logic: `lib/tools/` (first release: ticker and injuries)
-- [ ] Fixture ticker: FPL difficulty (1–5) per team for the next N gameweeks, handling double and blank gameweeks, sortable by the easiest run
-- [ ] Injuries & bans: flagged players with status, news, chance of playing and date reported, newest first, filterable by team
-- [ ] Unit tests on real bootstrap and fixtures samples
+## 3b. Tools logic: `lib/tools/` (done 2026-10-13)
+- [x] Shapes as agreed with the design session (`TickerRow`, `InjuryRow`, `InjuryReport`)
+- [x] Fixture ticker, `getTicker(weeks = 6)`:
+  - FPL difficulty (1–5) per team from the next deadline, fewer weeks at the end of the season
+  - blank weeks (`[]`) and doubles (two matches, in kickoff order)
+  - `runScore`: a blank counts 6, a double its easier match minus 1. The UI sorts.
+- [x] Injuries & bans, `getInjuryReport(now)`: every flagged player, newest first, with status, chance, news and date; every club for the filter
+- [x] The fixtures schema reads `team_h_difficulty` and `team_a_difficulty`, tolerant like the other tool fields
+- [x] 14 new tests (306 in the suite), on a real 13 Oct snapshot (GW7 next; 197 flagged: 67 injured, 21 doubtful, 4 suspended, 105 unavailable) plus hand-made blanks and doubles
+- [x] `/api/tools?weeks=` returns both, for inspection
+- [x] Vercel preview (`cdg1`), live FPL: 585 ms cold, 36–63 ms warm. The window is GW7–12; Coventry and Spurs have the easiest run (16); 197 flagged players.
+- [ ] Before launch: remove `/api/tools`, or rate-limit it
+
+## Share fix (2026-10-13, Ralph found it)
+- [x] Sharing sent a link, not the image: the share call carried a URL beside the file, and WhatsApp on iPhone keeps the link and drops the image
+- [x] `lib/share/share.ts`: `shareCard` shares the PNG alone on phones, and saves it on computers (for X, the composer opens with the league's page). It prefetches so the share stays inside the tap, and reports `tap-again` when it couldn't. 8 tests.
+- [ ] Design session: redesign the sheet with real WhatsApp and X marks and wire `shareCard` ([handoff](../docs/handoff/2026-10-13-share-image.md))
 
 ## 4. Design exploration
 The full spec is in [docs/design/brief.md](../docs/design/brief.md).
