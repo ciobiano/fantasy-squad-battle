@@ -160,7 +160,7 @@ The design session already built titles, language detection and the switcher in 
 - [x] `lib/analytics`: server-side capture after the response, daily-rotating anonymous visitors, no cookies, no IP sent, bots and prefetches skipped, the 5 events with strict properties
 - [x] `/api/signal`: shares and downloads from the browser (same origin only, ≤ 1 KB, client events only); `track()` is a ~300-byte beacon
 - [x] `ANALYTICS_SALT` in Vercel (Production, Preview). 12 new tests (329 in the suite).
-- [ ] `POSTHOG_KEY` (the `phc_` project key) from Ralph
+- [x] `POSTHOG_KEY` (the public `phc_` project token) in Vercel Production and Preview; PostHog EU accepted a test event (2026-10-15)
 - [ ] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
 - [ ] Before launch: rate-limit `/api/signal` with Vercel Firewall
 
