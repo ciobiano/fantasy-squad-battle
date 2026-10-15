@@ -7,7 +7,6 @@ import type { CardModel } from "@/lib/cards/render";
 import type { CardKey } from "@/lib/cards/request";
 import type { AwardFacts, CardMeta, Manager as CardManager, WrapRow } from "@/lib/cards/types";
 import { copyFor, type Lang } from "@/lib/i18n";
-import { competitionRanks } from "@/lib/league/standings";
 import type { Award, LeagueView } from "@/lib/league/types";
 import { groupLineFor, roastFor } from "@/lib/roasts";
 import { colours } from "@/lib/tokens";
@@ -84,18 +83,9 @@ export function tableFromView(view: LeagueView): TableView {
 
 // ---------------------------------------------------------------- Cards
 
-/**
- * A manager's league rank after each gameweek they played. At any gameweek,
- * ordering the league by gap to the average is ordering it by total, so the
- * gaps the view already carries give the ranks (equal totals share, D5).
- */
+/** A manager's league rank after each gameweek they played (lib/league's rankSeries, ties shared as in the Table). */
 function rankHistory(view: LeagueView, entry: number): number[] {
-  const weeks = Math.max(0, ...view.market.map((row) => row.gapSeries.length));
-  return Array.from({ length: weeks }).flatMap((_, i) => {
-    const playing = view.market.filter((row) => present(row.gapSeries[i]));
-    const at = playing.findIndex((row) => row.manager.id === entry);
-    return at < 0 ? [] : [competitionRanks(playing, (row) => row.gapSeries[i] ?? 0)[at]];
-  });
+  return (view.market.find((row) => row.manager.id === entry)?.rankSeries ?? []).filter(present);
 }
 
 function cardManager(manager: { readonly firstName: string; readonly teamName: string }): CardManager {
@@ -136,17 +126,17 @@ function factsFor(award: Award, view: LeagueView): AwardFacts {
         leagueSize: ranked,
       };
     case "captain": {
-      // The view doesn't carry the team's best player yet; the gameweek's top player stands in.
+      // Set against the best other player in that team; the gameweek's top player only if there was none.
+      const own = first?.captain?.best ?? null;
       const top = view.teamOfTheWeek.topPlayer;
       return {
         award: "captain",
         captain: { name: first?.captain?.name ?? "", points: award.stat },
-        best: top ? { name: top.name, points: top.points, scope: "gameweek" } : null,
+        best: own ? { ...own, scope: "team" } : top ? { name: top.name, points: top.points, scope: "gameweek" } : null,
       };
     }
     case "bench":
-      // The view doesn't carry who sat on the bench yet: the card shows the total alone.
-      return { award: "bench", total: award.stat, players: [] };
+      return { award: "bench", total: award.stat, players: first?.bench ?? [] };
     case "hits":
       return { award: "hits", gross: first?.score?.points ?? 0, paid: award.stat };
   }

@@ -54,9 +54,23 @@ describe("cardFromView", () => {
     expect(middle.facts.rankByGw.every((series) => series.length === 4)).toBe(true);
     expect(middle.facts.places).toBe(1);
   });
-  it("sets a captain disaster against the gameweek's top player, until the team's best is known", () => {
+  it("sets a captain disaster against the best other player in that team", () => {
     const captain = award(view, "captain");
-    expect(captain.facts).toEqual({ award: "captain", captain: { name: "Fernandes", points: 2 }, best: { name: "Brobbey", points: 17, scope: "gameweek" } });
+    expect(captain.facts).toEqual({ award: "captain", captain: { name: "Fernandes", points: 2 }, best: { name: "Saka", points: 5, scope: "team" } });
+  });
+  it("falls back to the gameweek's top player when nobody else in the team counted", () => {
+    const lone = {
+      ...view,
+      awards: view.awards.map((a) =>
+        a.id === "captain" ? { ...a, winners: a.winners.map((w) => ({ ...w, captain: w.captain ? { ...w.captain, best: null } : undefined })) } : a,
+      ),
+    };
+    expect(award(lone, "captain").facts).toMatchObject({ best: { name: "Brobbey", points: 17, scope: "gameweek" } });
+  });
+  it("puts Bench Regret's benched players on the card", () => {
+    const benched = [{ name: "Wissa", points: 13 }, { name: "Mbeumo", points: 8 }];
+    const withBench = { ...view, awards: view.awards.map((a) => (a.id === "bench" ? { ...a, winners: a.winners.map((w) => ({ ...w, bench: benched })) } : a)) };
+    expect(award(withBench, "bench").facts).toEqual({ award: "bench", total: 21, players: benched });
   });
   it("gives every award card its roast line, the same every time", () => {
     for (const key of AWARD_KEYS) {
