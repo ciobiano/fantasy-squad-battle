@@ -260,7 +260,8 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] Accessibility audit on production (2026-10-15): axe-core 4.10, WCAG 2.0–2.2 A/AA plus best practice, phone size, light and dark.
   - Pages: Start, picker, Market, Table, a story, the share sheet open, the share page, Fixtures, Players.
   - **No WCAG A/AA violations** in either theme, including contrast and target size (2.5.8).
-  - One best-practice gap on every page but the story: no level-one heading. Handed to the design session.
+  - A first run flagged a missing level-one heading. It was a measuring artefact: every page has an h1, streamed inside Suspense, and the in-app browser doesn't reveal streamed content until the pane paints. Re-run with the page painted: **no violations on any page**.
+  - Optional (Ralph's call): fixed titles (Start, Pick your league, Fixtures, Players) could sit outside Suspense, so the h1 arrives with the first bytes on slow 4G.
 - [ ] Smoke test on Ralph's own league (league ID still needed)
 - [ ] Unit tests for parsing, awards and roasts
 - [ ] Accessibility pass (WCAG 2.2: story timing, target sizes, contrast)
