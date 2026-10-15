@@ -208,6 +208,12 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] Verified (2026-10-13, dev and production): auto-advance and the URL following, pause, tap zones, last card closing to the league, the share sheet open and Cancel, light and dark cards (only the shown theme downloads, ~40 KB WebP each), watched circles, the share page and its preview tags; bad story and share links are real 404s
 - [x] Real Market and real cards (2026-10-13, after PR #2): `getLeagueView` and `lib/roasts` through `lib/screens/from-view.ts`; checked on league 314 GW 6 (Market, stories, cards, share page). Waiting on the data session for the captain's best-in-team, the bench players and a rank series (docs/handoff/2026-10-13-market-wired.md)
 
+## 5f. Wiring the data session's handoffs (2026-10-15)
+- [x] Fixtures and Players on live `lib/tools` (`getTicker`, `getInjuryReport`); the 12 Oct snapshot is gone
+- [x] Cards: the captain set against the best in that team (`captain.best`), bench players (`winner.bench`), rank charts from `rankSeries`
+- [x] Share sheet on `lib/share` (`shareCard`, `createImageCache`, `browserShareEnv`)
+- [ ] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`) once PR #4 (`feat/analytics`) is on main and `POSTHOG_KEY` is set in Vercel
+
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
 - [ ] Bundled font files, Noto or Twemoji emoji, generated team badges and the web address watermark
