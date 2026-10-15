@@ -6,7 +6,7 @@ import type { ClientEvent, EventProps } from "./events";
 
 export const SIGNAL_PATH = "/api/signal";
 
-/** Counts a share or a download. Fire and forget: never throws, never waits. */
+/** Counts a card seen, shared or downloaded. Fire and forget: never throws, never waits. */
 export function track<E extends ClientEvent>(event: E, props: EventProps[E]): void {
   try {
     const body = JSON.stringify({ event, props });
