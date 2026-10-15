@@ -251,12 +251,17 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] `ANALYTICS_SALT` in Vercel (Production, Preview). 12 new tests (329 in the suite).
 - [x] `POSTHOG_KEY` (the public `phc_` project token) in Vercel Production and Preview; PostHog EU accepted a test event (2026-10-15)
 - [x] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
-- [x] Before launch: rate-limit `/api/signal` with Vercel Firewall — done 2026-10-15, see Phase 8
+- [ ] Before launch: rate-limit `/api/signal` with Vercel Firewall — staged 2026-10-15 (log only), Ralph to publish; see Phase 8
 
 ## 8. Ship
 - [x] Inspection endpoints (`/api/health`, `/api/league/*`, `/api/team/*`, `/api/tools`) answer 404 on production before doing any work; previews (behind Vercel's login) keep them. `/api/health` and `/api/tools` become static 404s in production builds.
 - [x] Vercel Firewall rule "Rate limit analytics beacons" staged: POST `/api/signal`, 300 a minute per IP, **log only**. It's generous because Nigerian mobile networks put many phones behind one IP.
   - [ ] Ralph publishes it (`vercel firewall publish --yes`). After a week of real traffic, tighten the limit and switch to a 429.
+- [x] Accessibility audit on production (2026-10-15): axe-core 4.10, WCAG 2.0–2.2 A/AA plus best practice, phone size, light and dark.
+  - Pages: Start, picker, Market, Table, a story, the share sheet open, the share page, Fixtures, Players.
+  - **No WCAG A/AA violations** in either theme, including contrast and target size (2.5.8).
+  - One best-practice gap on every page but the story: no level-one heading. Handed to the design session.
+- [ ] Smoke test on Ralph's own league (league ID still needed)
 - [ ] Unit tests for parsing, awards and roasts
 - [ ] Accessibility pass (WCAG 2.2: story timing, target sizes, contrast)
 - [ ] Smoke test against Ralph's league
