@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { preload } from "react-dom";
+import { track } from "@/lib/analytics/client";
 import type { Lang } from "@/lib/i18n";
 import type { StoryView } from "@/lib/screens/story";
 import {
@@ -67,9 +68,11 @@ export function StoryPlayer({ view, labels, lang }: { view: StoryView; labels: S
     window.history.replaceState(null, "", cards[next].href);
   }
 
+  // Each card shown is watched and counted, the first included; going back counts it again.
   useEffect(() => {
     markWatched(view.leagueId, view.gw, card.key);
-  }, [view.leagueId, view.gw, card.key]);
+    track("card_viewed", { league: view.leagueId, gw: view.gw, award: card.key, language: lang });
+  }, [view.leagueId, view.gw, card.key, lang]);
 
   // The next cards start downloading while this one plays, in the theme on screen
   // (about 26 KB each), so quick taps don't wait.
