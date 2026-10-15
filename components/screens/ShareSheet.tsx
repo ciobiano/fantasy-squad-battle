@@ -1,7 +1,8 @@
 "use client";
 
 // Share a card: WhatsApp Status (tall picture), X (square picture) or Save
-// image (both sizes), in the theme the page is showing.
+// image (both sizes), in the theme the page is showing. The sharing itself is
+// the data session's lib/share; this is the sheet around it.
 //
 // On a phone the picture goes to the phone's own share sheet ALONE: with text
 // or a link beside it, WhatsApp on iPhone keeps the link and drops the picture.
@@ -12,8 +13,9 @@
 //
 // With no JavaScript the sheet is a <details> of download links.
 import Link from "next/link";
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import type { CardImages } from "@/lib/screens/story";
+import { browserShareEnv, createImageCache, shareCard } from "@/lib/share/share";
 import {
   sheet, sheetBackdrop, sheetCancel, sheetGrabber, sheetIcon, sheetOption, sheetOptionSub, sheetOptionTitle, sheetStatus,
   sheetText, sheetTitle, storyShare, storyShareWrap, storyToast,
@@ -54,48 +56,6 @@ type CardFormat = keyof CardImages;
 type CardTheme = keyof CardImages[CardFormat];
 type Option = "status" | "x" | "save";
 
-// ---- Stand-in for the data session's shareCard (lib/share, PR #3), with the same
-// outcomes; replaced by it once that's on main.
-type ShareOutcome = "shared" | "cancelled" | "downloaded" | "tap-again" | "failed";
-
-function download(url: string, name: string) {
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = name;
-  link.click();
-}
-
-async function shareCard(
-  input: { url: string; filename: string; target: "status" | "x"; pageUrl: string },
-  cache: { ready: Map<string, Blob>; load: (url: string) => Promise<Blob> },
-): Promise<ShareOutcome> {
-  const probe = new File([], input.filename, { type: "image/png" });
-  if (typeof navigator.canShare !== "function" || !navigator.canShare({ files: [probe] })) {
-    download(input.url, input.filename);
-    if (input.target === "x") window.open(`https://x.com/intent/post?url=${encodeURIComponent(input.pageUrl)}`, "_blank", "noopener");
-    return "downloaded";
-  }
-  let blob = cache.ready.get(input.url);
-  const waited = !blob;
-  if (!blob) {
-    try {
-      blob = await cache.load(input.url);
-    } catch {
-      return "failed";
-    }
-  }
-  try {
-    await navigator.share({ files: [new File([blob], input.filename, { type: blob.type || "image/png" })] });
-    return "shared";
-  } catch (failure) {
-    const name = failure instanceof Error ? failure.name : "";
-    if (name === "AbortError") return "cancelled";
-    if (name === "NotAllowedError" && waited) return "tap-again";
-    download(input.url, input.filename);
-    return "downloaded";
-  }
-}
-// ---- end of stand-in
 
 const OPTIONS: readonly Option[] = ["status", "x", "save"];
 const THEMES: readonly CardTheme[] = ["light", "dark"];
@@ -106,37 +66,15 @@ const TOAST_MS = 4000;
 export function ShareSheet({ images, filename, cardHref, pageHref, labels, open, onOpenChange }: ShareSheetProps) {
   const [note, setNote] = useState<"tapAgain" | "failed" | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const pending = useRef(new Map<string, Promise<Blob>>());
-  const ready = useRef(new Map<string, Blob>());
-
-  const load = (url: string): Promise<Blob> => {
-    const known = pending.current.get(url);
-    if (known) return known;
-    const loading = fetch(url)
-      .then((response) => {
-        if (!response.ok) throw new Error(`card image ${response.status}`);
-        return response.blob();
-      })
-      .then(
-        (blob) => {
-          ready.current.set(url, blob);
-          return blob;
-        },
-        (failure: unknown) => {
-          pending.current.delete(url); // the next tap tries again
-          throw failure;
-        },
-      );
-    pending.current.set(url, loading);
-    return loading;
-  };
+  // One cache per sheet: the pictures arrive before the tap (lib/share).
+  const [cache] = useState(createImageCache);
 
   // Fetch both pictures when the sheet opens, so the tap can open the phone's share sheet at once.
   useEffect(() => {
     if (!open) return;
     const theme = shownTheme();
-    for (const format of ["status", "x"] as const) load(images[format][theme]).catch(() => {});
-  }, [open, images]);
+    for (const format of ["status", "x"] as const) cache.prefetch(images[format][theme]);
+  }, [open, images, cache]);
 
   useEffect(() => {
     if (!toast) return;
@@ -154,14 +92,15 @@ export function ShareSheet({ images, filename, cardHref, pageHref, labels, open,
 
   const choose = (option: Option, theme: CardTheme) => async (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
+    const env = browserShareEnv();
     if (option === "save") {
-      download(images.status[theme], name("status"));
-      download(images.x[theme], name("x"));
+      env.download(images.status[theme], name("status"));
+      env.download(images.x[theme], name("x"));
       close(labels.saved);
       return;
     }
     const pageUrl = new URL(pageHref, window.location.origin).href;
-    const outcome = await shareCard({ url: images[option][theme], filename: name(option), target: option, pageUrl }, { ready: ready.current, load });
+    const outcome = await shareCard({ url: images[option][theme], filename: name(option), target: option, pageUrl }, cache, env);
     if (outcome === "shared") close(null);
     else if (outcome === "downloaded") close(option === "x" ? labels.savedForX : labels.saved);
     else if (outcome === "tap-again") setNote("tapAgain");
