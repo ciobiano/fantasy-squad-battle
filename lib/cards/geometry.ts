@@ -43,13 +43,18 @@ export function sky(theme: CardTheme, format: CardFormat): Sky {
   return { height: end, background: `${glow}, ${linear}` };
 }
 
-/** Empty sky above the award label. Groups of winners take more room, so it shrinks. */
-export function airAbove(format: CardFormat, winnerCount: number): number {
+/**
+ * Empty sky above the award label. Groups of winners take more room, so it
+ * shrinks; a card with no chart or tiles drops its block lower, so the space
+ * the visual left is shared above and below rather than all above the roast.
+ */
+export function airAbove(format: CardFormat, winnerCount: number, visual = true): number {
+  const bare = visual ? 0 : format === "x" ? 56 : 140;
   const shown = Math.min(winnerCount, 3);
-  if (shown <= 1) return format === "x" ? 120 : 230;
+  if (shown <= 1) return (format === "x" ? 120 : 230) + bare;
   const single = format === "x" ? 104 : 144;
   const group = format === "x" ? shown * 52 + (shown - 1) * 10 : shown * 76 + (shown - 1) * 16;
-  return Math.max(format === "x" ? 64 : 80, (format === "x" ? 120 : 230) - Math.max(0, group - single));
+  return Math.max(format === "x" ? 64 : 80, (format === "x" ? 120 : 230) - Math.max(0, group - single)) + bare;
 }
 
 /** Inner size of a card's chart frame. */

@@ -23,12 +23,13 @@ export function AwardCard({ model, options }: { model: AwardCardModel; options: 
   const named = model.winners.slice(0, MAX_NAMED);
   const others = model.winners.length - named.length;
   const { value, arrow, note, message } = describe(model.facts, model.winners.length, lang);
+  const visual = Visual({ facts: model.facts, message, format, lang, names: named.map((m) => m.firstName), z, p });
 
   return (
     <CardFrame format={format} theme={theme} p={p} grain={!options.preview}>
       <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: z.gap }}>
         <MetaRow league={model.meta.leagueName} gw={l.gw(model.meta.gw)} provisional={model.meta.provisional ? l.provisional : null} z={z} p={p} />
-        <div style={{ display: "flex", height: airAbove(format, model.winners.length), flexShrink: 0 }} />
+        <div style={{ display: "flex", height: airAbove(format, model.winners.length, visual !== null), flexShrink: 0 }} />
 
         <div style={{ display: "flex", flexDirection: "column", gap: z.idGap }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: z.label, fontWeight: 600 }}>
@@ -71,7 +72,7 @@ export function AwardCard({ model, options }: { model: AwardCardModel; options: 
           ) : null}
         </div>
 
-        <Visual facts={model.facts} message={message} format={format} lang={lang} names={named.map((m) => m.firstName)} z={z} p={p} />
+        {visual}
       </div>
 
       <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: z.footGap }}>
@@ -98,6 +99,7 @@ function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
   switch (facts.award) {
     case "oga":
     case "spoon": {
+      if (facts.gapByGw.length === 0) return null;
       const t = trendChart(facts.gapByGw, box.width, box.height);
       const colour = facts.award === "oga" ? p.up : p.down;
       return (
@@ -150,7 +152,7 @@ function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
       );
     }
     case "captain": {
-      if (!facts.best) return null;
+      if (!facts.best || facts.captain.name === null) return null;
       const max = Math.max(facts.captain.points, facts.best.points, 1);
       const bestLabel = facts.best.scope === "team" ? l.best(facts.best.name) : l.topThisWeek(facts.best.name);
       const bars = [
@@ -200,6 +202,7 @@ function Visual({ facts, message, format, lang, names, z, p }: VisualProps) {
         </div>
       );
     case "hits": {
+      if (facts.gross === null) return null;
       const kept = Math.max(0, facts.gross - facts.paid);
       return (
         <div style={{ ...frameStyle(z, p), gap: 14 }}>

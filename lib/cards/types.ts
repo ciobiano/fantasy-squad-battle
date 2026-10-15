@@ -29,7 +29,7 @@ export type AwardFacts =
       /** Net GW score (points − hits) and the hits taken. */
       readonly net: number;
       readonly hits: number;
-      /** Season total minus the league average after each GW so far, oldest first. */
+      /** Season total minus the league average after each GW so far, oldest first; empty draws no chart. */
       readonly gapByGw: readonly number[];
     }
   | {
@@ -53,7 +53,8 @@ export type AwardFacts =
     }
   | {
       readonly award: "captain";
-      readonly captain: { readonly name: string; readonly points: number };
+      /** name: null when the winners captained different players (no name, no bars). */
+      readonly captain: { readonly name: string | null; readonly points: number };
       /**
        * What the captain is set against: the best player in the manager's team,
        * or the gameweek's top player when the team's isn't known. null: no bars.
@@ -68,8 +69,8 @@ export type AwardFacts =
     }
   | {
       readonly award: "hits";
-      /** Points scored before hits, and hit points paid. */
-      readonly gross: number;
+      /** Points scored before hits (null when the winners' differ: no bar), and hit points paid. */
+      readonly gross: number | null;
       readonly paid: number;
     };
 

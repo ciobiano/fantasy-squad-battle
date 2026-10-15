@@ -27,6 +27,11 @@ describe("airAbove", () => {
   it("treats more than three winners like three (the rest are counted)", () => {
     expect(airAbove("status", 7)).toBe(airAbove("status", 3));
   });
+
+  it("drops the block lower on a card with no visual", () => {
+    expect(airAbove("status", 2, false)).toBeGreaterThan(airAbove("status", 2));
+    expect(airAbove("x", 1, false)).toBeGreaterThan(airAbove("x", 1));
+  });
 });
 
 describe("trendChart", () => {

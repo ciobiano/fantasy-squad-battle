@@ -58,7 +58,7 @@ export function describe(facts: AwardFacts, winnerCount: number, lang: Lang): De
     case "middle":
       return { value: `±${facts.places}`, note: l.inWeeks(facts.weeks), message: "" };
     case "captain":
-      return { value: String(facts.captain.points), note: `${facts.captain.name} (C)`, message: "" };
+      return { value: String(facts.captain.points), note: facts.captain.name ? `${facts.captain.name} (C)` : "", message: "" };
     case "bench":
       return { value: String(facts.total), note: l.onBench, message: "" };
     case "hits":
