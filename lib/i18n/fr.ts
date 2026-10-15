@@ -80,7 +80,6 @@ export const fr: Copy = {
     home: "D",
     away: "E",
     runLabel: (run) => `Difficulté cumulée ${run}`,
-    snapshot: "Instantané du 12 oct.",
   },
   players: {
     title: "Joueurs",
@@ -94,7 +93,6 @@ export const fr: Copy = {
     allTeams: "Toutes les équipes",
     empty: "Aucune blessure ni suspension signalée.",
     ago: (age) => `il y a ${age}`,
-    snapshot: "Instantané du 12 oct.",
   },
   story: {
     label: (gw) => `Stories des récompenses, J${gw}`,

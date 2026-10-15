@@ -80,7 +80,6 @@ export const pcm: Copy = {
     home: "H",
     away: "A",
     runLabel: (run) => `Run difficulty ${run}`,
-    snapshot: "Snapshot from 12 Oct",
   },
   players: {
     title: "Players",
@@ -94,7 +93,6 @@ export const pcm: Copy = {
     allTeams: "All teams",
     empty: "No injuries or bans flagged.",
     ago: (age) => `${age} ago`,
-    snapshot: "Snapshot from 12 Oct",
   },
   story: {
     label: (gw) => `GW ${gw} award stories`,

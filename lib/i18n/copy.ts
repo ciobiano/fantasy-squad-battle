@@ -81,7 +81,6 @@ export interface Copy {
     readonly home: string;
     readonly away: string;
     readonly runLabel: (run: number) => string;
-    readonly snapshot: string;
   };
   readonly players: {
     readonly title: string;
@@ -95,7 +94,6 @@ export interface Copy {
     readonly allTeams: string;
     readonly empty: string;
     readonly ago: (age: string) => string;
-    readonly snapshot: string;
   };
   /** The story viewer and its share sheet. */
   readonly story: {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { copyFor, type Lang } from "@/lib/i18n";
 import type { FixturesView } from "@/lib/screens/fixtures";
 import {
-  column, fixture, fixtureBlank, fixtureOpponent, fixtureSub, legend, legendSwatch, onSkyRow, onSkyTitle, sectionAside,
+  column, fixture, fixtureBlank, fixtureOpponent, fixtureSub, legend, legendSwatch, onSkyRow, onSkyTitle,
   segment, segmented, ticker, tickerCell, tickerGw, tickerRow, tickerRun, tickerScroll, tickerShort, tickerTeam, visuallyHidden,
 } from "@/lib/variants";
 import { ThemeToggle } from "../ui/ThemeToggle";
@@ -94,7 +94,6 @@ export function Fixtures({ view, lang }: { view: FixturesView; lang: Lang }) {
         ))}
         <span>{f.legendEnd}</span>
       </div>
-      <p className={sectionAside()}>{f.snapshot}</p>
     </div>
   );
 }

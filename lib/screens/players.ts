@@ -2,7 +2,7 @@
 // by status (?status=) and club (?team=).
 import { guard, ready, type Screen } from "./screen";
 import type { Query } from "./start";
-import { snapshotTools, type InjuryRow, type InjuryStatus, type ToolsSource } from "./tools";
+import { liveTools, type InjuryRow, type InjuryStatus, type ToolsSource } from "./tools";
 
 export type InjuryFilter = "all" | InjuryStatus;
 export const INJURY_FILTERS: readonly InjuryFilter[] = ["all", "injured", "doubtful", "suspended", "unavailable"];
@@ -29,7 +29,7 @@ export interface PlayersView {
  */
 const shows = (status: InjuryFilter, row: InjuryRow) => (status === "all" ? row.status !== "unavailable" : row.status === status);
 
-export async function loadPlayers(query: Query, source: ToolsSource = snapshotTools): Promise<Screen<PlayersView>> {
+export async function loadPlayers(query: Query, source: ToolsSource = liveTools): Promise<Screen<PlayersView>> {
   return guard("players", "/players", async () => {
     const report = await source.injuries();
     const status = INJURY_FILTERS.find((s) => s === query.status) ?? "all";

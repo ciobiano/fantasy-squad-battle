@@ -7,7 +7,7 @@ import { INJURY_FILTERS, type InjuryFilter, type PlayersView } from "@/lib/scree
 import { age } from "@/lib/ui/format";
 import {
   column, filterChip, filterCount, filters, newsHead, newsMeta, newsRow, newsText, onSkyKicker, onSkyRow, onSkyTitle,
-  panel, sectionAside, statusChip, teamMenu, teamMenuItem, teamMenuList, helpSummary,
+  panel, statusChip, teamMenu, teamMenuItem, teamMenuList, helpSummary,
 } from "@/lib/variants";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { ChevronDown } from "../ui/icons";
@@ -77,13 +77,13 @@ export function Players({ view, lang }: { view: PlayersView; lang: Lang }) {
               </span>
               <span className={newsText()}>{row.news}</span>
               <span className={newsMeta()}>
-                {row.team} · {row.position} · {p.ago(age(row.reportedAt, asOf))}
+                {row.team} · {row.position}
+                {row.reportedAt ? ` · ${p.ago(age(row.reportedAt, asOf))}` : null}
               </span>
             </li>
           ))}
         </ul>
       )}
-      <p className={sectionAside()}>{p.snapshot}</p>
     </div>
   );
 }
