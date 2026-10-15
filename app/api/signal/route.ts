@@ -4,7 +4,8 @@ import { parseClientEvent } from "@/lib/analytics/events";
 // Where the browser reports shares and downloads (lib/analytics/client.ts).
 // Only our own pages may post, only the two client events, with exactly their
 // properties. PostHog gets them after the response.
-// TODO(before launch): rate-limit with Vercel Firewall.
+// Rate limited by the Vercel Firewall rule "Rate limit analytics beacons" (POST,
+// 300 a minute per IP; logging only until real traffic has been reviewed).
 
 const MAX_BYTES = 1024;
 

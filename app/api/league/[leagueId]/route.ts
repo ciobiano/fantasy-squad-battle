@@ -1,9 +1,10 @@
 import { getLeagueGameweek, resolveGameweek } from "@/lib/fpl/league-gameweek";
 import { parseLeagueInput } from "@/lib/fpl/start-input";
+import { hidden, inspectionAllowed } from "@/app/api/inspection";
 
 // Phase 1 inspection endpoint: returns the raw bundle lib/league will consume,
 // with timings, so caching can be checked on a real deployment.
-// TODO(before launch): remove, or rate-limit with Vercel Firewall (like /api/health).
+// Previews only: production answers 404 (app/api/inspection.ts).
 
 const GAMEWEEK = /^([1-9]|[1-3]\d)$/;
 
@@ -11,6 +12,7 @@ const error = (status: number, code: string) =>
   Response.json({ error: code }, { status, headers: { "Cache-Control": "no-store" } });
 
 export async function GET(request: Request, ctx: RouteContext<"/api/league/[leagueId]">) {
+  if (!inspectionAllowed()) return hidden();
   const { leagueId } = await ctx.params;
   const gwParam = new URL(request.url).searchParams.get("gw");
 

@@ -1,9 +1,10 @@
 import { connection } from "next/server";
 import { FplHttpError, type FplRoute, fplFetchDetailed } from "@/lib/fpl/http";
+import { hidden, inspectionAllowed } from "@/app/api/inspection";
 
 // Phase 0 spike: proves the FPL API answers from wherever this runs (local or a
 // Vercel region). Each probe hits an endpoint the app will depend on.
-// TODO(before launch): remove, or put behind Vercel Firewall rate limiting.
+// Previews only: production answers 404 (app/api/inspection.ts).
 
 const PROBES = [
   { name: "bootstrap", path: "bootstrap-static/" },
@@ -34,6 +35,7 @@ async function probe(name: string, path: string): Promise<ProbeResult> {
 }
 
 export async function GET() {
+  if (!inspectionAllowed()) return hidden();
   await connection(); // always run at request time, never at build
   const probes = await Promise.all(PROBES.map(({ name, path }) => probe(name, path)));
   const ok = probes.every((p) => p.ok);

@@ -1,11 +1,12 @@
 import { parseLeagueInput, parseStartInput } from "@/lib/fpl/start-input";
 import { getLeagueView } from "@/lib/league/league-view";
 import { type Lang, roastView } from "@/lib/roasts";
+import { hidden, inspectionAllowed } from "@/app/api/inspection";
 
 // Inspection endpoint for Phase 2: the computed league view (awards, Market,
 // Table, Team of the Week) for ?gw= (default: newest unlocked) and ?you=<team ID>,
 // plus the roast lines and the Wrap's group lines in ?lang= (pcm, en or fr; default pcm).
-// TODO(before launch): remove, or rate-limit with Vercel Firewall (like /api/health).
+// Previews only: production answers 404 (app/api/inspection.ts).
 
 const GAMEWEEK = /^([1-9]|[1-3]\d)$/;
 const LANGS: readonly Lang[] = ["pcm", "en", "fr"];
@@ -15,6 +16,7 @@ const error = (status: number, code: string) =>
   Response.json({ error: code }, { status, headers: { "Cache-Control": "no-store" } });
 
 export async function GET(request: Request, ctx: RouteContext<"/api/league/[leagueId]/view">) {
+  if (!inspectionAllowed()) return hidden();
   const { leagueId } = await ctx.params;
   const params = new URL(request.url).searchParams;
   const gwParam = params.get("gw");

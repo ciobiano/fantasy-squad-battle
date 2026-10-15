@@ -30,7 +30,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - Checked: no key gets 401, a path outside the list gets 404, a non-GET gets 405, and all 7 FPL endpoints return 200.
   - End to end: a blocked `cdg1` preview served every probe through the relay, and the next call skipped the direct attempt.
 - [ ] Merge to `main` so production gets the relay and the `cdg1` region. Needs Ralph's OK.
-- [ ] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall
+- [x] Before launch: remove `/api/health`, or rate-limit it with Vercel Firewall — done 2026-10-15, see Phase 8
 
 ## 1. Data layer: `lib/fpl/` (the only module that touches the API)
 - [x] `parseLeagueInput`: a raw ID or a league URL. Head-to-head, draft and invite links each get a clear error.
@@ -47,7 +47,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
   - An unknown league is a result, not an error.
 - [x] Local production check: a cold load takes 6.7 s from Lagos (about 100 FPL calls); a warm one takes 7–12 ms. The bundle is 145 KB.
 - [x] Vercel preview (`cdg1`, Runtime Cache), league 314 with 50 managers: cold load 634–988 ms, warm load 27–29 ms. An unknown league returns `league-not-found`.
-- [ ] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it
+- [x] Before launch: remove `/api/league/[leagueId]` (the inspection endpoint), or rate-limit it — done 2026-10-15, see Phase 8
 
 ## 1b. More FPL readers: `lib/fpl/` (done 2026-10-11)
 - [x] Start input (`lib/fpl/start-input.ts`, which replaces `league-input.ts`): a team ID, a team link (`/entry/{id}/…`), a league ID or a league link. A bare number follows the mode the person picked; links decide for themselves.
@@ -61,7 +61,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] The relay allows `element-summary` (redeployed 2026-10-11). It still refuses login-only endpoints such as `my-team`.
 - [x] Local production check: `/api/team/{id}` takes 658 ms cold and 2 ms warm. An unknown team returns `team-not-found`. 113 tests pass.
 - [x] Vercel preview (`cdg1`): `/api/team/{id}` takes 167 ms cold and 11 ms warm. An unknown team returns `team-not-found`. The league bundle is still about 145 KB.
-- [ ] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it
+- [x] Before launch: remove `/api/team/[teamId]` (the inspection endpoint), or rate-limit it — done 2026-10-15, see Phase 8
 
 ## 2. Domain logic: `lib/league/` (done 2026-10-11)
 - [x] Language-free view types (`lib/league/types.ts`, D2). `getLeagueView(leagueId, { gw, now, youId })` runs on every request, straight from the cached bundle (D1).
@@ -83,7 +83,7 @@ The decisions behind this plan are in [CLAUDE.md](../CLAUDE.md) under "Decisions
 - [x] Vercel preview (`cdg1`): the league view takes 1.4 s cold and 43–57 ms warm. `you=` marks the visitor's row; an unknown league returns `league-not-found`.
 - [x] **Asked by the design session (13 Oct):** Captain Disaster's best other player (`captain.best`), Bench Regret's bench players (`bench`), and each manager's league rank after every GW (`MarketRow.rankSeries`). 3 new tests.
   - Checked on league 314, GW1, GW5 and GW6 (preview): every bench list adds up to FPL's own bench total (22, 26 and 26); each rank series ends on the Table rank.
-- [ ] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it
+- [x] Before launch: remove `/api/league/[leagueId]/view` (the inspection endpoint), or rate-limit it — done 2026-10-15, see Phase 8
 
 ## 3. Roasts: `lib/roasts/` (done 2026-10-13)
 The design session already built titles, language detection and the switcher in its `lib/i18n`, so this phase is the roast lines.
@@ -113,7 +113,7 @@ The design session already built titles, language detection and the switcher in 
 - [x] 14 new tests (306 in the suite), on a real 13 Oct snapshot (GW7 next; 197 flagged: 67 injured, 21 doubtful, 4 suspended, 105 unavailable) plus hand-made blanks and doubles
 - [x] `/api/tools?weeks=` returns both, for inspection
 - [x] Vercel preview (`cdg1`), live FPL: 585 ms cold, 36–63 ms warm. The window is GW7–12; Coventry and Spurs have the easiest run (16); 197 flagged players.
-- [ ] Before launch: remove `/api/tools`, or rate-limit it
+- [x] Before launch: remove `/api/tools`, or rate-limit it — done 2026-10-15, see Phase 8
 
 ## Share fix (2026-10-13, Ralph found it)
 - [x] Sharing sent a link, not the image: the share call carried a URL beside the file, and WhatsApp on iPhone keeps the link and drops the image
@@ -251,9 +251,12 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] `ANALYTICS_SALT` in Vercel (Production, Preview). 12 new tests (329 in the suite).
 - [x] `POSTHOG_KEY` (the public `phc_` project token) in Vercel Production and Preview; PostHog EU accepted a test event (2026-10-15)
 - [x] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
-- [ ] Before launch: rate-limit `/api/signal` with Vercel Firewall
+- [x] Before launch: rate-limit `/api/signal` with Vercel Firewall — done 2026-10-15, see Phase 8
 
 ## 8. Ship
+- [x] Inspection endpoints (`/api/health`, `/api/league/*`, `/api/team/*`, `/api/tools`) answer 404 on production before doing any work; previews (behind Vercel's login) keep them. `/api/health` and `/api/tools` become static 404s in production builds.
+- [x] Vercel Firewall rule "Rate limit analytics beacons" staged: POST `/api/signal`, 300 a minute per IP, **log only**. It's generous because Nigerian mobile networks put many phones behind one IP.
+  - [ ] Ralph publishes it (`vercel firewall publish --yes`). After a week of real traffic, tighten the limit and switch to a 429.
 - [ ] Unit tests for parsing, awards and roasts
 - [ ] Accessibility pass (WCAG 2.2: story timing, target sizes, contrast)
 - [ ] Smoke test against Ralph's league
