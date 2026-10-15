@@ -263,7 +263,11 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
   - **No WCAG A/AA violations** in either theme, including contrast and target size (2.5.8).
   - A first run flagged a missing level-one heading. It was a measuring artefact: every page has an h1, streamed inside Suspense, and the in-app browser doesn't reveal streamed content until the pane paints. Re-run with the page painted: **no violations on any page**.
   - Optional (Ralph's call): fixed titles (Start, Pick your league, Fixtures, Players) could sit outside Suspense, so the h1 arrives with the first bytes on slow 4G.
-- [ ] Smoke test on Ralph's own league (league ID still needed)
+- [x] Smoke test on Ralph's league, Arena of Champions (1261677), GW6 final, 11 managers (2026-10-15):
+  - Production: Market, Table, story, share page and picker all 200; all 18 award cards (9 × Status and X) render, 250–410 KB, 1.1–2.8 s first render, cached after
+  - All 8 awards won; every roast filled. Captain card shows Saka 2 vs João Pedro 12; bench tiles add up to 20.
+  - Found and fixed: capitals ("AMATEZE" → "Amateze", initials like "JB" kept) and a name with no letters ("9 9" → the team name, never a surname)
+  - For the design session: the Table screen derives names on its own (`lib/ui/format.ts`); a Bench Regret tie shows one winner's bench without saying whose
 - [ ] Unit tests for parsing, awards and roasts
 - [ ] Accessibility pass (WCAG 2.2: story timing, target sizes, contrast)
 - [ ] Smoke test against Ralph's league

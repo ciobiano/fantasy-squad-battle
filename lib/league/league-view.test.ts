@@ -13,8 +13,18 @@ describe("names and ranks", () => {
     ["Kelechi O", "Kelechi"],
     ["WiLL Shakespeare", "WiLL"],
     ["  ada  ", "Ada"],
+    // Seen in a real league (1261677, GW6): capitals, initials, and a name with no letters.
+    ["AMATEZE OKAFOR", "Amateze"],
+    ["JB Okonkwo", "JB"],
+    ["TJB Adeyemi", "TJB"],
+    ["ÉMILE DUPONT", "Émile"],
   ])("first name of %j is %s", (input, expected) => {
     expect(firstNameOf(input)).toBe(expected);
+  });
+
+  it("uses the team name, never a surname, when the first name has no letters", () => {
+    expect(firstNameOf("9 9", "nineAgain")).toBe("nineAgain");
+    expect(firstNameOf("9 Okafor", "nineAgain")).toBe("nineAgain");
   });
 
   it("shares ranks on equal values (1, 2, 2, 4)", () => {

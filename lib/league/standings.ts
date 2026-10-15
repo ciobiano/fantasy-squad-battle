@@ -7,14 +7,24 @@ import type { Manager, Score } from "./types";
 type HistoryRow = ManagerGameweek["history"]["current"][number];
 
 /** "valentine chukwu" → "Valentine"; "WiLL Shakespeare" → "WiLL" (only all-lowercase names are capitalised). */
-export function firstNameOf(playerName: string): string {
+const capitalise = (word: string) => word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase();
+
+/**
+ * The name on cards: the first word of FPL's player name, tidied. "kenny" and
+ * "AMATEZE" become "Kenny" and "Amateze"; short or vowel-less capitals stay
+ * ("JB", "TJB"), since they're usually initials. A first word with no letters
+ * ("9 9") gives the team name instead: never the second word, which may be a surname.
+ */
+export function firstNameOf(playerName: string, teamName = ""): string {
   const first = playerName.trim().split(/\s+/)[0] ?? "";
-  if (!first || first !== first.toLowerCase()) return first;
-  return first.charAt(0).toUpperCase() + first.slice(1);
+  if (!/\p{L}/u.test(first)) return teamName.trim() || first;
+  if (first === first.toLocaleLowerCase()) return capitalise(first);
+  const shouting = first === first.toLocaleUpperCase() && [...first].length >= 3 && /[aeiouyàâäéèêëïîôöùûüÿæœ]/iu.test(first);
+  return shouting ? capitalise(first) : first;
 }
 
 export function toManager(m: ManagerGameweek, youId?: number): Manager {
-  return { id: m.entry, firstName: firstNameOf(m.playerName), teamName: m.entryName.trim(), isYou: m.entry === youId };
+  return { id: m.entry, firstName: firstNameOf(m.playerName, m.entryName), teamName: m.entryName.trim(), isYou: m.entry === youId };
 }
 
 export function historyAt(m: ManagerGameweek, gw: number): HistoryRow | null {
