@@ -121,11 +121,100 @@ The design session already built titles, language detection and the switcher in 
 - [ ] Design session: redesign the sheet with real WhatsApp and X marks and wire `shareCard` ([handoff](../docs/handoff/2026-10-13-share-image.md))
 
 ## 4. Design exploration
-- [ ] Claude Design canvas with the **Market** and **Editorial** directions, using Denizens of Olympus GW5 data
-- [ ] Show both directions in light and dark, including our own gradient palette (no purple, no glow)
-- [ ] Ralph picks a direction, then the Design System artifact gets made: colour tokens for both themes, Inter plus Instrument Serif type scale, and AA contrast checks over gradients
+The full spec is in [docs/design/brief.md](../docs/design/brief.md).
+- [x] Design brief: every card, screen, state and component, the two directions, Satori limits, and the data each surface needs
+- [ ] Fetch Denizens of Olympus GW5 data and swap it into the canvas, with surnames stripped. *Waiting on Ralph for the league ID.* Pass 1 used a sample league with real GW5 player data.
+- [x] Draft roast lines for the pass 1 cards (EN, Pidgin, FR), marked as drafts
+- [x] Canvas pass 1, to pick a direction ("Squad Battle Directions", 2026-10-09):
+  - Market and Editorial: Wrap (Status), Oga (Status), Wooden Spoon (X)
+  - The Market tab in light and dark, in each direction
+  - Gradient candidates Harmattan and Lagoon, with every text pair checked for AA
+  - Checked in the browser; fixed two cards that ran into the Status safe zone and one grey-on-gradient contrast failure
+- [x] Ralph picks a direction: **A · Market** (2026-10-09).
+- [x] Ralph picks the official gradient: **Mint**, aqua `#35E1E5` to green `#28E4A3`, with grain and a deep-teal wash (2026-10-10). Applied to the canvas and the design system; Harmattan and Lagoon retired.
+- [x] **Mist sky** replaces bright Mint (2026-10-10). Bright Mint's aqua was ΔE 4.7 from the Premier League's own cyan (#05F0FF) and its green ΔE 9.7 from PL green (#00FF87), read from premierleague.com's stylesheet. New look from Ralph's reference: deep teal at the top, misty mint, fading into white (light) or black (dark). Every sky and accent colour is ΔE ≥ 16 from the PL palette, chroma ≤ 19.
+  - Cards now come in light and dark (canvas v29: 18 new light boards). Every text element checked for AA at its position on the sky.
+  - Accent: pale mint #C8EBDD on dark, deep teal #143A53 on light. Start and Market screens get the sky header.
+  - [x] Design system v5 (2026-10-11): Mist tokens (sky, accent, ring, you, caution, difficulty 1–5), brand book rules, restyled Button/StoryRing/AwardCard/WrapCard/Cover/TabBar, new Sky, LeaguePicker, FixtureTicker, InjuryList
+  - [ ] Ralph: shared image theme. Proposal: the image follows the app theme at share time; link previews use dark
+- [x] Middle Class rule: middle third of the table and moved ≤ 1 place over 3 GWs (adopted as D3, 2026-10-10).
+- [x] Canvas pass 2, Market direction only, on two new canvas pages (2026-10-09):
+  - [x] **Card component** (`A-Card`): all 8 awards in Status and X, with ties, the provisional tag and the language switch. Each award gets its own visual: trend line, rank line, captain bars, bench row, hit bar, flat group lines.
+  - [x] **Wrap:** Status and X, plus a version where an award has no winner and a group line takes its row
+  - [x] **Screens:** Start, Market tab, League tab, story viewer, share sheet, public share page
+  - [x] **States:** invalid ID, league not found or head-to-head, FPL down, loading, provisional, over 50 managers, GW still in progress, fewer than 3 GWs
+  - [x] Visual check of every card, screen and state in the browser
+- [x] Ralph approves pass 2 (2026-10-10), asking for less text
+- [x] Simplicity pass on cards and screens, following Apple's guidance (see tasks/lessons.md)
+- [ ] Ralph edits the Pidgin and English copy
+- [x] Design System artifact "Fantasy Squad Battle" (2026-10-10): https://claude.ai/artifact/8hkdZjwZq7JvCU4FS7NzYi
+  - Tokens for dark (first) and light: 36 colours, all text pairs AA in both themes; Inter App and Card type scales; spacing, radius, size and gradient tokens
+  - Brand book as usage rules: voice, colour, type, layout, share cards, iconography, motion, accessibility
+  - 18 components with guidelines and live HTML previews, from Button to AwardCard and WrapCard, plus a cover
+  - Instrument Serif dropped with the Editorial direction
+- [x] **Canvas pass 3, new scope** (2026-10-11), page "Pass 3 · New scope", dark and light, real FPL data:
+  - [x] Start with My team ID | League link, help, team-not-found
+  - [x] League picker: your leagues, public folded, no private leagues, loading, FPL down
+  - [x] Tab bar League · Fixtures · Players; Market | Table switch; Change league; your row and card highlighted
+  - [x] Fixtures ticker GW 7–12: sort, sticky team column, difficulty colours plus numbers, double and blank, end of season, loading, FPL down
+  - [x] Players, injuries & bans: status chips, filters (Unavailable separate), nothing flagged, loading, FPL down
+  - [x] AA checked at each text's position on the sky, both themes
+  - [x] Reply to the data session: [docs/handoff/2026-10-11-design-reply-pass3.md](../docs/handoff/2026-10-11-design-reply-pass3.md)
+- [ ] Ralph reviews pass 3
 
-## 5. Cards: `next/og`
+## 5. Build, slice 1 (started 2026-10-11): tokens and the share cards
+Data isn't wired yet (`lib/league` is in the data session's branch), so cards render from a sample league with the canvas data. The card takes a small view model (`lib/cards/types.ts`) that the award logic will fill later.
+- [x] Tokens: `design/tokens.json` (copied from the Design System) → `npm run tokens` generates `app/tokens.css` (light, dark by system preference, `data-theme` overrides, Tailwind mapping) and `lib/tokens.ts` (plain values for cards). `app/globals.css` holds the clamp() type scale. Inter only; Instrument Serif removed.
+- [ ] `lib/variants.ts`: CVA variants for the app's base components (with the app screens, slice 2)
+- [x] Card assets: Inter 400/600/700 Latin + Latin Extended WOFF from `@fontsource/inter` 5.3.0 (OFL, 240 KB), the 8 award emoji as Noto SVGs (OFL; the CDN set lacks 🫠), a sparse grain tile (`scripts/make-grain.mjs`, 8% speckle)
+- [x] `lib/cards/`: view-model types, words per language (`describe` turns facts into number, context and chart message), sky stops, air above the winner, trend and rank charts (rank scale spans the ranks shown; labels kept a line apart), request parsing, sample league. 26 unit tests.
+- [x] Card JSX for `next/og` (`lib/cards/render/`): award card and Wrap, Status and X, light and dark, provisional, ties (3 named + "+N others"). Inline style objects and plain `img` there are deliberate: Satori reads neither class names nor next/image. ▲ ▼ are drawn as shapes (the card fonts don't carry them).
+- [x] Route `app/cards/[league]/[gw]/[award]/route.tsx` (`award` = wrap or an award key; `?format=status|x&theme=dark|light&lang=pcm|en|fr&provisional=1`). Only `sample/5` until lib/league is wired; others 404. Final GWs: s-maxage 1 day; provisional: 5 minutes.
+- [x] Verified (2026-10-11): typecheck, lint, 108 tests, production build (assets traced into the route). All 36 cards (9 × 2 formats × 2 themes) rendered and checked by eye, plus French and provisional. Render 0.15–0.9 s warm.
+  - **Size:** dark Status cards are about 400 KB, light about 170 KB, X cards 100–270 KB. The grain costs about 200 KB on a dark card (dense noise made it 1.3 MB; sparse 8% speckle keeps the look). Ralph to decide whether shared cards keep the grain.
+- [ ] Wire cards to `lib/league` awards once the data session exposes them (plus `entryId` on winners, per the handoff reply)
+
+## 5c. Build, slice 2 (started 2026-10-12): the app screens
+Real data where the data layer already has it (start input, `getMyTeam`, standings); typed samples where the logic belongs to the data session and isn't built yet (Market data, ticker, injuries). Screens take view models (`lib/screens/`), so wiring the real logic later swaps one function per screen.
+- [x] Foundations: `lib/variants.ts` (CVA, no arbitrary values: named utilities and variants in `globals.css`), `components/ui/` (Sky, TabBar, theme toggle, language switch, down panel, badge, rank pill, Noto award emoji), theme with no flash (System / Light / Dark, `data-theme`), language from a cookie with the phone's language as the default
+- [x] Start `/` (real, no client JavaScript): My team ID | League link as radio segments, help as `<details>`, every `parseStartInput` error in three languages; `/find` redirects to the picker or the league
+- [x] Picker `/team/[teamId]` (real `getMyTeam`): your leagues, public folded, team not found → back to Start with the error, FPL down panel, loading skeleton
+- [x] Remembered on the phone: `proxy.ts` keeps the last team and league in cookies and opens `/` straight into the last league (`/?start=1` skips it)
+- [x] League `/league/[id]` (Market) and `/league/[id]/table`: shared header (Change league, Market | Table), Table on real standings (your row tinted, Top 50 note), Market on `/league/sample` until `lib/league` lands; real leagues show a note and a link to the Table
+- [x] Fixtures `/fixtures` and Players `/players` on the agreed `TickerRow` / `InjuryRow` shapes, from a 12 Oct snapshot until `lib/tools` lands; sort and filters are links (no JavaScript)
+- [x] Verified (2026-10-12): typecheck, lint, 163 tests, production build (every screen a partial prerender). Real flows checked in the browser at phone size in both themes: Start (mode switch, errors), picker on real team 1, Table on league 314 (Top 50), sample Market, Fixtures, Players, theme toggle, language switch, remembered league.
+  - **First-load JS on Start: 178 KB gzipped** (budget ~170). The Next/React runtime is ~164 KB in this build; ours is ~9 KB (next/image for the two card previews, the theme toggle). Ralph to decide: drop the previews or accept.
+- [ ] Wire the Market view to `lib/league`, Fixtures and Players to `lib/tools` (one call per screen; see docs/handoff/2026-10-12-screens-ready.md)
+- [ ] Story viewer and sharing (next slice)
+
+## 5d. Architecture pass (2026-10-12, agreed with Ralph): deep modules, clear layers
+Each step is one commit; the full suite runs once at the end.
+- [x] **i18n:** `lib/i18n` owns `Lang`, the language cookie and every word (app and cards), one catalogue per language; `lib/awards.ts` owns the award keys and emoji. Fix the English-only strings on the Market and Fixtures screens.
+- [x] **Remembered:** `lib/remembered.ts` owns the cookies and the proxy's decision (tested); `lib/ids.ts` checks an FPL ID once.
+- [x] **Screen loaders:** one module per screen in `lib/screens/` (raw input → ready view, redirect, not found or FPL down), the data source passed in; routes only switch on the outcome; components only draw. Tests go through the loaders.
+- [x] **Cards:** `renderCard` in `lib/cards` hides Satori (sizes, fonts, emoji, errors); `lib/screens/card.ts` loads the model.
+- [x] **Layers:** `docs/architecture.md` plus ESLint `no-restricted-imports` per folder; handoff to the data session for their side.
+- [x] Verified (2026-10-12): typecheck, lint (rules probed: each layer's forbidden import fails), 184 tests, production build (every screen still a partial prerender). On the production server: `/find`, bad team → Start with the reason, `/league/abc` → 404, picker on team 1, Table on league 314 (Top 50), Market-soon note, sample Market in French (stories, pills), Fixtures and Players in French with filters, `/prefs` (and refusing `//evil.example`), remembered league 307, cookies, card PNG and cache header, unknown cards 404.
+
+## 5e. Build, slice 3 (planned 2026-10-13): real Market, stories and sharing
+Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `getLeagueView` from the data session's `feat/league-logic` (not on main yet).
+- [x] **Real Market:** `LeagueSource.market` maps `getLeagueView` → `MarketData` (award IDs → our keys, `null` scores and gaps handled, `isYou` row); the Market-soon note goes
+- [x] **Real cards:** `loadCard` builds `AwardCardModel` / `WrapCardModel` from the league view (stat and winners → `AwardFacts`, "+N others" for big ties, skipped awards → Wrap group lines)
+- [x] **Story viewer** `/league/{id}/story/{card}`: works as plain links with no JavaScript (card, previous and next, close); a small client script adds 5 s auto-advance, progress segments, hold to pause, a visible Pause button, and no auto-advance under reduced motion
+- [x] **Watched circles:** grey once seen (localStorage), a tiny script on the Market's story row
+- [x] **Share sheet:** WhatsApp Status (tall), X (square), Save image. Web Share with the PNG file where the phone supports it; a download link otherwise
+- [x] **Share page** `/s/{league}/{gw}` (public): Wrapped card, award cards, standings, "Roast your own league"; link previews (Open Graph, X) use the dark Wrapped card
+- [x] Tests through the screen modules (201 in the suite); JS budget measured on the production build (compressed): the framework's shared chunks are ~170 KB on every page; on top, Start +14 KB (next/image previews, theme, language), League +14 KB (links, theme toggle, story circles 1.2 KB), the story viewer +16 KB on its own page only
+- [x] Verified (2026-10-13, dev and production): auto-advance and the URL following, pause, tap zones, last card closing to the league, the share sheet open and Cancel, light and dark cards (only the shown theme downloads, ~40 KB WebP each), watched circles, the share page and its preview tags; bad story and share links are real 404s
+- [x] Real Market and real cards (2026-10-13, after PR #2): `getLeagueView` and `lib/roasts` through `lib/screens/from-view.ts`; checked on league 314 GW 6 (Market, stories, cards, share page). Waiting on the data session for the captain's best-in-team, the bench players and a rank series (docs/handoff/2026-10-13-market-wired.md)
+
+## 5f. Wiring the data session's handoffs (2026-10-15)
+- [x] Fixtures and Players on live `lib/tools` (`getTicker`, `getInjuryReport`); the 12 Oct snapshot is gone
+- [x] Cards: the captain set against the best in that team (`captain.best`), bench players (`winner.bench`), rank charts from `rankSeries`
+- [x] Share sheet on `lib/share` (`shareCard`, `createImageCache`, `browserShareEnv`)
+- [ ] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`) once PR #4 (`feat/analytics`) is on main and `POSTHOG_KEY` is set in Vercel
+
+## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
 - [ ] Bundled font files, Noto or Twemoji emoji, generated team badges and the web address watermark
 - [ ] Long-lived cache headers for finished GWs and a short cache for provisional ones
@@ -175,6 +264,8 @@ The design session already built titles, language detection and the switcher in 
 - **Card rendering:** `next/og` is built into Next.js, so no extra dependency.
 - **Concurrency:** `p-limit` 7.3.3, a well-tested tiny library, rather than a hand-written pool.
 - **Validation:** `zod` 4.6.5. Its schemas also strip unused fields, which keeps cached payloads small.
+
+- **Slice 3 calls (Ralph, 2026-10-13):** the data session's `feat/league-logic` goes to main first (PR #2), then the design branch wires it; real cards show no roast line until `lib/roasts` lands (no placeholder text ships); a shared card image follows the app's theme, and link previews are always dark.
 
 ## Review
 _(fill in after the build)_

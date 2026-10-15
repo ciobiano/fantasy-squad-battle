@@ -115,6 +115,7 @@ Verified API facts (2026-10-08):
   - Planner: selling prices are estimates, labelled as such, because exact ones need the user's FPL login.
   - Projections: FPL's `ep_next` is only recent form. A real projection means our own model built from free inputs (xG, xA, minutes, availability, team strengths, fixtures), possibly as Python functions on Vercel.
   - Keep raw API access (`lib/fpl/`) separate from domain logic (`lib/league/` for the banter, `lib/tools/` for the tools), so features reuse both.
+- **Layers:** `docs/architecture.md` says which folder may import which; ESLint enforces it. Each screen is one module in `lib/screens/` that returns an outcome, and its route only settles it.
 
 ## Legal / brand guardrails
 

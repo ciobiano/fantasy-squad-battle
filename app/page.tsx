@@ -1,10 +1,25 @@
-import { heading, placeholderMain } from "@/lib/variants";
+import { Suspense } from "react";
+import { StartFallback } from "@/components/screens/fallbacks";
+import { Start } from "@/components/screens/Start";
+import { Sky } from "@/components/ui/Sky";
+import { requestLang } from "@/lib/request";
+import { startView } from "@/lib/screens/start";
+import { page } from "@/lib/variants";
 
-export default function Home() {
+// "/" opens the remembered league straight away (proxy.ts); this is Start for
+// everyone else, and for "Change team" / errors (?start=1).
+async function StartForRequest({ searchParams }: { searchParams: PageProps<"/">["searchParams"] }) {
+  const [lang, query] = await Promise.all([requestLang(), searchParams]);
+  return <Start view={startView(query, lang)} lang={lang} />;
+}
+
+export default function StartPage({ searchParams }: PageProps<"/">) {
   return (
-    <main className={placeholderMain()}>
-      <h1 className={heading({ level: "display" })}>Fantasy Squad Battle</h1>
-      <p className={heading()}>Roast cards for your mini-league. Coming soon.</p>
+    <main className={page({ tabs: false })}>
+      <Sky height="start" />
+      <Suspense fallback={<StartFallback />}>
+        <StartForRequest searchParams={searchParams} />
+      </Suspense>
     </main>
   );
 }

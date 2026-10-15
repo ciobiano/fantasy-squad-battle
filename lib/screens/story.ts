@@ -1,0 +1,87 @@
+// The story viewer (/league/{id}/story/{card}): the Wrap first, then every
+// award that has a winner, in story order. Each card carries its page link and
+// its image in both formats and both themes, so the viewer can show the one
+// that matches the app's theme and share the size the person picks.
+import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
+import type { Lang } from "@/lib/i18n";
+import { FORMATS, THEMES } from "@/lib/cards/query";
+import { cardUrl, type CardKey } from "@/lib/cards/request";
+import type { CardFormat, CardTheme } from "@/lib/cards/types";
+import { liveLeague, type LeagueSource } from "./league";
+import { marketFromView } from "./from-view";
+import { SAMPLE_MARKET, storyHref, type MarketData } from "./market";
+import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
+
+export type CardImages = Readonly<Record<CardFormat, Readonly<Record<CardTheme, string>>>>;
+
+export interface StoryCard {
+  readonly key: CardKey;
+  /** This card's story page. */
+  readonly href: string;
+  /** The shared images, at full size with their grain. */
+  readonly images: CardImages;
+  /** What the viewer shows: the tall card without grain, lighter to draw and to send. */
+  readonly preview: CardImages["status"];
+}
+
+export interface StoryView {
+  readonly leagueId: string;
+  readonly leagueName: string;
+  readonly gw: number;
+  readonly cards: readonly StoryCard[];
+  /** The card the link opened. */
+  readonly index: number;
+  readonly closeHref: string;
+  /** The league's public page for this gameweek, sent along with a shared card. */
+  readonly pageHref: string;
+}
+
+/** A card's image URLs: both formats, both themes, in one language; `preview` for the in-app copies. */
+export function cardImages(leagueId: string, gw: number, key: CardKey, lang: Lang, preview = false): CardImages {
+  return Object.fromEntries(
+    FORMATS.map((format) => [
+      format,
+      Object.fromEntries(THEMES.map((theme) => [theme, cardUrl(leagueId, gw, key, { format, theme, lang, preview })])),
+    ]),
+  ) as CardImages;
+}
+
+/** The public page for a league's gameweek, whose link previews with the Wrapped card. */
+export const sharePageHref = (leagueId: string, gw: number): string => `/s/${leagueId}/${gw}`;
+
+function storyView(leagueId: string, market: MarketData, lang: Lang): Omit<StoryView, "index"> {
+  const keys: readonly CardKey[] = ["wrap", ...market.awards];
+  return {
+    leagueId,
+    leagueName: market.leagueName,
+    gw: market.gw,
+    cards: keys.map((key) => ({
+      key,
+      href: storyHref(leagueId, key),
+      images: cardImages(leagueId, market.gw, key, lang),
+      preview: cardImages(leagueId, market.gw, key, lang, true).status,
+    })),
+    closeHref: `/league/${leagueId}`,
+    pageHref: sharePageHref(leagueId, market.gw),
+  };
+}
+
+/** The newest unlocked gameweek's stories. A card nobody won is a 404; a league with no gameweek yet goes back to its page. */
+export async function loadStory(
+  leagueSegment: string,
+  cardSegment: string,
+  lang: Lang,
+  source: LeagueSource = liveLeague,
+): Promise<Screen<StoryView>> {
+  const open = (view: Omit<StoryView, "index">): Screen<StoryView> => {
+    const index = view.cards.findIndex((card) => card.key === cardSegment);
+    return index < 0 ? notFound() : ready({ ...view, index });
+  };
+  if (leagueSegment === SAMPLE_LEAGUE) return open(storyView(SAMPLE_LEAGUE, SAMPLE_MARKET, lang));
+  const leagueId = fplId(leagueSegment);
+  if (leagueId === null) return notFound();
+  return guard("story", `/league/${leagueId}/story/${cardSegment}`, async () => {
+    const result = await source.view(leagueId, {});
+    return result.ok ? open(storyView(String(leagueId), marketFromView(result.data), lang)) : redirectTo(`/league/${leagueId}`);
+  });
+}

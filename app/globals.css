@@ -1,22 +1,167 @@
 @import "tailwindcss";
+@import "./tokens.css";
 
-/* Placeholder tokens. The real light/dark palette and gradients come from the
-   Design System after the design exploration (tasks/todo.md, phase 4). */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Colours, gradients and radii come from tokens.css (generated from the Design
+   System). This file adds the type scale and the page defaults. */
+
+@theme inline {
+  --font-sans: var(--font-inter), -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-emoji: "Noto Color Emoji", sans-serif;
+
+  /* App type scale (Design System, "App" group). Sizes are in rem so they follow
+     the phone's text size; headings ease down on narrow screens with clamp().
+     Nothing a person reads in a paragraph is smaller than 17px. */
+  --text-display: clamp(1.75rem, 1.5rem + 1.25vw, 2rem);
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+
+  --text-large-title: clamp(1.625rem, 1.4rem + 1.1vw, 1.875rem);
+  --text-large-title--line-height: 1.1;
+  --text-large-title--letter-spacing: -0.025em;
+  --text-large-title--font-weight: 700;
+
+  --text-title: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.015em;
+  --text-title--font-weight: 700;
+
+  --text-headline: 1.0625rem;
+  --text-headline--line-height: 1.3;
+  --text-headline--letter-spacing: -0.01em;
+  --text-headline--font-weight: 600;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.4;
+
+  --text-callout: 0.9375rem;
+  --text-callout--line-height: 1.4;
+
+  --text-footnote: 0.8125rem;
+  --text-footnote--line-height: 1.38;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.33;
+
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.27;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Named variants and utilities, so lib/variants.ts never needs arbitrary values. */
+@custom-variant current (&[aria-current="page"], &[aria-current="true"]);
+@custom-variant flagged (&[aria-invalid="true"]);
+
+@utility bg-sky {
+  background-image: var(--gradient-sky);
+}
+@utility bg-mark {
+  background-image: var(--gradient-mark);
+}
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@utility rounded-squircle {
+  border-radius: 30%;
+}
+@utility rounded-shield {
+  border-radius: 25% 25% 50% 50%;
+}
+/* Safe areas (viewport-fit=cover): content stays clear of the Dynamic Island,
+   notch and home bar wherever the browser lets the page run under them. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pb-with-tabs {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+}
+@utility pb-end {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+}
+@utility pb-sheet {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+}
+@utility pb-cta {
+  padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
+}
+/* The status-bar strip. Safari 26 on iPhone ignores theme-color and tints the
+   status bar from a full-width fixed element at the top edge (else the page
+   background, white in light mode). At least 1px so there's always one to sample. */
+@utility h-status {
+  height: max(1px, env(safe-area-inset-top));
+}
+@utility border-fine {
+  border-width: 1.5px;
+}
+
+/* The app's theme as the page shows it: a saved choice (data-theme on <html>), else the phone's.
+   Used to show the card image that matches; a forced-dark subtree (the story viewer) doesn't change it. */
+@custom-variant dark {
+  :root[data-theme="dark"] & {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) & {
+      @slot;
+    }
   }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-instrument-serif);
+/* Story viewer: each card's progress segment fills in 5 s; the card advances when it ends.
+   Animates `scale`, the property Tailwind's scale-x-* utilities set: animating transform
+   instead would combine with their scale-x-0 and keep the segment empty. */
+@keyframes story-fill {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@utility animate-story {
+  animation: story-fill 5s linear forwards;
+}
+@utility animation-paused {
+  animation-play-state: paused;
+}
+/* Paused by the button, a press and hold, or the share sheet. */
+@custom-variant story-paused (:where([data-paused="true"]) &);
+/* Fits the card (9:16) inside its stage, whichever side runs out first. */
+@utility container-size {
+  container-type: size;
+}
+@utility story-fit {
+  width: min(100cqw, calc(100cqh * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+/* No "save image" menu on a long press: holding a card pauses it. */
+@utility touch-callout-none {
+  -webkit-touch-callout: none;
+}
+@utility no-drag {
+  -webkit-user-drag: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Start screen: the My team ID | League link radios swap the label, button and
+   help text without JavaScript. */
+[data-mode-switch]:has(input[value="league"]:checked) [data-show="team"],
+[data-mode-switch]:has(input[value="team"]:checked) [data-show="league"] {
+  display: none;
 }

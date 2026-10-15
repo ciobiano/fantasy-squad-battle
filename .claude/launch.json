@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "next-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "source \"$HOME/.nvm/nvm.sh\" && nvm exec npm run dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "next-start",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "source \"$HOME/.nvm/nvm.sh\" && nvm exec npm run start -- -p 3100"
+      ],
+      "port": 3100
+    }
+  ]
+}
