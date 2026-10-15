@@ -31,7 +31,7 @@ const domError = (name: string) => new DOMException("", name);
 
 describe("shareCard on a phone", () => {
   it("hands the phone's share sheet the image alone: no text, no link", async () => {
-    const share = vi.fn(async (_data: { files: File[] }) => {});
+    const share = vi.fn<ShareEnv["share"]>(async () => {});
     const env = phone({ share });
     expect(await shareCard(input, await readyCache(), env)).toBe("shared");
     const [data] = share.mock.calls[0];
