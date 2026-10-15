@@ -1,11 +1,13 @@
 // Both League routes (Market and Table) render through here; only the tab and
 // the sky's height differ.
+import { headers } from "next/headers";
 import { Suspense } from "react";
 import { LeagueFallback } from "@/components/screens/fallbacks";
 import { LeagueScreen } from "@/components/screens/LeagueScreen";
 import { settle } from "@/components/screens/settle";
 import { Sky } from "@/components/ui/Sky";
 import { TabBar } from "@/components/ui/TabBar";
+import { trackServer } from "@/lib/analytics/capture";
 import { rememberedTeam, requestLang } from "@/lib/request";
 import { loadLeague, type LeagueTab } from "@/lib/screens/league";
 import { page } from "@/lib/variants";
@@ -13,8 +15,12 @@ import { page } from "@/lib/variants";
 type Params = Promise<{ readonly leagueId: string }>;
 
 async function LeagueForRequest({ params, tab }: { params: Params; tab: LeagueTab }) {
-  const [{ leagueId }, lang, team] = await Promise.all([params, requestLang(), rememberedTeam()]);
-  return settle(await loadLeague(leagueId, tab, team), lang, (view) => <LeagueScreen view={view} lang={lang} />);
+  const [{ leagueId }, lang, team, head] = await Promise.all([params, requestLang(), rememberedTeam(), headers()]);
+  const screen = await loadLeague(leagueId, tab, team);
+  if (screen.kind === "ready" && screen.view.gw !== null) {
+    trackServer("league_loaded", { league: screen.view.leagueId, gw: screen.view.gw, view: tab, language: lang }, head);
+  }
+  return settle(screen, lang, (view) => <LeagueScreen view={view} lang={lang} />);
 }
 
 export function LeagueTabPage({ params, tab }: { params: Params; tab: LeagueTab }) {

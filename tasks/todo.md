@@ -212,7 +212,7 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] Fixtures and Players on live `lib/tools` (`getTicker`, `getInjuryReport`); the 12 Oct snapshot is gone
 - [x] Cards: the captain set against the best in that team (`captain.best`), bench players (`winner.bench`), rank charts from `rankSeries`
 - [x] Share sheet on `lib/share` (`shareCard`, `createImageCache`, `browserShareEnv`)
-- [ ] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`) once PR #4 (`feat/analytics`) is on main and `POSTHOG_KEY` is set in Vercel
+- [x] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`). Checked 15 Oct against a local fake PostHog: each event arrives with only its props; bots, link previews, `<Link>` prefetches and re-picking the same language aren't counted. `card_viewed` counts the card a link opened, not cards played after it in place.
 
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
@@ -250,7 +250,7 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] `/api/signal`: shares and downloads from the browser (same origin only, ≤ 1 KB, client events only); `track()` is a ~300-byte beacon
 - [x] `ANALYTICS_SALT` in Vercel (Production, Preview). 12 new tests (329 in the suite).
 - [x] `POSTHOG_KEY` (the public `phc_` project token) in Vercel Production and Preview; PostHog EU accepted a test event (2026-10-15)
-- [ ] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
+- [x] Design session: call `trackServer` and `track` at the five places ([handoff](../docs/handoff/2026-10-15-analytics.md))
 - [ ] Before launch: rate-limit `/api/signal` with Vercel Firewall
 
 ## 8. Ship

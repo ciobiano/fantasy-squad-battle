@@ -35,7 +35,7 @@ export function Story({ view, lang }: { view: StoryView; lang: Lang }) {
   };
   return (
     <div lang={lang}>
-      <StoryPlayer view={view} labels={labels} />
+      <StoryPlayer view={view} labels={labels} lang={lang} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { preload } from "react-dom";
+import type { Lang } from "@/lib/i18n";
 import type { StoryView } from "@/lib/screens/story";
 import {
   storyBar, storyCard, storyClose, storyColumn, storyFill, storyPause, storySegment, storySegments, storyStage,
@@ -44,7 +45,7 @@ const SIZES = "(max-width: 448px) 92vw, 420px";
 /** How many cards ahead start downloading. */
 const PRELOAD_AHEAD = 2;
 
-export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLabels }) {
+export function StoryPlayer({ view, labels, lang }: { view: StoryView; labels: StoryLabels; lang: Lang }) {
   const router = useRouter();
   const [index, setIndex] = useState(view.index);
   const [paused, setPaused] = useState(false);
@@ -176,6 +177,7 @@ export function StoryPlayer({ view, labels }: { view: StoryView; labels: StoryLa
         <div className={storyBar()}>
           <ShareSheet
             images={card.images}
+            count={{ league: view.leagueId, gw: view.gw, award: card.key, language: lang }}
             filename={`squad-battle-gw${view.gw}-${card.key}`}
             cardHref={card.href}
             pageHref={view.pageHref}

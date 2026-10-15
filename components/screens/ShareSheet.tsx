@@ -14,6 +14,8 @@
 // With no JavaScript the sheet is a <details> of download links.
 import Link from "next/link";
 import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
+import { track } from "@/lib/analytics/client";
+import type { EventProps } from "@/lib/analytics/events";
 import type { CardImages } from "@/lib/screens/story";
 import { browserShareEnv, createImageCache, shareCard } from "@/lib/share/share";
 import {
@@ -39,8 +41,12 @@ export interface ShareLabels {
   readonly savedForX: string;
 }
 
+/** What a share or a download is counted with: the card, never the person. */
+export type ShareCount = Omit<EventProps["card_shared"], "format">;
+
 interface ShareSheetProps {
   readonly images: CardImages;
+  readonly count: ShareCount;
   /** e.g. "squad-battle-gw5-oga"; the format is added. */
   readonly filename: string;
   /** Where Cancel goes with no JavaScript: this card's page. */
@@ -56,14 +62,13 @@ type CardFormat = keyof CardImages;
 type CardTheme = keyof CardImages[CardFormat];
 type Option = "status" | "x" | "save";
 
-
 const OPTIONS: readonly Option[] = ["status", "x", "save"];
 const THEMES: readonly CardTheme[] = ["light", "dark"];
 const ICON: Record<Option, ReactNode> = { status: <WhatsAppMark />, x: <XMark />, save: <DownloadIcon /> };
 /** How long "Saved" stays up after the sheet closes. */
 const TOAST_MS = 4000;
 
-export function ShareSheet({ images, filename, cardHref, pageHref, labels, open, onOpenChange }: ShareSheetProps) {
+export function ShareSheet({ images, count, filename, cardHref, pageHref, labels, open, onOpenChange }: ShareSheetProps) {
   const [note, setNote] = useState<"tapAgain" | "failed" | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   // One cache per sheet: the pictures arrive before the tap (lib/share).
@@ -96,14 +101,19 @@ export function ShareSheet({ images, filename, cardHref, pageHref, labels, open,
     if (option === "save") {
       env.download(images.status[theme], name("status"));
       env.download(images.x[theme], name("x"));
+      track("card_downloaded", { ...count, format: "both" });
       close(labels.saved);
       return;
     }
     const pageUrl = new URL(pageHref, window.location.origin).href;
     const outcome = await shareCard({ url: images[option][theme], filename: name(option), target: option, pageUrl }, cache, env);
-    if (outcome === "shared") close(null);
-    else if (outcome === "downloaded") close(option === "x" ? labels.savedForX : labels.saved);
-    else if (outcome === "tap-again") setNote("tapAgain");
+    if (outcome === "shared") {
+      track("card_shared", { ...count, format: option });
+      close(null);
+    } else if (outcome === "downloaded") {
+      track("card_downloaded", { ...count, format: option });
+      close(option === "x" ? labels.savedForX : labels.saved);
+    } else if (outcome === "tap-again") setNote("tapAgain");
     else if (outcome === "failed") setNote("failed");
   };
 
