@@ -212,7 +212,7 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 - [x] Fixtures and Players on live `lib/tools` (`getTicker`, `getInjuryReport`); the 12 Oct snapshot is gone
 - [x] Cards: the captain set against the best in that team (`captain.best`), bench players (`winner.bench`), rank charts from `rankSeries`
 - [x] Share sheet on `lib/share` (`shareCard`, `createImageCache`, `browserShareEnv`)
-- [x] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`). Checked 15 Oct against a local fake PostHog: each event arrives with only its props; bots, link previews, `<Link>` prefetches and re-picking the same language aren't counted. `card_viewed` counts the card a link opened, not cards played after it in place.
+- [x] Analytics: five calls (`league_loaded`, `card_viewed`, `language_changed`, `card_shared`, `card_downloaded`). Checked 15 Oct against a local fake PostHog: each event arrives with only its props; bots, link previews, `<Link>` prefetches and re-picking the same language aren't counted. `card_viewed` is a browser event: every card the story player shows, going back included.
 
 ## 5b. Cards: `next/og` (original checklist)
 - [ ] Wrap and award cards in Status (1080×1920) and X (1080×1080) sizes
