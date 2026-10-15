@@ -78,7 +78,7 @@ Verified API facts (2026-10-08):
 - Cards come from `next/og` `ImageResponse` (Satori). Satori supports flexbox only: no CSS grid, blend modes or filters, and fonts must be shipped as files.
 - No database for the MVP. Add one only when it's actually needed.
 - Analytics (built 2026-10-15): PostHog EU, free plan, signed up directly. The Marketplace install needed a card for its pay-as-you-go plan.
-  - **No PostHog library on the phone.** Our server sends events to PostHog's capture API after each response (`after()`), from `lib/analytics/capture.ts`. Shares and downloads are reported by a ~300-byte beacon to our own `/api/signal`, which checks them.
+  - **No PostHog library on the phone.** Our server sends events to PostHog's capture API after each response (`after()`), from `lib/analytics/capture.ts`. Cards seen, shared and downloaded are reported by a ~300-byte beacon to our own `/api/signal`, which checks them. The story player reports every card it shows, because it moves between cards without loading a page.
   - **Cookieless, no consent banner:** a visitor is a daily-rotating hash of IP and browser with a secret salt. The IP never leaves our server; the country comes from Vercel's header. Events are anonymous (`$process_person_profile: false`). Bots, link previews and prefetches aren't counted.
   - Env: `POSTHOG_KEY` (the public `phc_` project key) and `ANALYTICS_SALT` (secret) in Vercel Production and Preview; analytics is off without them. Every event carries `environment`, so previews can be filtered out.
   - Events (`lib/analytics/events.ts`): `league_loaded` {league, gw, view, language}, `card_viewed` {league, gw, award, language}, `card_shared` and `card_downloaded` {league, gw, award, format, language}, `language_changed` {from, to}.

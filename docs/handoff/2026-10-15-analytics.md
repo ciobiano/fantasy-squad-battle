@@ -7,7 +7,7 @@ Phase 7 is on branch `feat/analytics`; it goes to main once Ralph says. PostHog 
 | Event | Where | Call |
 |---|---|---|
 | `league_loaded` | Market, Table and share page routes | `trackServer("league_loaded", { league, gw, view: "market" \| "table" \| "share", language }, headers)` |
-| `card_viewed` | Story page route, for the card shown | `trackServer("card_viewed", { league, gw, award, language }, headers)` |
+| `card_viewed` | Story player, for **each** card shown, the first included (changed 15 Oct: the player moves between cards without loading a page) | `track("card_viewed", { league, gw, award, language })`; the story route no longer counts it |
 | `language_changed` | `/prefs`, when the cookie changes | `trackServer("language_changed", { from, to }, headers)` (`from` is null before a first choice) |
 | `card_shared` | Share sheet, when `shareCard` returns `"shared"` | `track("card_shared", { league, gw, award, format: "status" \| "x", language })` |
 | `card_downloaded` | Share sheet: `"downloaded"`, and Save image (`format: "both"`) | `track("card_downloaded", { league, gw, award, format, language })` |

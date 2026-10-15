@@ -75,8 +75,10 @@ describe("capture", () => {
 });
 
 describe("events from the browser", () => {
-  it("accepts only shares and downloads, with exactly their properties", () => {
+  it("accepts only cards seen, shared and downloaded, with exactly their properties", () => {
     expect(parseClientEvent({ event: "card_shared", props: shared })).toEqual({ event: "card_shared", props: shared });
+    expect(parseClientEvent({ event: "card_viewed", props: { league: "314", gw: 5, award: "wrap", language: "pcm" } })).not.toBeNull();
+    expect(parseClientEvent({ event: "card_viewed", props: { ...shared } })).toBeNull();
     expect(parseClientEvent({ event: "card_downloaded", props: { ...shared, format: "both" } })).not.toBeNull();
     expect(parseClientEvent({ event: "league_loaded", props: { league: "314", gw: 5, view: "market", language: "en" } })).toBeNull();
     expect(parseClientEvent({ event: "card_shared", props: { ...shared, name: "Ade" } })).toBeNull();
