@@ -23,6 +23,11 @@ const POSITIONS = ["GK", "DEF", "MID", "FWD"] as const;
 
 const present = (gap: number | null | undefined): gap is number => gap !== null && gap !== undefined;
 
+/** The value every winner has, or null when they differ. */
+function shared<T>(values: readonly T[]): T | null {
+  return values.length > 0 && values.every((v) => v === values[0]) ? values[0] : null;
+}
+
 // ---------------------------------------------------------------- Market and Table
 
 function teamOfTheWeek(view: LeagueView): TeamOfTheWeek {
@@ -97,15 +102,23 @@ function cardManager(manager: { readonly firstName: string; readonly teamName: s
   };
 }
 
+// A card naming several winners shows only what they share: one manager's
+// chart, hits, captain or bench would read as everyone's.
 function factsFor(award: Award, view: LeagueView): AwardFacts {
   const [first] = award.winners;
+  const alone = award.winners.length === 1;
   const ranked = view.table.filter((row) => row.rank !== null).length;
   const charted = award.winners.slice(0, NAMED);
   switch (award.id) {
     case "oga":
     case "spoon": {
       const row = view.market.find((r) => r.manager.id === first?.manager.id);
-      return { award: award.id, net: award.stat, hits: first?.score?.hits ?? 0, gapByGw: (row?.gapSeries ?? []).filter(present) };
+      return {
+        award: award.id,
+        net: award.stat,
+        hits: shared(award.winners.map((w) => w.score?.hits ?? 0)) ?? 0,
+        gapByGw: alone ? (row?.gapSeries ?? []).filter(present) : [],
+      };
     }
     case "climber":
     case "faller":
@@ -126,19 +139,20 @@ function factsFor(award: Award, view: LeagueView): AwardFacts {
         leagueSize: ranked,
       };
     case "captain": {
-      // Set against the best other player in that team; the gameweek's top player only if there was none.
-      const own = first?.captain?.best ?? null;
+      // Set against the best other player in that team; the gameweek's top player when
+      // there was none, or when several managers share the award.
+      const own = alone ? (first?.captain?.best ?? null) : null;
       const top = view.teamOfTheWeek.topPlayer;
       return {
         award: "captain",
-        captain: { name: first?.captain?.name ?? "", points: award.stat },
+        captain: { name: shared(award.winners.map((w) => w.captain?.name ?? "")), points: award.stat },
         best: own ? { ...own, scope: "team" } : top ? { name: top.name, points: top.points, scope: "gameweek" } : null,
       };
     }
     case "bench":
-      return { award: "bench", total: award.stat, players: first?.bench ?? [] };
+      return { award: "bench", total: award.stat, players: alone ? (first?.bench ?? []) : [] };
     case "hits":
-      return { award: "hits", gross: first?.score?.points ?? 0, paid: award.stat };
+      return { award: "hits", gross: shared(award.winners.map((w) => w.score?.points ?? 0)), paid: award.stat };
   }
 }
 

@@ -72,6 +72,35 @@ describe("cardFromView", () => {
     const withBench = { ...view, awards: view.awards.map((a) => (a.id === "bench" ? { ...a, winners: a.winners.map((w) => ({ ...w, bench: benched })) } : a)) };
     expect(award(withBench, "bench").facts).toEqual({ award: "bench", total: 21, players: benched });
   });
+  describe("an award several managers share", () => {
+    // Two winners of everything, the second with different details.
+    const tied = {
+      ...view,
+      awards: view.awards.map((a) => {
+        const [w] = a.winners;
+        const other = {
+          ...w,
+          manager: { ...w.manager, id: 999, firstName: "Femi" },
+          score: w.score ? { ...w.score, points: w.score.points + 4, hits: w.score.hits + 4 } : undefined,
+          captain: w.captain ? { ...w.captain, name: "Haaland" } : undefined,
+          bench: [{ name: "Raya", points: 9 }],
+        };
+        return { ...a, winners: [{ ...w, bench: [{ name: "Wissa", points: 13 }] }, other] };
+      }),
+    };
+    it("keeps the shared number and drops one manager's details", () => {
+      expect(award(tied, "bench").facts).toEqual({ award: "bench", total: 21, players: [] });
+      expect(award(tied, "hits").facts).toMatchObject({ gross: null });
+      expect(award(tied, "oga").facts).toMatchObject({ hits: 0, gapByGw: [] });
+    });
+    it("sets the captain against the gameweek's top player, unnamed when the captains differ", () => {
+      expect(award(tied, "captain").facts).toEqual({
+        award: "captain",
+        captain: { name: null, points: 2 },
+        best: { name: "Brobbey", points: 17, scope: "gameweek" },
+      });
+    });
+  });
   it("gives every award card its roast line, the same every time", () => {
     for (const key of AWARD_KEYS) {
       const roast = award(view, key).roast;
