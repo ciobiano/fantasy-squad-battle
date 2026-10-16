@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
-import { age, compactRank, firstName, movement } from "./format";
+import { age, compactRank, movement } from "./format";
 
 describe("format", () => {
   it("shortens big ranks", () => {
@@ -21,9 +21,6 @@ describe("format", () => {
     expect(age("2026-10-12T09:30:00Z", now)).toBe("2h");
     expect(age("2026-10-12T11:59:00Z", now)).toBe("1h");
     expect(age("2026-10-09T12:00:00Z", now)).toBe("3d");
-  });
-  it("keeps the first name only", () => {
-    expect(firstName("  Ralph   Obiano ")).toBe("Ralph");
   });
 });
 

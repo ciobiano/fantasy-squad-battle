@@ -35,6 +35,21 @@ describe("loadLeague, Table", () => {
     expect(v.body.table.rows.map((r) => r.firstName)).toEqual(["Tobi", "Emeka"]);
     expect(JSON.stringify(v)).not.toContain("Adeyemi");
   });
+  it("names people as the cards do", async () => {
+    const shouting = {
+      ...standings,
+      standings: {
+        ...standings.standings,
+        results: [
+          { ...standings.standings.results[0], player_name: "AMATEZE OKAFOR" },
+          { ...standings.standings.results[1], player_name: "9 9", entry_name: "nineAgain" },
+        ],
+      },
+    };
+    const v = await view("314", "table", null, { ...live, standings: async () => shouting });
+    if (v.body.kind !== "table") throw new Error(v.body.kind);
+    expect(v.body.table.rows.map((r) => r.firstName)).toEqual(["Amateze", "nineAgain"]);
+  });
   it("marks the remembered team, flags leagues over 50 and trims the name", async () => {
     const v = await view("314", "table", 22, live);
     if (v.body.kind !== "table") throw new Error(v.body.kind);

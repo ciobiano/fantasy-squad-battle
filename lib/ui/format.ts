@@ -31,6 +31,3 @@ export function age(isoTime: string, now: number): string {
   const hours = Math.floor(ms / 3_600_000);
   return hours < 24 ? `${Math.max(1, hours)}h` : `${Math.floor(hours / 24)}d`;
 }
-
-/** First word of a full name: surnames are never shown. */
-export const firstName = (fullName: string): string => fullName.trim().split(/\s+/)[0] ?? "";
