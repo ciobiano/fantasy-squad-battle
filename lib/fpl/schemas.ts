@@ -22,6 +22,7 @@ function tolerant<T extends z.ZodType>(field: string, schema: T) {
 }
 const toolNumber = (field: string) => tolerant(field, z.coerce.number());
 const toolText = (field: string) => tolerant(field, z.string());
+const toolFlag = (field: string) => tolerant(field, z.boolean());
 
 export const eventSchema = z.object({
   id,
@@ -74,6 +75,19 @@ export const elementSchema = z.object({
   expected_goal_involvements: toolNumber("expected_goal_involvements"),
   ict_index: toolNumber("ict_index"),
   defensive_contribution: toolNumber("defensive_contribution"),
+  // Projections (lib/projections): season totals
+  expected_goals_conceded: toolNumber("expected_goals_conceded"),
+  saves: toolNumber("saves"),
+  bonus: toolNumber("bonus"),
+  yellow_cards: toolNumber("yellow_cards"),
+  /** Set pieces: 1 is first choice, null when the player isn't on the list. */
+  penalties_order: toolNumber("penalties_order"),
+  direct_freekicks_order: toolNumber("direct_freekicks_order"),
+  corners_and_indirect_freekicks_order: toolNumber("corners_and_indirect_freekicks_order"),
+  // Planner: false once a player has left the league
+  can_select: toolFlag("can_select"),
+  /** Price change since the season began, in tenths: the GW1 price is now_cost − cost_change_start. */
+  cost_change_start: toolNumber("cost_change_start"),
   /** FPL's "expected points": in practice this is recent form (see CLAUDE.md). Never label it a projection. */
   ep_next: toolNumber("ep_next"),
   // Prices and transfers
@@ -92,10 +106,67 @@ export const elementSchema = z.object({
   ),
 });
 
+// The game's own rules, read by the planner and the projections so they follow
+// FPL when it changes them. Tolerant as a whole: if FPL reshapes one, it is
+// null and the planner says it can't plan, while the league pages carry on.
+
+const byPosition = z.object({ GKP: z.number(), DEF: z.number(), MID: z.number(), FWD: z.number() });
+
+export const gameConfigSchema = z.object({
+  settings: z.object({
+    /** The next nightly price-change times (ISO), soonest first. */
+    price_change_deadlines: z.array(z.string()).catch([]),
+  }),
+  rules: z.object({
+    squad_squadsize: z.number().int(),
+    squad_squadplay: z.number().int(),
+    squad_team_limit: z.number().int(),
+    /** The budget, in tenths of a million. */
+    squad_total_spend: z.number().int(),
+    /** Half of a price rise is kept when selling. */
+    transfers_sell_on_fee: z.number(),
+    /** Free transfers that can be saved on top of the weekly one. */
+    max_extra_free_transfers: z.number().int(),
+    /** Most transfers in a week (Wildcard and Free Hit aside). */
+    transfers_cap: z.number().int(),
+  }),
+  scoring: z.object({
+    long_play: z.number(),
+    short_play: z.number(),
+    goals_scored: byPosition,
+    assists: z.number(),
+    clean_sheets: byPosition,
+    goals_conceded: byPosition,
+    saves: z.number(),
+    bonus: z.number(),
+    yellow_cards: z.number(),
+    defensive_contribution: byPosition,
+  }),
+});
+
+export const chipRuleSchema = z.object({
+  name: z.string(),
+  start_event: z.number().int(),
+  stop_event: z.number().int(),
+});
+
+export const elementTypeSchema = z.object({
+  id,
+  singular_name_short: z.string(),
+  /** How many the squad holds (2 goalkeepers, 5, 5, 3). */
+  squad_select: z.number().int(),
+  /** Fewest and most in the starting eleven. */
+  squad_min_play: z.number().int(),
+  squad_max_play: z.number().int(),
+});
+
 export const bootstrapSchema = z.object({
   events: z.array(eventSchema),
   teams: z.array(teamSchema),
   elements: z.array(elementSchema),
+  game_config: tolerant("game_config", gameConfigSchema),
+  chips: tolerant("chips", z.array(chipRuleSchema)),
+  element_types: tolerant("element_types", z.array(elementTypeSchema)),
 });
 
 export const fixtureSchema = z.object({
@@ -142,10 +213,25 @@ export const historySchema = z.object({
       event_transfers: z.number().int(),
       event_transfers_cost: z.number().int(),
       points_on_bench: z.number(),
+      /** Money in the bank at that deadline, in tenths (planner). */
+      bank: toolNumber("history.bank"),
     }),
   ),
   chips: z.array(z.object({ name: z.string(), event: id })),
 });
+
+/** Every transfer a manager has made this season, newest first (planner: purchase prices). */
+export const transfersSchema = z.array(
+  z.object({
+    element_in: id,
+    /** Price paid, in tenths. */
+    element_in_cost: z.number().int(),
+    element_out: id,
+    element_out_cost: z.number().int(),
+    event: id,
+    time: z.string(),
+  }),
+);
 
 export const picksSchema = z.object({
   active_chip: z.string().nullable(),
@@ -187,6 +273,8 @@ export const entrySchema = z.object({
   id,
   name: z.string(),
   player_first_name: z.string(),
+  /** The first gameweek the team played (planner: prices paid for the first squad). */
+  started_event: toolNumber("entry.started_event"),
   current_event: z.number().int().nullable(),
   last_deadline_bank: z.number().int().nullable(),
   last_deadline_value: z.number().int().nullable(),
@@ -255,6 +343,10 @@ export type Live = z.infer<typeof liveSchema>;
 export type DreamTeam = z.infer<typeof dreamTeamSchema>;
 export type Entry = z.infer<typeof entrySchema>;
 export type PlayerSummary = z.infer<typeof playerSummarySchema>;
+export type Transfers = z.infer<typeof transfersSchema>;
+export type GameConfig = z.infer<typeof gameConfigSchema>;
+export type ChipRule = z.infer<typeof chipRuleSchema>;
+export type ElementType = z.infer<typeof elementTypeSchema>;
 
 export class FplSchemaError extends Error {
   constructor(

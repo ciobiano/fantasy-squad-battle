@@ -283,3 +283,32 @@ Design: canvas `S-Story` (with its share `sheet`), brief §3 and §5. Data: `get
 
 ## Review
 _(fill in after the build)_
+
+## 9. Planner and team rating: data layer (2026-10-19, branch `feat/planner-data`)
+
+Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-19-ffs-rating-and-planner.md`. Decisions: CLAUDE.md, "Planner and team rating".
+
+- [x] Studied FFS signed out: Rate My Team, the Draft Tool, Projected Points and Rob's Transfer Planner.
+- [x] `lib/fpl`:
+  - FPL's rules from bootstrap (`game_config`, `chips`, `element_types`), all tolerant;
+  - `entry.started_event`, `history.bank`, and player fields for projections;
+  - `getTransfers`, with the relay allowlist and its tests.
+- [x] `lib/projections` v1 (D7): club strength from xG, match outlook, player expected points, and availability from FPL's news.
+- [x] `lib/planner/engine`, pure and browser-safe: rules, best line-up, plan simulation, team rating, on-paper ranking, transfer ideas.
+- [x] `lib/planner`: rules, players with price trends, squad import, `getPlanner`, `getLeaguePaper`.
+- [x] Inspection endpoints `/api/planner?team=&weeks=` and `/api/planner/league/{id}`. Both answer 404 in production.
+- [x] ESLint: components may import only `@/lib/planner/engine`; the engine imports no server code.
+- [x] Tests: 47 new, 494 in the suite. Typecheck and lint are clean.
+- [x] Live check from Lagos, on a manager in league 1261677:
+  - import, rating and ideas take 3.4 s cold with no cache;
+  - "on paper" for 11 squads takes 1.1 s;
+  - the bundle is 20 KB gzipped.
+- [ ] Redeploy the relay Worker (the allowlist now includes `entry/{id}/transfers/`). Needs Ralph's OK.
+- [ ] Vercel preview check of both endpoints.
+- [ ] Design session: Team rating, Planner and "On paper" screens (`docs/handoff/2026-10-19-planner-data.md`).
+- [ ] Later: auto-pick and a Wildcard optimiser (a squad solver), and a backtest of the projections against finished gameweeks.
+
+### Review
+- FPL's team strength fields are all 0 this season, so strength comes from xG.
+- Projections land 6% under real points per gameweek before availability. The ranking looks right: Haaland leads on about 6 points a week, and FFS's Auto-pick also chose Thomas (£4.0m).
+- Bug found by a test and fixed: club matches counted only once finished, while player totals grow from kick-off.

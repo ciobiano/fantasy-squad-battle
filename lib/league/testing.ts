@@ -53,6 +53,7 @@ function history(m: TestManager, gw: number): ManagerGameweek["history"] {
       event_transfers: hits / 4,
       event_transfers_cost: hits,
       points_on_bench: week.bench ?? 0,
+      bank: null,
     }];
   });
   return { current, chips: [] };

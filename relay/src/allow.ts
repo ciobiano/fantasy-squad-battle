@@ -10,6 +10,7 @@ const ALLOWED_PATHS: readonly RegExp[] = [
   /^\/api\/dream-team\/\d{1,2}\/$/,
   /^\/api\/entry\/\d{1,10}\/$/,
   /^\/api\/entry\/\d{1,10}\/history\/$/,
+  /^\/api\/entry\/\d{1,10}\/transfers\/$/,
   /^\/api\/entry\/\d{1,10}\/event\/\d{1,2}\/picks\/$/,
   /^\/api\/leagues-classic\/\d{1,10}\/standings\/$/,
   /^\/api\/element-summary\/\d{1,6}\/$/,
