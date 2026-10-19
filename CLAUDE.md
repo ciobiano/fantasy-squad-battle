@@ -49,6 +49,7 @@ Base URL: `https://fantasy.premierleague.com/api/`
 - `element-summary/{player_id}/` returns one player's fixtures ahead (with difficulty) and gameweek-by-gameweek history.
 - `entry/{team_id}/history/` returns the manager's season history per gameweek.
 - `entry/{team_id}/event/{gw}/picks/` returns the manager's picks, captain, bench and transfer cost.
+- `entry/{team_id}/transfers/` returns every transfer this season, with the price paid (`element_in_cost`). The planner uses it for selling prices.
 - `leagues-classic/{league_id}/standings/?page_standings=N` returns mini-league standings, 50 per page.
 - `my-team/{team_id}/` (exact selling prices, unconfirmed transfers) needs the user's FPL login and returns 403 without it. We don't use it.
 
@@ -70,6 +71,15 @@ Verified API facts (2026-10-08):
   - Player fields: `status` (a, d, i, s, u), `news`, `news_added`, `chance_of_playing_next_round`, `expected_goals`, `expected_assists`, `expected_goal_involvements`, `ict_index`, `defensive_contribution`, `transfers_in_event`, `transfers_out_event`, `cost_change_event`, `price_change_projections`, and `ep_next` (FPL's own expected points).
   - Team fields: `strength_attack_home/away` and `strength_defence_home/away`.
   - Fixtures carry `team_h_difficulty` and `team_a_difficulty` (1–5).
+- Read 2026-10-19:
+  - **FPL's team strength fields are all 0 in 2026/27** (`strength_attack_home` and the rest). Club strength comes from xG instead (`lib/projections/teams.ts`).
+  - **The game's rules are in bootstrap**, and the planner and projections read them instead of hard-coding them:
+    - `game_config.rules`: budget, club limit, sell-on fee 0.5, 4 extra free transfers, transfer cap;
+    - `game_config.scoring`: the points table;
+    - `chips`: two of each, one per half;
+    - `element_types`: formation limits.
+  - `price_change_projections` is `[{ offset 0–2, projected_percent, likelihood −5…5 }]`. 100% or more by an offset is a forecast change at that one of `game_config.settings.price_change_deadlines`. A negative value is a fall.
+  - Player totals in bootstrap grow from kick-off, so a club's matches count from kick-off too.
 - **`ep_next` is not a projection.** For 385 of 421 players who had played, it equals `form` (average points over the last 30 days). It drops to 0 when a player is ruled out, and it ignores fixtures. For example, Groß showed 15.5 and Haaland 7.5 (2026-10-10).
 
 ## Stack
@@ -106,13 +116,14 @@ Verified API facts (2026-10-08):
   - So any single deployment can end up blocked. The fix is the **Cloudflare relay**: `relay/`, deployed as `fsb-fpl-relay` on workers.dev.
     - `lib/fpl/http.ts` calls FPL directly. On a 403 it switches to the relay and stays on it for 10 minutes.
     - The relay forwards only the allowlisted FPL endpoints (`relay/src/allow.ts`), and only to requests carrying the `x-relay-key` header. After changing the list, redeploy the Worker. It never forwards login-only endpoints such as `my-team`.
+    - `entry/{id}/transfers/` was added on 2026-10-19 for the planner. Until the Worker is redeployed, a blocked deployment can't import squads.
     - Env vars: `FPL_RELAY_URL` and `FPL_RELAY_KEY` live in Vercel (all environments) and `.env.local`. `RELAY_SECRET` lives in Cloudflare.
     - Verified 2026-10-08: on a blocked preview, every probe came back through the relay in 103–342 ms.
     - Wrangler needs Node 22 or newer. Run it with nvm's Node 24 (`PATH=~/.nvm/versions/node/v24.13.1/bin:$PATH`); the project default is Node 20.
 - **Built for the tools.** Most tools (fixture ticker, injuries, stats, price trends) run on `bootstrap-static` and `fixtures`. Those are the same for every visitor and cached hourly, so tool pages are cheaper and faster than league pages.
   - New readers needed: `entry/{id}` (your leagues, your squad) and `element-summary/{id}` (player detail).
   - Price trends: FPL's own `price_change_projections` and `transfers_in/out_event` may be enough. If we need history, add a scheduled job (Vercel Cron) that snapshots bootstrap into a database.
-  - Planner: selling prices are estimates, labelled as such, because exact ones need the user's FPL login.
+  - Planner: selling prices are estimates, labelled as such, because exact ones need the user's FPL login. Built 2026-10-19: see "Planner and team rating".
   - Projections: FPL's `ep_next` is only recent form. A real projection means our own model built from free inputs (xG, xA, minutes, availability, team strengths, fixtures), possibly as Python functions on Vercel.
   - Keep raw API access (`lib/fpl/`) separate from domain logic (`lib/league/` for the banter, `lib/tools/` for the tools), so features reuse both.
 - **Layers:** `docs/architecture.md` says which folder may import which; ESLint enforces it. Each screen is one module in `lib/screens/` that returns an outcome, and its route only settles it.
@@ -152,6 +163,9 @@ Verified API facts (2026-10-08):
   2. Projections: our own model (D7).
   3. Price changes and transfer trends.
   4. The planner, as its own phase.
+- **Changed 2026-10-19:** Ralph asked for the planner and a team rating like Fantasy Football Scout's.
+  - Data layer built: the projections v1, the planner engine, the team rating, "on paper" league ranking and FPL's price forecast.
+  - UI is with the design session. See "Planner and team rating" below.
 - **Player stats v1 columns:** price, ownership, form (FPL's number), points, xG, xA, xGI, defensive contributions and minutes. These are Opta-derived stats that FPL publishes for free; Opta's own data feed is a paid licence and out of scope.
 - **Fixture difficulty:** FPL's official ratings and colours first. Later, as something extra, our own attack and defence split built from team strength ratings.
   - **Ticker (decided 2026-10-13):** the 6 gameweeks from the next deadline, fewer at the end of the season.
@@ -232,6 +246,37 @@ Verified API facts (2026-10-08):
   - The app follows the phone's theme, with a System / Light / Dark switch that remembers the choice.
   - Shared card images have one fixed look per design (Market is dark, Editorial is light), whatever the app's theme. In-app previews show the card's real look.
 - **Project skills** in `.claude/skills/`: `accessibility`, `emil-design-eng` and `apple-hig`. Ignore apple-hig's `/duo` command; it's for native iPhone apps.
+
+### Planner and team rating (2026-10-19)
+
+The research is in `docs/research/2026-10-19-ffs-rating-and-planner.md`, and the handoff in `docs/handoff/2026-10-19-planner-data.md`.
+
+- **P1 · Squad import:** from a team ID, the squad as of the last deadline (FFS's Draft Tool does the same). Transfers made since need the FPL login, so the screen says "as of GW{n}".
+  - After a Free Hit, the squad from before it.
+  - Prices paid come from `entry/{id}/transfers/` (Free Hit weeks ignored). Players held since the team started get the GW1 price, or that gameweek's price from `element-summary`.
+  - Selling price follows FPL's rule: half of a rise, rounded down.
+  - Free transfers are replayed from history: +1 a week, max 5. A Wildcard or Free Hit week keeps the saved ones.
+  - Selling prices and free transfers are shown as **estimates**.
+- **P2 · Rules:** read from bootstrap, falling back to the 2026/27 rules if FPL stops sending them. The engine checks:
+  - budget, 3 per club, positions and formation;
+  - the 20-transfer cap, and −4 hits;
+  - Wildcard, Free Hit (the squad reverts), Bench Boost and Triple Captain, one of each per half.
+- **P3 · Team rating:** expected points over the window (6 GWs by default) with the best eleven and captain each week, broken down by position. It's a points number, not a mark out of 10, because FFS doesn't publish its scale either.
+  - **On paper** ranks every squad in a mini-league: our banter twist.
+- **P4 · Free where FFS charges:**
+  - transfer ideas: single and double moves, net of hits;
+  - line-up optimisation;
+  - projections;
+  - price forecasts.
+- **P5 · Where it runs:**
+  - The rating and the ideas are computed on the server and drawn without client JS.
+  - The planner's edits run in the browser through `lib/planner/engine`. It's pure, with no dependencies, and ESLint keeps it that way.
+  - The bundle is about 20 KB gzipped.
+- **P6 · Projections v1 (D7):** per-90 rates blended with the position's average over 270 minutes. Club strength from xG, blended over 5 matches. Home 1.1, away 0.9.
+  - Poisson for clean sheets, goals conceded, saves and defensive contributions.
+  - Availability: FPL's chance next week, then the return date in the news, else a recovery of 50% then 75%.
+  - Calibration: 866 points per gameweek before availability, against 918 real (−6%).
+- **Not built yet:** auto-pick or a Wildcard optimiser (it needs a squad solver), and screenshot import.
 
 ## Owner and working style
 

@@ -11,7 +11,9 @@ app/                 routes: read the request, call a screen module, settle the 
 components/          draw views and words; never fetch
 lib/screens/         one module per screen: raw input → outcome
 lib/cards/           share cards: model + options → PNG
-lib/league, lib/tools   domain logic (data session)
+lib/league, lib/tools, domain logic (data session)
+lib/projections,
+lib/planner
 lib/fpl/             raw FPL access: cached, validated (data session)
 shared leaves        lib/i18n, lib/awards, lib/ids, lib/remembered, lib/ui, lib/variants, lib/tokens
 ```
@@ -35,6 +37,9 @@ Two adapters sit beside the layers:
 | `lib/cards/request` + `lib/cards/query` | `cardUrl(...)`, `cardRequest(...)` | the card URL in both directions; `next.config.ts` allows exactly the queries `cardUrl` builds through the image optimiser |
 | `components/ui/CardImage.tsx` | `<CardImage images alt sizes />` | showing only the card that matches the app's theme |
 | `lib/fpl/api` (data session) | one function per endpoint | caching, validation, the relay |
+| `lib/projections` (data session) | `buildProjections(bootstrap, fixtures, weeks)`, `getProjections(weeks)` | club strength from xG, availability, FPL's points table |
+| `lib/planner` (data session) | `getPlanner(teamId \| null, weeks)`, `getLeaguePaper(leagueId, weeks)` | squad import, prices paid, free transfers, FPL's rules |
+| `lib/planner/engine` (data session) | `simulatePlan`, `rateSquad`, `suggestTransfers`, `bestLineup`, … | the rules engine; pure, so it also runs in the browser |
 
 ## Adding a screen
 
@@ -63,3 +68,7 @@ Two adapters sit beside the layers:
   - The card renderer needs the same words outside React.
   - The `Copy` type turns a missing line into a compile error, at no runtime cost.
 - **Built-in ESLint `no-restricted-imports`, not eslint-plugin-boundaries.** Five folder rules don't justify a new dependency.
+- **The planner engine is the one data module components may import** (2026-10-19).
+  - The planner's edits must run in the browser: a server round trip per change is too slow on Nigerian 4G.
+  - So `lib/planner/engine` takes plain data and imports only its own files (type imports aside), and ESLint enforces it.
+  - Everything else in `lib/planner` and `lib/projections` stays behind the screens like other data.
