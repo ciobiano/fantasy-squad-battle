@@ -116,7 +116,7 @@ Verified API facts (2026-10-08):
   - So any single deployment can end up blocked. The fix is the **Cloudflare relay**: `relay/`, deployed as `fsb-fpl-relay` on workers.dev.
     - `lib/fpl/http.ts` calls FPL directly. On a 403 it switches to the relay and stays on it for 10 minutes.
     - The relay forwards only the allowlisted FPL endpoints (`relay/src/allow.ts`), and only to requests carrying the `x-relay-key` header. After changing the list, redeploy the Worker. It never forwards login-only endpoints such as `my-team`.
-    - `entry/{id}/transfers/` was added on 2026-10-19 for the planner. Until the Worker is redeployed, a blocked deployment can't import squads.
+    - `entry/{id}/transfers/` was added on 2026-10-19 for the planner, and the Worker was redeployed the same day.
     - Env vars: `FPL_RELAY_URL` and `FPL_RELAY_KEY` live in Vercel (all environments) and `.env.local`. `RELAY_SECRET` lives in Cloudflare.
     - Verified 2026-10-08: on a blocked preview, every probe came back through the relay in 103–342 ms.
     - Wrangler needs Node 22 or newer. Run it with nvm's Node 24 (`PATH=~/.nvm/versions/node/v24.13.1/bin:$PATH`); the project default is Node 20.

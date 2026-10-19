@@ -303,8 +303,9 @@ Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-
   - import, rating and ideas take 3.4 s cold with no cache;
   - "on paper" for 11 squads takes 1.1 s;
   - the bundle is 20 KB gzipped.
-- [ ] Redeploy the relay Worker (the allowlist now includes `entry/{id}/transfers/`). Needs Ralph's OK.
-- [ ] Vercel preview check of both endpoints.
+- [x] Relay Worker redeployed (version 3c96d146). Checked: transfers 200 with the key, `my-team` 404, no key 401.
+- [x] Vercel preview: planner 640 ms cold and 175 ms warm on the server; on paper 238 ms cold and 87 ms warm. Same results as local.
+- [x] Merged to main (PR #8) on 2026-10-19. Production deploy succeeded; the planner endpoints answer 404 there.
 - [ ] Design session: Team rating, Planner and "On paper" screens (`docs/handoff/2026-10-19-planner-data.md`).
 - [ ] Later: auto-pick and a Wildcard optimiser (a squad solver), and a backtest of the projections against finished gameweeks.
 
