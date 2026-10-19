@@ -11,6 +11,7 @@ import {
   type Picks,
   type PlayerSummary,
   type Standings,
+  type Transfers,
   bootstrapSchema,
   dreamTeamSchema,
   entrySchema,
@@ -21,6 +22,7 @@ import {
   picksSchema,
   playerSummarySchema,
   standingsSchema,
+  transfersSchema,
 } from "./schemas";
 
 // Typed, validated FPL reads. Each is cached in Vercel's shared Runtime Cache
@@ -122,4 +124,12 @@ export async function getPlayerSummary(playerId: number): Promise<PlayerSummary 
   cacheLife("provisional");
   cacheTag(`fpl:player:${playerId}`);
   return readOrNull(`element-summary/${playerId}/`, playerSummarySchema);
+}
+
+/** Every transfer the manager has made this season (planner: prices paid). null: no such team. */
+export async function getTransfers(entryId: number): Promise<Transfers | null> {
+  "use cache: remote";
+  cacheLife("provisional");
+  cacheTag(`fpl:entry:${entryId}`);
+  return readOrNull(`entry/${entryId}/transfers/`, transfersSchema);
 }
