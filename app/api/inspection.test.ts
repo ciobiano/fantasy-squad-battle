@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET as health } from "./health/route";
 import { GET as leagueBundle } from "./league/[leagueId]/route";
 import { GET as leagueView } from "./league/[leagueId]/view/route";
+import { GET as planner } from "./planner/route";
+import { GET as paper } from "./planner/league/[leagueId]/route";
 import { GET as team } from "./team/[teamId]/route";
 import { GET as tools } from "./tools/route";
 import { inspectionAllowed } from "./inspection";
@@ -32,8 +34,10 @@ describe("inspection endpoints", () => {
       leagueBundle(new Request("https://fsb.example/api/league/314"), params({ leagueId: "314" })),
       leagueView(new Request("https://fsb.example/api/league/314/view"), params({ leagueId: "314" })),
       team(new Request("https://fsb.example/api/team/1"), params({ teamId: "1" })),
+      planner(new Request("https://fsb.example/api/planner?team=1")),
+      paper(new Request("https://fsb.example/api/planner/league/314"), params({ leagueId: "314" })),
     ]);
-    expect(responses.map((r) => r.status)).toEqual([404, 404, 404, 404, 404]);
+    expect(responses.map((r) => r.status)).toEqual([404, 404, 404, 404, 404, 404, 404]);
     expect(fetch).not.toHaveBeenCalled();
   });
 });

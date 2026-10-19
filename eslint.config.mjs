@@ -4,7 +4,11 @@ import nextTs from "eslint-config-next/typescript";
 
 // Which folder may import which (docs/architecture.md). Each file matches one
 // layer below, because a later block replaces an earlier block's rule.
-const DATA = { group: ["@/lib/fpl/*", "@/lib/league/*", "@/lib/tools/*"], message: "FPL data reaches the app through a screen module in lib/screens." };
+const DATA = {
+  // The planner's engine (lib/planner/engine) is pure and runs in the browser, so components may use it.
+  regex: "^@/lib/(fpl|league|tools|projections)(/|$)|^@/lib/planner(/(?!engine(/|$))|$)",
+  message: "FPL data reaches the app through a screen module in lib/screens.",
+};
 const INTERNALS = { group: ["@/lib/i18n/*", "@/lib/cards/render/*"], message: "Import the module's entry point (@/lib/i18n, @/lib/cards/render)." };
 const REQUEST = { group: ["next/headers", "@/lib/request"], message: "Only routes (app/) read the request; pass what it says down as arguments." };
 
@@ -44,6 +48,18 @@ const eslintConfig = defineConfig([
     REQUEST,
     { group: ["@/lib/screens/*", "@/lib/cards/*", "@/components/*"], message: "Shared leaves sit below everything else." },
   ]),
+  // The planner engine runs in the browser: plain data in, plain data out. No fetching, no server code.
+  layer(
+    ["lib/planner/engine/**/*.ts"],
+    [
+      {
+        group: ["@/lib/*", "next", "next/*", "../*"],
+        allowTypeImports: true,
+        message: "lib/planner/engine runs in the browser: import only its own files (types from elsewhere are fine).",
+      },
+    ],
+    ["lib/planner/engine/**/*.test.ts"],
+  ),
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
