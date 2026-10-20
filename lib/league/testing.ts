@@ -56,7 +56,7 @@ function history(m: TestManager, gw: number): ManagerGameweek["history"] {
       bank: null,
     }];
   });
-  return { current, chips: [] };
+  return { current, chips: [], past: [] };
 }
 
 function picks(m: TestManager, gw: number): ManagerGameweek["picks"] {
