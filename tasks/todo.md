@@ -312,3 +312,24 @@ Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-
 - FPL's team strength fields are all 0 this season, so strength comes from xG.
 - Projections land 6% under real points per gameweek before availability. The ranking looks right: Haaland leads on about 6 points a week, and FFS's Auto-pick also chose Thomas (£4.0m).
 - Bug found by a test and fixed: club matches counted only once finished, while player totals grow from kick-off.
+
+## 10. "Tipped to win": title odds (2026-10-20, branch `feat/title-odds`)
+
+Ralph's friend's idea. Ralph's calls: show percentages, and call out quitters.
+
+- [x] Prototype on league 1261677.
+- [x] Calibration study on 265 managers in 12 friend leagues (`scripts/odds-calibration/`):
+  - weekly luck 12.4, skill spread 3–4.8;
+  - last season's weight 0.24–0.4;
+  - comeback rate 9–16% a week;
+  - bench points 6.6.
+- [x] Backtest: adding last season's record helps at every horizon, and the odds are well calibrated (65% predicted came true 61–63% of the time).
+- [x] `lib/league/odds`:
+  - edge model and activity (quiet or ghost);
+  - closed-form season simulation, seeded by league and gameweek;
+  - 159 ms for 50 managers on the i3.
+- [x] `history.past` read (tolerant). The `/api/league/{id}/odds` inspection endpoint answers 404 in production.
+- [x] 14 new tests.
+- [ ] Ralph edits the draft lines in the handoff. The data session then adds them to `lib/roasts`.
+- [ ] Design session: the "Tipped to win" card, a Table column and spoon odds.
+- [ ] Around GW15: re-run the calibration (quit rate, ghost slide, chip values) with the longer season.

@@ -37,6 +37,7 @@ Two adapters sit beside the layers:
 | `lib/cards/request` + `lib/cards/query` | `cardUrl(...)`, `cardRequest(...)` | the card URL in both directions; `next.config.ts` allows exactly the queries `cardUrl` builds through the image optimiser |
 | `components/ui/CardImage.tsx` | `<CardImage images alt sizes />` | showing only the card that matches the app's theme |
 | `lib/fpl/api` (data session) | one function per endpoint | caching, validation, the relay |
+| `lib/league/odds` (data session) | `getLeagueOdds(leagueId, { gw?, now })`, `buildLeagueOdds(bundle, bootstrap)` | the calibrated edge model, quitting, the seeded season simulation |
 | `lib/projections` (data session) | `buildProjections(bootstrap, fixtures, weeks)`, `getProjections(weeks)` | club strength from xG, availability, FPL's points table |
 | `lib/planner` (data session) | `getPlanner(teamId \| null, weeks)`, `getLeaguePaper(leagueId, weeks)` | squad import, prices paid, free transfers, FPL's rules |
 | `lib/planner/engine` (data session) | `simulatePlan`, `rateSquad`, `suggestTransfers`, `bestLineup`, … | the rules engine; pure, so it also runs in the browser |
