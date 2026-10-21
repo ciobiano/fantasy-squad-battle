@@ -47,3 +47,14 @@ export function money(tenths: number, lang: Lang): string {
 
 /** A points change with its sign: "+9.7", "−4.0" (a real minus sign). */
 export const signedDecimal = (value: number, lang: Lang): string => `${value < 0 ? "−" : "+"}${decimal(Math.abs(value), lang)}`;
+
+/** FPL deadlines in West Africa Time, where most of our players are: "Fri 23 Oct, 18:30", "ven. 23 oct., 18:30". */
+export function deadlineText(iso: string, lang: Lang): string {
+  const when = new Date(iso);
+  const locale = lang === "fr" ? "fr-FR" : "en-GB";
+  const zone = { timeZone: "Africa/Lagos" } as const;
+  const day = when.toLocaleDateString(locale, { ...zone, weekday: "short", day: "numeric", month: "short" });
+  const time = when.toLocaleTimeString(locale, { ...zone, hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${day.replace(/,/g, "")}, ${time}`;
+}
+

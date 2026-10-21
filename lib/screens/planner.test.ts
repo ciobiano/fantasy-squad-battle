@@ -77,8 +77,10 @@ describe("loadTeamRating", () => {
     expect(screen).toEqual({ kind: "redirect", to: "/planner?start=1&q=99999999&error=team-not-found" });
   });
   it("says when a new team has no squad yet", async () => {
-    const screen = await loadTeamRating("5", source({ planner: async () => ({ kind: "no-squad" }) }));
-    expect(screen).toEqual({ kind: "ready", view: { kind: "no-squad", teamId: 5 } });
+    const screen = await loadTeamRating("5", source({
+      planner: async () => ({ kind: "no-squad", team: { id: 5, name: "Agbero Athletic " }, deadline: "2026-10-23T17:30:00Z" }),
+    }));
+    expect(screen).toMatchObject({ kind: "ready", view: { kind: "no-squad", team: { id: 5, name: "Agbero Athletic" }, deadline: "2026-10-23T17:30:00Z" } });
   });
   it("shows the FPL panel when FPL is down, with a retry back here", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});

@@ -195,7 +195,7 @@ export const fr: Copy = {
     planButton: "Planifier mes transferts",
     changeTeam: "Pas votre équipe ? Changer d’équipe",
     noSquadTitle: "Pas encore d’équipe à noter",
-    noSquadBody: "FPL montre l’effectif d’une nouvelle équipe après sa première date limite.",
+    noSquadBody: (deadline) => (deadline ? `FPL montre l’effectif d’une nouvelle équipe après sa première date limite : ${deadline}.` : "FPL montre l’effectif d’une nouvelle équipe après sa première date limite."),
     loading: "Notation de votre équipe",
   },
 };

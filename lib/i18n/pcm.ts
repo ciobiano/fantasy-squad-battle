@@ -195,7 +195,7 @@ export const pcm: Copy = {
     planButton: "Plan transfer",
     changeTeam: "No be your team? Change team",
     noSquadTitle: "No squad to rate yet",
-    noSquadBody: "FPL go show new team squad after the first deadline.",
+    noSquadBody: (deadline) => (deadline ? `FPL go show new team squad after the first deadline: ${deadline}.` : "FPL go show new team squad after the first deadline."),
     loading: "We dey rate your squad",
   },
 };

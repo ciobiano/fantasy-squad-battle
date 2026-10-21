@@ -86,7 +86,9 @@ export interface RatedTeamView {
 /** The team hasn't played a gameweek yet, so FPL shows no squad. */
 export interface NoSquadView {
   readonly kind: "no-squad";
-  readonly teamId: number;
+  readonly team: { readonly id: number; readonly name: string; readonly badge: Badge };
+  /** When FPL will show the squad (the next deadline, ISO), if known. */
+  readonly deadline: string | null;
 }
 
 export type TeamRatingView = RatedTeamView | NoSquadView;
@@ -129,9 +131,14 @@ export async function loadTeamRating(segment: string, source: PlannerScreenSourc
   return guard("planner", `/planner/${teamId}`, async () => {
     const outcome = await source.planner(teamId);
     if (outcome.kind === "team-not-found") return redirectTo(plannerStartHref(String(teamId), "team-not-found"));
-    if (outcome.kind === "no-squad") return ready({ kind: "no-squad", teamId });
+    if (outcome.kind === "no-squad") {
+      const { team, deadline } = outcome;
+      return ready({ kind: "no-squad", team: { id: team.id, name: team.name.trim(), badge: badgeFor(team.name) }, deadline });
+    }
     const view = ratedView(outcome.data);
-    return view ? ready(view) : ready({ kind: "no-squad", teamId });
+    if (view) return ready(view);
+    // A squad with no gameweeks left to plan: the season is over.
+    return ready({ kind: "no-squad", team: { id: teamId, name: outcome.data.team?.name.trim() ?? "", badge: badgeFor(outcome.data.team?.name ?? "") }, deadline: null });
   });
 }
 

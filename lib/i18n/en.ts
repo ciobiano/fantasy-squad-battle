@@ -201,7 +201,7 @@ export const en: Copy = {
     planButton: "Plan transfers",
     changeTeam: "Not your team? Change team",
     noSquadTitle: "No squad to rate yet",
-    noSquadBody: "FPL shows a new team’s squad after its first deadline.",
+    noSquadBody: (deadline) => (deadline ? `FPL shows a new team’s squad after its first deadline: ${deadline}.` : "FPL shows a new team’s squad after its first deadline."),
     loading: "Rating your squad",
   },
 };

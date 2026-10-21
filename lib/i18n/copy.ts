@@ -197,7 +197,7 @@ export interface Copy {
     readonly planButton: string;
     readonly changeTeam: string;
     readonly noSquadTitle: string;
-    readonly noSquadBody: string;
+    readonly noSquadBody: (deadline: string | null) => string;
     readonly loading: string;
   };
 }

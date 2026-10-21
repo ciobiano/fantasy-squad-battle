@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
-import { age, compactRank, decimal, money, movement, signedDecimal } from "./format";
+import { age, compactRank, deadlineText, decimal, money, movement, signedDecimal } from "./format";
 
 describe("format", () => {
   it("shortens big ranks", () => {
@@ -50,3 +50,11 @@ describe("planner numbers", () => {
     expect(signedDecimal(-4, "fr")).toBe("−4,0");
   });
 });
+
+describe("deadlineText", () => {
+  it("writes an FPL deadline in West Africa Time", () => {
+    expect(deadlineText("2026-10-23T17:30:00Z", "en")).toBe("Fri 23 Oct, 18:30");
+    expect(deadlineText("2026-10-23T17:30:00Z", "fr")).toMatch(/^ven\.? 23 oct\.?, 18:30$/);
+  });
+});
+

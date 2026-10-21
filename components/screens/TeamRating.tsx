@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { copyFor, type Lang } from "@/lib/i18n";
 import type { NoSquadView, RatedTeamView, TeamRatingView, TransferIdeaView } from "@/lib/screens/planner";
-import { decimal, money, signedDecimal } from "@/lib/ui/format";
+import { deadlineText, decimal, money, signedDecimal } from "@/lib/ui/format";
 import {
   actionStack, asOfPill, badge, button, column, ideaArrow, ideaGain, ideaList, ideaMove, ideaMoves, ideaOut, ideaRow, ideaSub, onSkyRow,
   onSkyTitle, panel, panelBody, panelTitle, partBar, partFill, partHead, partLabel, partList, partRow, partTrack, partValue,
@@ -39,13 +39,9 @@ function Rated({ view, lang, paper }: { view: RatedTeamView; lang: Lang; paper: 
   return (
     <div lang={lang} className={column({ gap: "lg" })}>
       <Header lang={lang}>
-        <p className={teamLine()}>
-          <span aria-hidden="true" className={badge({ colour: team.badge.colour, shape: team.badge.shape, size: "sm" })}>
-            {team.badge.initials}
-          </span>
-          {team.name}
+        <TeamLine team={team}>
           <span className={asOfPill()}>{p.asOf(view.asOf)}</span>
-        </p>
+        </TeamLine>
       </Header>
 
       <section aria-labelledby="rating-h" className={ratingHero()}>
@@ -159,14 +155,26 @@ function Idea({ idea, href, lang }: { idea: TransferIdeaView; href: string; lang
   );
 }
 
-function NoSquad({ lang }: { view: NoSquadView; lang: Lang }) {
+function TeamLine({ team, children }: { team: { readonly name: string; readonly badge: RatedTeamView["team"]["badge"] }; children?: ReactNode }) {
+  return (
+    <p className={teamLine()}>
+      <span aria-hidden="true" className={badge({ colour: team.badge.colour, shape: team.badge.shape, size: "sm" })}>
+        {team.badge.initials}
+      </span>
+      {team.name}
+      {children}
+    </p>
+  );
+}
+
+function NoSquad({ view, lang }: { view: NoSquadView; lang: Lang }) {
   const p = copyFor(lang).planner;
   return (
     <div lang={lang} className={column({ gap: "lg" })}>
-      <Header lang={lang} />
+      <Header lang={lang}>{view.team.name ? <TeamLine team={view.team} /> : null}</Header>
       <section role="status" className={panel()}>
         <h2 className={panelTitle()}>{p.noSquadTitle}</h2>
-        <p className={panelBody()}>{p.noSquadBody}</p>
+        <p className={panelBody()}>{p.noSquadBody(view.deadline ? deadlineText(view.deadline, lang) : null)}</p>
       </section>
       <div className={actionStack()}>
         <Link href="/planner/draft" className={button({ intent: "primary" })}>
