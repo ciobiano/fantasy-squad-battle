@@ -312,3 +312,27 @@ Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-
 - FPL's team strength fields are all 0 this season, so strength comes from xG.
 - Projections land 6% under real points per gameweek before availability. The ranking looks right: Haaland leads on about 6 points a week, and FFS's Auto-pick also chose Thomas (£4.0m).
 - Bug found by a test and fixed: club matches counted only once finished, while player totals grow from kick-off.
+
+## 10. Planner UI (designs approved by Ralph 2026-10-21)
+
+Canvas "Pass 4 · Planner", 19 boards: https://claude.ai/artifact/LRmm2RpE97BMqwtuuPBfrW. What the screens still need from the data session: `docs/handoff/2026-10-21-planner-ui-needs.md`.
+
+- [ ] 10a · Planner tab and routes
+  - The tab bar gets Planner (fourth tab).
+  - `/planner` is Start, or opens the remembered team (proxy), like "/" opens the remembered league.
+  - `/planner/{id}` saves the team; a bad ID is a 404 from the proxy.
+- [ ] 10b · Your team: the rating, week by week, where the points come from, transfer ideas.
+  - Server only, no client JS.
+  - States: loading, team not found (back to Start with the reason), no squad yet, FPL down.
+  - "On paper" pill, streamed, when a league is remembered.
+- [ ] 10c · League "On paper": a third League view, `/league/{id}/paper`.
+- [ ] 10d · Plan board (browser, `lib/planner/engine`)
+  - Gameweek tabs; free transfers, bank and hits; pitch and bench; chips row.
+  - Undo and redo; the plan kept on the phone; transfer ideas open it applied.
+- [ ] 10e · Transfer flow: player sheet, pick a replacement (needs ask 1), compare (with the hit and "free next week"), review.
+- [ ] 10f · Chips sheet (needs ask 2).
+- [ ] 10g · Draft from scratch: empty, pick, partial, full.
+- [ ] 10h · Finish
+  - Copy in English, Pidgin and French.
+  - A JS budget for `/planner/*`.
+  - Tests, light theme, accessibility, preview check.
