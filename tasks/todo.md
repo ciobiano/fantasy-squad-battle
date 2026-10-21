@@ -333,3 +333,13 @@ Ralph's friend's idea. Ralph's calls: show percentages, and call out quitters.
 - [ ] Ralph edits the draft lines in the handoff. The data session then adds them to `lib/roasts`.
 - [ ] Design session: the "Tipped to win" card, a Table column and spoon odds.
 - [ ] Around GW15: re-run the calibration (quit rate, ghost slide, chip values) with the longer season.
+## 9b. Planner screens: the data the designs need (2026-10-21, branch `feat/planner-ui-data`)
+
+From the design session's `2026-10-21-planner-ui-needs.md` (Ralph approved the planner designs).
+
+- [x] `replacementsFor`: every player in a position, ranked by team gain, with what blocks him (over budget, club limit).
+  - Exact against a full rating.
+  - Fast: all 15 lists (2,118 candidates) in 16.5 ms on the i3.
+- [x] `chipValues`: Bench Boost and Triple Captain for one gameweek.
+- [x] The `no-squad` outcome now carries the team and the next deadline.
+- [x] Answered how `getLeaguePaper` is cached: inputs cached, result not (D1); 87 ms warm and 238 ms cold on the preview.
