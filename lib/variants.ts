@@ -394,3 +394,8 @@ export const ideaGain = cva("text-headline font-bold tabular-nums text-up");
 /** The main action and a quiet one under it. */
 export const actionStack = cva("flex flex-col gap-1.5");
 
+// ---------------------------------------------------------------- League: On paper
+
+export const paperHeadline = cva("m-0 text-headline font-bold");
+export const paperHeadlineSub = cva("m-0 text-callout text-ink-2");
+

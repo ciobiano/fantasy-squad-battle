@@ -1,5 +1,5 @@
-// Both League routes (Market and Table) render through here; only the tab and
-// the sky's height differ.
+// The League routes (Market, Table, On paper) render through here; only the tab,
+// its loader and the sky's height differ.
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { LeagueFallback } from "@/components/screens/fallbacks";
@@ -10,14 +10,16 @@ import { TabBar } from "@/components/ui/TabBar";
 import { trackServer } from "@/lib/analytics/capture";
 import { rememberedTeam, requestLang } from "@/lib/request";
 import { loadLeague, type LeagueTab } from "@/lib/screens/league";
+import { loadLeaguePaper } from "@/lib/screens/paper";
 import { page } from "@/lib/variants";
 
 type Params = Promise<{ readonly leagueId: string }>;
 
 async function LeagueForRequest({ params, tab }: { params: Params; tab: LeagueTab }) {
   const [{ leagueId }, lang, team, head] = await Promise.all([params, requestLang(), rememberedTeam(), headers()]);
-  const screen = await loadLeague(leagueId, tab, team);
-  if (screen.kind === "ready" && screen.view.gw !== null) {
+  const screen = tab === "paper" ? await loadLeaguePaper(leagueId, team) : await loadLeague(leagueId, tab, team);
+  // On paper isn't one of the analytics views yet (lib/analytics/events.ts).
+  if (tab !== "paper" && screen.kind === "ready" && screen.view.gw !== null) {
     trackServer("league_loaded", { league: screen.view.leagueId, gw: screen.view.gw, view: tab, language: lang }, head);
   }
   return settle(screen, lang, (view) => <LeagueScreen view={view} lang={lang} />);

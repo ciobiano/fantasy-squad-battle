@@ -63,6 +63,17 @@ export interface Copy {
     readonly standingsCaption: (gw: number) => string;
     readonly you: string;
     readonly sample: string;
+    /** The third League view: every squad rated over the coming gameweeks. */
+    readonly paperView: string;
+    readonly squadsAsOf: (gw: number) => string;
+    readonly paperSoon: string;
+    readonly paperBest: (name: string) => string;
+    readonly paperLeader: (name: string, rank: number) => string;
+    readonly paperLeaderToo: string;
+    readonly paperCaption: (first: number, last: number) => string;
+    readonly paperColumns: { readonly rank: string; readonly manager: string; readonly points: (first: number, last: number) => string; readonly table: string };
+    readonly paperNote: string;
+    readonly ordinal: (n: number) => string;
   };
   readonly fixtures: {
     readonly title: string;
