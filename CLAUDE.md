@@ -278,6 +278,26 @@ The research is in `docs/research/2026-10-19-ffs-rating-and-planner.md`, and the
   - Calibration: 866 points per gameweek before availability, against 918 real (−6%).
 - **Not built yet:** auto-pick or a Wildcard optimiser (it needs a squad solver), and screenshot import.
 
+### "Tipped to win": title odds (2026-10-20)
+
+Ralph's friend's idea. Study and backtest: `docs/research/2026-10-20-title-odds.md`. Handoff: `docs/handoff/2026-10-20-tipped-to-win.md`.
+
+- **What:** each manager's chance of winning the league, finishing top 3 and finishing last, plus this week's change. Shown as percentages under the working name "Tipped to win".
+- **Model** (`lib/league/odds`): plays out the rest of the season 10,000 times.
+  - Each manager has an edge over FPL's gameweek average. It starts from last season's points a week (0.3 per point) or −3.8 for a new manager, then moves toward this season's margin as weeks pass.
+  - Weekly luck is 12.4 points (sd). Unused first-half chips add points.
+  - The random numbers are seeded by league and gameweek, so a card never changes.
+- **Quitting:** Ralph wants quitters called out ("it's a game").
+  - **Quiet:** 3+ weeks without a transfer. It's only a label, because savers can hold 5 free transfers.
+  - **Ghost:** quiet with 2+ unavailable starters, or 6+ weeks idle. A ghost slides 1 point a week more each week, up to 20, and comes back with a 10% chance each week. Anyone may quit, at 1.5% a week.
+- **Measured** on 265 managers in 12 friend leagues (GW1–7):
+  - weekly luck, skill spread, the last-season weight, new managers' level;
+  - the comeback rate, and the Bench Boost value.
+  - The backtest favours adding last season's record, and the odds are well calibrated.
+- **Assumptions to recheck around GW15** (`scripts/odds-calibration/`):
+  - the quit rate, the ghost slide and its floor;
+  - Triple Captain, Free Hit and Wildcard values.
+
 ## Owner and working style
 
 - Ralph is a design engineer based in Lagos. The visual design of the cards is the product, so give it real care.

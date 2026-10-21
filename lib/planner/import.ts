@@ -40,8 +40,11 @@ export type SquadImport =
       readonly guessedPrices: readonly number[];
     }
   | { readonly kind: "team-not-found" }
-  /** The team hasn't played a gameweek yet. */
-  | { readonly kind: "no-squad" };
+  /**
+   * The team hasn't played a gameweek yet: FPL shows its squad once `deadline` passes
+   * (the next deadline, ISO; null once the season is over).
+   */
+  | { readonly kind: "no-squad"; readonly team: { readonly id: number; readonly name: string }; readonly deadline: string | null };
 
 const CHIP_NAMES: ReadonlySet<string> = new Set<Chip>(["wildcard", "freehit", "bboost", "3xc"]);
 const TRANSFER_CHIPS: ReadonlySet<string> = new Set(["wildcard", "freehit"]);
@@ -90,16 +93,21 @@ async function startPrices(ids: readonly number[], started: number, bootstrap: B
 export async function importSquad(teamId: number, bootstrap: Bootstrap, rules: Rules, source: ImportSource = liveImport): Promise<SquadImport> {
   const entry = await source.entry(teamId);
   if (!entry) return { kind: "team-not-found" };
+  const noSquad: SquadImport = {
+    kind: "no-squad",
+    team: { id: entry.id, name: entry.name },
+    deadline: bootstrap.events.find((e) => e.is_next)?.deadline_time ?? null,
+  };
   const current = entry.current_event;
-  if (current === null) return { kind: "no-squad" };
+  if (current === null) return noSquad;
   const [history, latestPicks, transfers] = await Promise.all([source.history(teamId, current), source.picks(teamId, current), source.transfers(teamId)]);
-  if (!latestPicks) return { kind: "no-squad" };
+  if (!latestPicks) return noSquad;
 
   // A Free Hit squad lasts one week; the squad that carries on is the one before it.
   const onFreeHit = latestPicks.active_chip === "freehit";
   const asOf = onFreeHit ? current - 1 : current;
   const picks = onFreeHit ? await source.picks(teamId, asOf) : latestPicks;
-  if (!picks) return { kind: "no-squad" };
+  if (!picks) return noSquad;
 
   const squad = picks.picks.map((p) => p.element);
   const started = entry.started_event ?? 1;

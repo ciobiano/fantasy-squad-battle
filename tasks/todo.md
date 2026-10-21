@@ -313,26 +313,57 @@ Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-
 - Projections land 6% under real points per gameweek before availability. The ranking looks right: Haaland leads on about 6 points a week, and FFS's Auto-pick also chose Thomas (£4.0m).
 - Bug found by a test and fixed: club matches counted only once finished, while player totals grow from kick-off.
 
-## 10. Planner UI (designs approved by Ralph 2026-10-21)
+## 10. "Tipped to win": title odds (2026-10-20, branch `feat/title-odds`)
+
+Ralph's friend's idea. Ralph's calls: show percentages, and call out quitters.
+
+- [x] Prototype on league 1261677.
+- [x] Calibration study on 265 managers in 12 friend leagues (`scripts/odds-calibration/`):
+  - weekly luck 12.4, skill spread 3–4.8;
+  - last season's weight 0.24–0.4;
+  - comeback rate 9–16% a week;
+  - bench points 6.6.
+- [x] Backtest: adding last season's record helps at every horizon, and the odds are well calibrated (65% predicted came true 61–63% of the time).
+- [x] `lib/league/odds`:
+  - edge model and activity (quiet or ghost);
+  - closed-form season simulation, seeded by league and gameweek;
+  - 159 ms for 50 managers on the i3.
+- [x] `history.past` read (tolerant). The `/api/league/{id}/odds` inspection endpoint answers 404 in production.
+- [x] 14 new tests.
+- [ ] Ralph edits the draft lines in the handoff. The data session then adds them to `lib/roasts`.
+- [ ] Design session: the "Tipped to win" card, a Table column and spoon odds.
+- [ ] Around GW15: re-run the calibration (quit rate, ghost slide, chip values) with the longer season.
+## 9b. Planner screens: the data the designs need (2026-10-21, branch `feat/planner-ui-data`)
+
+From the design session's `2026-10-21-planner-ui-needs.md` (Ralph approved the planner designs).
+
+- [x] `replacementsFor`: every player in a position, ranked by team gain, with what blocks him (over budget, club limit).
+  - Exact against a full rating.
+  - Fast: all 15 lists (2,118 candidates) in 16.5 ms on the i3.
+- [x] `chipValues`: Bench Boost and Triple Captain for one gameweek.
+- [x] The `no-squad` outcome now carries the team and the next deadline.
+- [x] Answered how `getLeaguePaper` is cached: inputs cached, result not (D1); 87 ms warm and 238 ms cold on the preview.
+
+## 11. Planner UI (designs approved by Ralph 2026-10-21)
 
 Canvas "Pass 4 · Planner", 19 boards: https://claude.ai/artifact/LRmm2RpE97BMqwtuuPBfrW. What the screens still need from the data session: `docs/handoff/2026-10-21-planner-ui-needs.md`.
 
-- [ ] 10a · Planner tab and routes
+- [x] 11a · Planner tab and routes
   - The tab bar gets Planner (fourth tab).
   - `/planner` is Start, or opens the remembered team (proxy), like "/" opens the remembered league.
   - `/planner/{id}` saves the team; a bad ID is a 404 from the proxy.
-- [ ] 10b · Your team: the rating, week by week, where the points come from, transfer ideas.
+- [x] 11b · Your team: the rating, week by week, where the points come from, transfer ideas.
   - Server only, no client JS.
   - States: loading, team not found (back to Start with the reason), no squad yet, FPL down.
   - "On paper" pill, streamed, when a league is remembered.
-- [ ] 10c · League "On paper": a third League view, `/league/{id}/paper`.
-- [ ] 10d · Plan board (browser, `lib/planner/engine`)
+- [x] 11c · League "On paper": a third League view, `/league/{id}/paper`.
+- [ ] 11d · Plan board (browser, `lib/planner/engine`)
   - Gameweek tabs; free transfers, bank and hits; pitch and bench; chips row.
   - Undo and redo; the plan kept on the phone; transfer ideas open it applied.
-- [ ] 10e · Transfer flow: player sheet, pick a replacement (needs ask 1), compare (with the hit and "free next week"), review.
-- [ ] 10f · Chips sheet (needs ask 2).
-- [ ] 10g · Draft from scratch: empty, pick, partial, full.
-- [ ] 10h · Finish
+- [ ] 11e · Transfer flow: player sheet, pick a replacement (data ready: `replacementsFor`), compare (with the hit and "free next week"), review.
+- [ ] 11f · Chips sheet (data ready: `chipValues`).
+- [ ] 11g · Draft from scratch: empty, pick, partial, full.
+- [ ] 11h · Finish
   - Copy in English, Pidgin and French.
   - A JS budget for `/planner/*`.
   - Tests, light theme, accessibility, preview check.

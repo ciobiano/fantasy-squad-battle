@@ -218,6 +218,11 @@ export const historySchema = z.object({
     }),
   ),
   chips: z.array(z.object({ name: z.string(), event: id })),
+  /** Earlier seasons' totals (title odds: last season is the best early guide to skill). */
+  past: tolerant(
+    "history.past",
+    z.array(z.object({ season_name: z.string(), total_points: z.number(), rank: z.number().nullable() })),
+  ),
 });
 
 /** Every transfer a manager has made this season, newest first (planner: purchase prices). */

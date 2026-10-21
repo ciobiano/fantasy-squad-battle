@@ -85,6 +85,7 @@ export async function getHistory(entryId: number, gw: number, final: boolean): P
   return {
     current: history.current.filter((row) => row.event <= gw),
     chips: history.chips.filter((chip) => chip.event <= gw),
+    past: history.past,
   };
 }
 
