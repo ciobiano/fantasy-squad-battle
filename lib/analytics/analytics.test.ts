@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "@/app/api/signal/route";
 import { analyticsConfig, capture, requestContext, visitorId } from "./capture";
 import { track } from "./client";
-import { parseClientEvent } from "./events";
+import { EVENT_SCHEMAS, parseClientEvent } from "./events";
 
 const after = vi.hoisted(() => vi.fn());
 vi.mock("next/server", () => ({ after }));
@@ -71,6 +71,14 @@ describe("capture", () => {
     const send = vi.fn(async () => Promise.reject(new Error("offline")));
     expect(await capture("card_shared", shared, requestContext(headersOf()), { config: CONFIG, send })).toBe(false);
     warn.mockRestore();
+  });
+});
+
+describe("server events", () => {
+  it("count every league view, On paper included", () => {
+    const loaded = (view: string) => EVENT_SCHEMAS.league_loaded.safeParse({ league: "314", gw: 7, view, language: "pcm" }).success;
+    expect(["market", "table", "paper", "share"].every(loaded)).toBe(true);
+    expect(loaded("planner")).toBe(false);
   });
 });
 

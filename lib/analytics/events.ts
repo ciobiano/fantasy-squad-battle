@@ -10,8 +10,8 @@ const league = z.string().regex(/^(\d{1,9}|sample)$/);
 const gw = z.number().int().min(1).max(38);
 
 export const EVENT_SCHEMAS = {
-  /** A league's Market, Table or public share page was opened. */
-  league_loaded: z.object({ league, gw, view: z.enum(["market", "table", "share"]), language: lang }).strict(),
+  /** A league's Market, Table, On paper or public share page was opened. */
+  league_loaded: z.object({ league, gw, view: z.enum(["market", "table", "paper", "share"]), language: lang }).strict(),
   /** A card was shown in the story viewer: each card, as the player moves through them. */
   card_viewed: z.object({ league, gw, award: card, language: lang }).strict(),
   /** The phone's share sheet took a card image (lib/share: "shared"). */
