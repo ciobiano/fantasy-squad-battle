@@ -16,7 +16,7 @@ import rawFixtures from "./__fixtures__/fixtures.json";
 import rawHistory from "./__fixtures__/history.json";
 import rawPicks from "./__fixtures__/picks.json";
 import rawTransfers from "./__fixtures__/transfers.json";
-import { sellingPrice, simulatePlan, type Rules } from "./engine";
+import { rateSquad, replacementsFor, sellingPrice, simulatePlan, type Rules } from "./engine";
 import { freeTransfersAfter, importSquad, pricesPaid, type ImportSource } from "./import";
 import { contextOf, getPlanner, type PlannerSource } from "./index";
 import { getLeaguePaper, type PaperSource } from "./league";
@@ -115,7 +115,12 @@ describe("importing a squad", () => {
   it("says when the team doesn't exist or hasn't played yet", async () => {
     expect(await importSquad(42, bootstrap, rules, squads())).toEqual({ kind: "team-not-found" });
     const fresh = squads({ entry: async () => ({ ...entry, current_event: null }) });
-    expect(await importSquad(entry.id, bootstrap, rules, fresh)).toEqual({ kind: "no-squad" });
+    // FPL shows a new team's squad once the next deadline passes.
+    expect(await importSquad(entry.id, bootstrap, rules, fresh)).toEqual({
+      kind: "no-squad",
+      team: { id: entry.id, name: "Test FC" },
+      deadline: "2026-10-23T17:30:00Z",
+    });
   });
 });
 
@@ -159,6 +164,30 @@ describe("the planner bundle", () => {
       likelihood: 3,
     });
     expect(priceTrend({ ...bootstrap.elements[0], price_change_projections: null }, deadlines)).toBeNull();
+  });
+});
+
+describe("replacements on real data", () => {
+  it("rank by team gain exactly as a full rating does, fast enough for a phone", async () => {
+    const outcome = await getPlanner(entry.id, 6, planner());
+    if (outcome.kind !== "ready") throw new Error(outcome.kind);
+    const { data } = outcome;
+    const ctx = contextOf(data);
+    const state = data.team!.start;
+    const ids = state.squad.map((o) => o.id);
+    const base = rateSquad(ids, ctx).points;
+    const started = performance.now();
+    const lists = state.squad.map((o) => replacementsFor(state, o.id, ctx));
+    const perPlayer = (performance.now() - started) / lists.length;
+    // The slowest single list (a midfielder's, about 300 candidates) stays well inside a frame on this i3.
+    expect(perPlayer).toBeLessThan(16);
+    for (const [k, list] of lists.entries()) {
+      const out = state.squad[k].id;
+      for (const r of list.slice(0, 5)) {
+        const swapped = ids.map((id) => (id === out ? r.id : id));
+        expect(r.gain).toBeCloseTo(rateSquad(swapped, ctx).points - base, 1);
+      }
+    }
   });
 });
 

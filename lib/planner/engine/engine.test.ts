@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { RULES_2026_27 } from "../rules";
+import { chipValues } from "./chips";
 import { bestLineup } from "./lineup";
 import { rankSquads, rateSquad } from "./rating";
+import { replacementsFor } from "./replacements";
 import { chipAvailable, chipsLeft, formationAllowed, sellingPrice, squadValue } from "./rules";
 import { type Context, simulatePlan } from "./simulate";
 import { suggestPairs, suggestTransfers } from "./suggest";
@@ -235,5 +237,51 @@ describe("transfer ideas", () => {
     expect(pair.transfers[0]).toEqual({ out: 15, in: 20 });
     expect(pair.transfers[1].in).toBe(22);
     expect(pair.gain).toBe(15 + 6 - rules.hitCost);
+  });
+});
+
+describe("replacements for one player", () => {
+  it("ranks every player in the position by what he adds to the team", () => {
+    const list = replacementsFor(start, 15, ctx);
+    expect(list.map((r) => r.id)).toEqual([20]);
+    // 20 starts up front and captains in GW8: +8 then +7, as the transfer ideas found.
+    expect(list[0]).toEqual({ id: 20, gain: 15, price: 80, blocked: [] });
+  });
+
+  it("matches a full rating of the new squad, bench players included", () => {
+    const base = rateSquad(ids, ctx).points;
+    for (const out of [7, 12, 2]) {
+      for (const r of replacementsFor(start, out, ctx)) {
+        expect(r.gain).toBeCloseTo(rateSquad(ids.map((id) => (id === out ? r.id : id)), ctx).points - base, 9);
+      }
+    }
+    // A keeper who never starts adds nothing; 25 beats the starter, so he adds his margin twice.
+    expect(replacementsFor(start, 2, ctx)).toEqual([{ id: 25, gain: 4, price: 45, blocked: [] }]);
+  });
+
+  it("keeps players the squad can't take, with every rule that blocks them", () => {
+    const poor = { squad: start.squad, bank: 0 };
+    const mids = replacementsFor(poor, 12, ctx);
+    // 24 costs 200 against 45 for 12: 155 short, and a 2nd from club 13 is still allowed.
+    expect(mids.find((r) => r.id === 24)).toMatchObject({ blocked: [{ kind: "over-budget", short: 155 }] });
+    const crowded = { squad: start.squad.map((o) => (o.id === 6 ? { id: 22, bought: 45 } : o.id === 5 ? { id: 23, bought: 45 } : o)), bank: 50 };
+    // Club 1 now has the keeper, 22 and 23: a 4th (21) breaks the limit.
+    expect(replacementsFor(crowded, 12, ctx).find((r) => r.id === 21)).toMatchObject({ blocked: [{ kind: "club-limit", club: 1 }] });
+  });
+
+  it("counts only the weeks from the transfer on", () => {
+    expect(replacementsFor(start, 15, ctx, 9)[0].gain).toBe(7);
+  });
+
+  it("is empty for a player not in the squad", () => {
+    expect(replacementsFor(start, 99, ctx)).toEqual([]);
+  });
+});
+
+describe("chip values for one gameweek", () => {
+  it("prices Bench Boost at the bench's points and Triple Captain at the captain's", () => {
+    expect(chipValues(ids, 8, ctx)).toEqual({ benchBoost: 1 + 2 + 1 + 1, tripleCaptain: { captain: 13, extra: 8 } });
+    expect(chipValues(ids, 9, ctx).tripleCaptain).toEqual({ captain: 13, extra: 9 });
+    expect(chipValues([3, 4], 8, ctx)).toEqual({ benchBoost: 0, tripleCaptain: null });
   });
 });

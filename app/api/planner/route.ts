@@ -25,6 +25,9 @@ export async function GET(request: Request) {
   const started = performance.now();
   try {
     const outcome = await getPlanner(teamId, weeksParam === null ? undefined : Number(weeksParam));
+    if (outcome.kind === "no-squad") {
+      return Response.json({ error: outcome.kind, team: outcome.team, deadline: outcome.deadline }, { status: 404, headers: { "Cache-Control": "no-store" } });
+    }
     if (outcome.kind !== "ready") return error(404, outcome.kind);
     const ms = Math.round(performance.now() - started);
     return Response.json({ ms, data: outcome.data }, { headers: { "Cache-Control": "no-store" } });

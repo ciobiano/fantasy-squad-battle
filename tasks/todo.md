@@ -312,3 +312,14 @@ Ralph asked for FFS's team rating and planner. Research: `docs/research/2026-10-
 - FPL's team strength fields are all 0 this season, so strength comes from xG.
 - Projections land 6% under real points per gameweek before availability. The ranking looks right: Haaland leads on about 6 points a week, and FFS's Auto-pick also chose Thomas (£4.0m).
 - Bug found by a test and fixed: club matches counted only once finished, while player totals grow from kick-off.
+
+## 9b. Planner screens: the data the designs need (2026-10-21, branch `feat/planner-ui-data`)
+
+From the design session's `2026-10-21-planner-ui-needs.md` (Ralph approved the planner designs).
+
+- [x] `replacementsFor`: every player in a position, ranked by team gain, with what blocks him (over budget, club limit).
+  - Exact against a full rating.
+  - Fast: all 15 lists (2,118 candidates) in 16.5 ms on the i3.
+- [x] `chipValues`: Bench Boost and Triple Captain for one gameweek.
+- [x] The `no-squad` outcome now carries the team and the next deadline.
+- [x] Answered how `getLeaguePaper` is cached: inputs cached, result not (D1); 87 ms warm and 238 ms cold on the preview.
