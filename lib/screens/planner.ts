@@ -5,9 +5,10 @@ import { parseStartInput } from "@/lib/fpl/start-input";
 import { START_ERRORS, type StartError } from "@/lib/i18n";
 import { fplId } from "@/lib/ids";
 import { getPlanner, type PlannerData, type PlannerOutcome } from "@/lib/planner";
-import type { Position } from "@/lib/planner/engine";
+import type { Position, Transfer } from "@/lib/planner/engine";
 import { getLeaguePaper, type PaperTable } from "@/lib/planner/league";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
+import type { BoardData } from "./plan-board";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import type { Query } from "./start";
 
@@ -167,3 +168,47 @@ export async function loadPaperRank(leagueId: number | null, teamId: number, sou
     return null;
   }
 }
+
+// ---------------------------------------------------------------- The plan board
+
+export interface PlanBoardView {
+  /** Everything the board needs in the browser: players, rules, fixtures, and the squad (none for a draft). */
+  readonly data: BoardData;
+  /** The transfers to start from, when the link opens one of the rating's ideas (?idea=s0, ?idea=p0). */
+  readonly idea: readonly Transfer[] | null;
+}
+
+/** The board's slice of the bundle: the rating and ideas stay on the server. */
+const boardData = (data: PlannerData): BoardData => ({
+  ...data,
+  team: data.team && { id: data.team.id, name: data.team.name.trim(), asOf: data.team.asOf, start: data.team.start },
+});
+
+function ideaFrom(data: PlannerData, query: Query): readonly Transfer[] | null {
+  const match = /^([sp])(\d)$/.exec(one(query, "idea"));
+  if (!match || !data.team) return null;
+  const list = match[1] === "s" ? data.team.ideas.singles : data.team.ideas.pairs;
+  return list[Number(match[2])]?.transfers ?? null;
+}
+
+/** A team's plan board. No squad yet, or no gameweek left to plan, goes back to the team's rating, which says why. */
+export async function loadPlan(segment: string, query: Query, source: PlannerScreenSource = livePlannerScreens): Promise<Screen<PlanBoardView>> {
+  const teamId = fplId(segment);
+  if (teamId === null) return notFound();
+  return guard("planner", `/planner/${teamId}/plan`, async () => {
+    const outcome = await source.planner(teamId);
+    if (outcome.kind === "team-not-found") return redirectTo(plannerStartHref(String(teamId), "team-not-found"));
+    if (outcome.kind === "no-squad" || !outcome.data.team || outcome.data.gws.length === 0) return redirectTo(`/planner/${teamId}`);
+    return ready({ data: boardData(outcome.data), idea: ideaFrom(outcome.data, query) });
+  });
+}
+
+/** A draft from scratch: every player and the rules, no squad. */
+export async function loadDraft(source: PlannerScreenSource = livePlannerScreens): Promise<Screen<PlanBoardView>> {
+  return guard("planner", "/planner/draft", async () => {
+    const outcome = await source.planner(null);
+    if (outcome.kind !== "ready") return redirectTo("/planner?start=1");
+    return ready({ data: boardData(outcome.data), idea: null });
+  });
+}
+

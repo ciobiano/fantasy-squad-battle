@@ -92,6 +92,10 @@
 @utility pb-sheet {
   padding-bottom: calc(2rem + env(safe-area-inset-bottom));
 }
+/* The plan bar sits on top of the tab bar (h-21). */
+@utility bottom-tabs {
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+}
 @utility pb-cta {
   padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { PlannerData } from "@/lib/planner";
 import type { PaperTable } from "@/lib/planner/league";
-import { loadPaperRank, loadTeamRating, plannerDestination, plannerStartView, type PlannerScreenSource, type RatedTeamView } from "./planner";
+import { loadDraft, loadPaperRank, loadPlan, loadTeamRating, plannerDestination, plannerStartView, type PlannerScreenSource, type RatedTeamView } from "./planner";
 
 const RULES: PlannerData["rules"] = {
   squadSize: 15, starters: 11, clubLimit: 3, budget: 1000, sellOnFee: 0.5, maxFreeTransfers: 5, transfersCap: 20, hitCost: 4,
@@ -116,3 +116,24 @@ describe("loadPaperRank", () => {
     expect(await loadPaperRank(1261677, 3920688, source({ paper: async () => { throw new Error("503"); } }))).toBeNull();
   });
 });
+
+describe("loadPlan", () => {
+  it("sends the board the squad without the rating, and opens a transfer idea", async () => {
+    const screen = await loadPlan("3920688", { idea: "p0" }, source());
+    if (screen.kind !== "ready") throw new Error(screen.kind);
+    expect(screen.view.data.team).toEqual({ id: 3920688, name: "PASUZAE", asOf: 7, start: data.team!.start });
+    expect(screen.view.idea).toEqual([{ out: 399, in: 427 }, { out: 290, in: 68 }]);
+    expect((await loadPlan("3920688", { idea: "s9" }, source())).kind === "ready").toBe(true);
+  });
+  it("goes back to the rating when there's no squad, and to Start for an unknown team", async () => {
+    expect(await loadPlan("5", {}, source({ planner: async () => ({ kind: "no-squad", team: { id: 5, name: "A" }, deadline: null }) }))).toEqual({
+      kind: "redirect", to: "/planner/5",
+    });
+    expect(await loadPlan("5", {}, source({ planner: async () => ({ kind: "team-not-found" }) }))).toMatchObject({ kind: "redirect" });
+  });
+  it("loads a draft with no squad", async () => {
+    const screen = await loadDraft(source({ planner: async () => ({ kind: "ready", data: { ...data, team: null } }) }));
+    expect(screen).toMatchObject({ kind: "ready", view: { data: { team: null }, idea: null } });
+  });
+});
+

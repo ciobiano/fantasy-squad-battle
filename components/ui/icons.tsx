@@ -23,6 +23,40 @@ export function ChevronRight({ size = 14, className }: IconProps) {
   );
 }
 
+/** A link that leaves the app. */
+export function ExternalIcon({ size = 14 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden="true" {...stroke} strokeWidth={1.7}>
+      <path d="M5.5 2.5h-3v9h9v-3M8 2h4v4M12 2 6.5 7.5" />
+    </svg>
+  );
+}
+
+/** Back to the previous screen. */
+export function BackIcon({ size = 18 }: IconProps) {
+  return (
+    <svg width={size * 0.61} height={size} viewBox="0 0 11 18" aria-hidden="true" {...stroke} strokeWidth={2.2}>
+      <path d="M9 1.5 1.75 9 9 16.5" />
+    </svg>
+  );
+}
+
+export function UndoIcon({ size = 22 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden="true" {...stroke} strokeWidth={1.9}>
+      <path d="M8 4.5 3.5 9 8 13.5M4 9h9.5a5 5 0 0 1 0 10H10" />
+    </svg>
+  );
+}
+
+export function RedoIcon({ size = 22 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden="true" {...stroke} strokeWidth={1.9}>
+      <path d="M14 4.5 18.5 9 14 13.5M18 9H8.5a5 5 0 0 0 0 10H12" />
+    </svg>
+  );
+}
+
 /** "Out → in": a transfer. */
 export function ArrowRight({ size = 16, className }: IconProps) {
   return (

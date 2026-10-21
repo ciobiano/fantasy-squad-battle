@@ -46,7 +46,11 @@ export function money(tenths: number, lang: Lang): string {
 }
 
 /** A points change with its sign: "+9.7", "−4.0" (a real minus sign). */
-export const signedDecimal = (value: number, lang: Lang): string => `${value < 0 ? "−" : "+"}${decimal(Math.abs(value), lang)}`;
+export function signedDecimal(value: number, lang: Lang): string {
+  const size = decimal(Math.abs(value), lang);
+  if (Math.round(Math.abs(value) * 10) === 0) return size;
+  return `${value < 0 ? "−" : "+"}${size}`;
+}
 
 /** FPL deadlines in West Africa Time, where most of our players are: "Fri 23 Oct, 18:30", "ven. 23 oct., 18:30". */
 export function deadlineText(iso: string, lang: Lang): string {
@@ -57,4 +61,8 @@ export function deadlineText(iso: string, lang: Lang): string {
   const time = when.toLocaleTimeString(locale, { ...zone, hour: "2-digit", minute: "2-digit", hour12: false });
   return `${day.replace(/,/g, "")}, ${time}`;
 }
+
+/** The day of a forecast, in West Africa Time: "Tue", "mar.". */
+export const weekdayText = (iso: string, lang: Lang): string =>
+  new Date(iso).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-GB", { timeZone: "Africa/Lagos", weekday: "short" });
 

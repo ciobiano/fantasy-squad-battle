@@ -48,6 +48,7 @@ describe("planner numbers", () => {
     expect(money(17, "fr")).toBe("1,7 M£");
     expect(signedDecimal(9.67, "en")).toBe("+9.7");
     expect(signedDecimal(-4, "fr")).toBe("−4,0");
+    expect(signedDecimal(0.02, "en")).toBe("0.0");
   });
 });
 
