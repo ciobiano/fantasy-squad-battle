@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
-import { age, compactRank, movement } from "./format";
+import { age, compactRank, decimal, money, movement, signedDecimal } from "./format";
 
 describe("format", () => {
   it("shortens big ranks", () => {
@@ -36,5 +36,17 @@ describe("badges", () => {
     const b = badgeFor("Danfo Rovers");
     expect(b.colour).toBeGreaterThanOrEqual(1);
     expect(b.colour).toBeLessThanOrEqual(8);
+  });
+});
+
+describe("planner numbers", () => {
+  it("writes one decimal and FPL money the way each language does", () => {
+    expect(decimal(53.67, "en")).toBe("53.7");
+    expect(decimal(53.67, "fr")).toBe("53,7");
+    expect(money(17, "pcm")).toBe("£1.7m");
+    expect(money(1000, "en")).toBe("£100.0m");
+    expect(money(17, "fr")).toBe("1,7 M£");
+    expect(signedDecimal(9.67, "en")).toBe("+9.7");
+    expect(signedDecimal(-4, "fr")).toBe("−4,0");
   });
 });

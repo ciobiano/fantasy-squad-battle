@@ -29,7 +29,7 @@ export const visuallyHidden = cva("sr-only");
 export const statusTint = cva("pointer-events-none fixed inset-x-0 top-0 z-30 h-status bg-brand-deep");
 export const sky = cva("pointer-events-none absolute inset-x-0 top-0 -z-10 bg-sky", {
   variants: {
-    height: { start: "h-108", picker: "h-80", league: "h-118", fixtures: "h-48", players: "h-84" },
+    height: { start: "h-108", picker: "h-80", league: "h-118", fixtures: "h-48", players: "h-84", planner: "h-90", rating: "h-75" },
   },
 });
 export const onSkyTitle = cva("m-0 text-large-title text-on-sky");
@@ -348,3 +348,49 @@ export const heading = cva("", {
   variants: { level: { display: "text-display", body: "text-body text-ink-2" } },
   defaultVariants: { level: "body" },
 });
+
+// ---------------------------------------------------------------- Planner: Start and Your team
+
+export const plannerTagline = cva("text-headline font-semibold text-on-sky-2");
+export const plannerForm = cva("mt-10 flex flex-col gap-2.5");
+export const orRule = cva("flex items-center gap-3 text-footnote font-semibold text-ink-3 before:h-px before:flex-1 before:bg-hairline after:h-px after:flex-1 after:bg-hairline");
+export const scratchLink = cva("flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border-fine border-surface-3 text-ink no-underline");
+export const scratchTitle = cva("text-headline font-bold");
+export const scratchSub = cva("text-footnote text-ink-2");
+
+export const teamLine = cva("flex items-center gap-2 text-callout font-semibold text-on-sky-2");
+export const asOfPill = cva("inline-flex h-5.5 items-center rounded-full bg-on-sky-fill px-2 text-caption font-bold text-on-sky");
+export const ratingHero = cva("flex flex-col gap-2");
+export const ratingFigure = cva("flex items-end gap-3");
+export const ratingNumber = cva("text-hero tabular-nums");
+export const ratingUnit = cva("flex flex-col pb-0.5 text-headline font-semibold leading-tight text-ink-2");
+export const ratingNote = cva("m-0 mt-1.5 text-callout text-ink-2");
+export const paperPill = cva("mt-1.5 inline-flex min-h-11 items-center gap-2.5 self-start rounded-full bg-surface pr-3.5 pl-4 text-callout font-semibold text-ink no-underline");
+export const paperLeague = cva("text-ink-2");
+
+export const weekGrid = cva("m-0 grid list-none grid-cols-6 gap-1.5 p-0");
+export const weekTile = cva("flex flex-col items-center gap-1 rounded-lg bg-surface py-3");
+export const weekGw = cva("text-caption font-semibold text-ink-2");
+export const weekPoints = cva("text-headline font-bold tabular-nums");
+
+export const partList = cva("m-0 flex list-none flex-col gap-3.5 p-0");
+export const partRow = cva("flex flex-col gap-2");
+export const partHead = cva("flex items-baseline justify-between text-callout");
+export const partLabel = cva("font-semibold");
+export const partValue = cva("font-bold tabular-nums");
+/** A share bar, drawn as SVG so its length is an attribute rather than an inline style. */
+export const partBar = cva("block h-1.5 w-full overflow-hidden rounded-full");
+export const partTrack = cva("fill-surface-2");
+export const partFill = cva("", { variants: { part: { position: "fill-ink-2", captain: "fill-accent" } } });
+
+export const ideaList = cva("m-0 flex list-none flex-col p-0");
+export const ideaRow = cva("flex min-h-16 items-center gap-3 border-t border-hairline py-2.5 text-ink no-underline");
+export const ideaMoves = cva("flex min-w-0 flex-1 flex-col gap-1");
+export const ideaMove = cva("flex items-center gap-2 text-headline");
+export const ideaOut = cva("font-medium text-ink-2");
+export const ideaArrow = cva("shrink-0 text-ink-3");
+export const ideaSub = cva("text-footnote text-ink-2");
+export const ideaGain = cva("text-headline font-bold tabular-nums text-up");
+/** The main action and a quiet one under it. */
+export const actionStack = cva("flex flex-col gap-1.5");
+

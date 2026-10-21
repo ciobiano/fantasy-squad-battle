@@ -23,6 +23,15 @@ export function ChevronRight({ size = 14, className }: IconProps) {
   );
 }
 
+/** "Out → in": a transfer. */
+export function ArrowRight({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 16 12" aria-hidden="true" className={className} {...stroke} strokeWidth={1.8}>
+      <path d="M1 6h13M9.5 1.5 14 6l-4.5 4.5" />
+    </svg>
+  );
+}
+
 export function ThemeIcon({ size = 20 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
@@ -55,6 +64,8 @@ export const TAB_ICONS = {
   league: "M3 22h20M5.5 22v-6h5v6M10.5 22V9h5v13M15.5 22v-9h5v9",
   fixtures: "M5.5 5h15a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3.5 10.5h19M8.5 3v4M17.5 3v4M8 15h2M12 15h2M16 15h2M8 18.5h2M12 18.5h2",
   players: "M13 12.5a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5zM4.5 22.5c.6-4.6 4.1-7.5 8.5-7.5s7.9 2.9 8.5 7.5",
+  /** A clipboard with a tick: the plan. */
+  planner: "M9 4.5H7.5a2 2 0 0 0-2 2V21a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V6.5a2 2 0 0 0-2-2H17M9.5 3h7v3.5h-7zM9 14.5l2.75 2.75L17 12",
 } as const;
 
 /** Story viewer icons, as drawn on the canvas (S-Story). */

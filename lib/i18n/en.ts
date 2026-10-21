@@ -1,6 +1,12 @@
 // English. Ralph edits this one.
 import type { Copy } from "./copy";
 
+const ordinal = (n: number): string => {
+  const tens = n % 100;
+  const suffix = tens >= 11 && tens <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
+  return `${n}${suffix}`;
+};
+
 export const en: Copy = {
   theme: { system: "Theme: System. Change theme", light: "Theme: Light. Change theme", dark: "Theme: Dark. Change theme" },
   languageLabel: "Language",
@@ -153,5 +159,39 @@ export const en: Copy = {
     kept: "kept",
     paid: "paid",
     others: (count) => `+${count} others`,
+  },
+  planner: {
+    title: "Planner",
+    tagline: "Rate your squad. Plan your transfers.",
+    rateButton: "Rate my team",
+    or: "or",
+    scratch: "Start from scratch",
+    scratchSub: "Pick every player yourself",
+    asOf: (gw) => `As of GW${gw}`,
+    gw: (gw) => `GW${gw}`,
+    window: (first, last) => `GW${first}–${last}`,
+    ratingHeading: "Team rating",
+    ptsProjected: "pts projected",
+    ratingNote: "Best XI and captain each week, no transfers.",
+    paperRank: (rank, of) => `${ordinal(rank)} of ${of}`,
+    onPaper: "on paper",
+    paperAria: (rank, of, league) => `${ordinal(rank)} of ${of} on paper in ${league}`,
+    weekByWeek: "Week by week",
+    weekAria: (gw, points) => `Gameweek ${gw}: ${points} points`,
+    whereFrom: "Where the points come from",
+    parts: { GK: "Goalkeeper", DEF: "Defenders", MID: "Midfielders", FWD: "Forwards", captain: "Captain’s armband" },
+    ideas: "Transfer ideas",
+    ideasAside: (first, last) => `GW${first}–${last}, after hits`,
+    freeTransfer: "Free transfer",
+    twoTransfers: "Two transfers",
+    hitCounted: (hit) => `−${hit} hit counted`,
+    left: (money) => `${money} left`,
+    moveAria: (out, into) => `${out} out, ${into} in`,
+    gainAria: (points) => `${points} points`,
+    planButton: "Plan transfers",
+    changeTeam: "Not your team? Change team",
+    noSquadTitle: "No squad to rate yet",
+    noSquadBody: "FPL shows a new team’s squad after its first deadline.",
+    loading: "Rating your squad",
   },
 };

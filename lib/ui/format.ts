@@ -1,4 +1,5 @@
 // Small formatting rules shared by the app screens.
+import type { Lang } from "@/lib/i18n";
 
 /** Ranks over 99,999 shorten (412K, 1.2M); smaller ones keep their separators. */
 export function compactRank(rank: number): string {
@@ -31,3 +32,18 @@ export function age(isoTime: string, now: number): string {
   const hours = Math.floor(ms / 3_600_000);
   return hours < 24 ? `${Math.max(1, hours)}h` : `${Math.floor(hours / 24)}d`;
 }
+
+/** One decimal place, the way each language writes it: "53.7", or "53,7" in French. */
+export function decimal(value: number, lang: Lang): string {
+  const text = value.toFixed(1);
+  return lang === "fr" ? text.replace(".", ",") : text;
+}
+
+/** FPL money (tenths of a million): "£1.7m", or "1,7 M£" in French. */
+export function money(tenths: number, lang: Lang): string {
+  const millions = decimal(tenths / 10, lang);
+  return lang === "fr" ? `${millions} M£` : `£${millions}m`;
+}
+
+/** A points change with its sign: "+9.7", "−4.0" (a real minus sign). */
+export const signedDecimal = (value: number, lang: Lang): string => `${value < 0 ? "−" : "+"}${decimal(Math.abs(value), lang)}`;

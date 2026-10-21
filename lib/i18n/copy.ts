@@ -153,4 +153,40 @@ export interface Copy {
     readonly paid: string;
     readonly others: (count: number) => string;
   };
+  /** The Planner tab: Start, your team's rating, and (later) the plan. */
+  readonly planner: {
+    readonly title: string;
+    readonly tagline: string;
+    readonly rateButton: string;
+    readonly or: string;
+    readonly scratch: string;
+    readonly scratchSub: string;
+    readonly asOf: (gw: number) => string;
+    readonly gw: (gw: number) => string;
+    readonly window: (first: number, last: number) => string;
+    readonly ratingHeading: string;
+    readonly ptsProjected: string;
+    readonly ratingNote: string;
+    /** "2nd of 11", then "on paper" beside it. */
+    readonly paperRank: (rank: number, of: number) => string;
+    readonly onPaper: string;
+    readonly paperAria: (rank: number, of: number, league: string) => string;
+    readonly weekByWeek: string;
+    readonly weekAria: (gw: number, points: string) => string;
+    readonly whereFrom: string;
+    readonly parts: { readonly GK: string; readonly DEF: string; readonly MID: string; readonly FWD: string; readonly captain: string };
+    readonly ideas: string;
+    readonly ideasAside: (first: number, last: number) => string;
+    readonly freeTransfer: string;
+    readonly twoTransfers: string;
+    readonly hitCounted: (hit: number) => string;
+    readonly left: (money: string) => string;
+    readonly moveAria: (out: string, into: string) => string;
+    readonly gainAria: (points: string) => string;
+    readonly planButton: string;
+    readonly changeTeam: string;
+    readonly noSquadTitle: string;
+    readonly noSquadBody: string;
+    readonly loading: string;
+  };
 }

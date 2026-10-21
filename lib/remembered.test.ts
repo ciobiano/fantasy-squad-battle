@@ -54,6 +54,29 @@ describe("onVisit", () => {
   });
 });
 
+describe("onVisit, Planner", () => {
+  it("opens the last team's rating from the Planner tab, unless the link asks for Start", () => {
+    expect(visit("/planner", { [TEAM_COOKIE]: "3920688" })).toEqual({ kind: "redirect", to: "/planner/3920688" });
+    expect(visit("/planner?start=1", { [TEAM_COOKIE]: "3920688" })).toEqual({ kind: "continue", save: [] });
+    expect(visit("/planner")).toEqual({ kind: "continue", save: [] });
+  });
+  it("saves the team a planner page carries, and refuses one that isn't a team ID", () => {
+    const saved = { kind: "continue", save: [{ name: TEAM_COOKIE, value: "3920688" }] };
+    expect(visit("/planner/3920688")).toEqual(saved);
+    expect(visit("/planner/3920688/plan")).toEqual(saved);
+    expect(visit("/planner/abc")).toEqual({ kind: "not-found" });
+    expect(visit("/planner/0/plan")).toEqual({ kind: "not-found" });
+  });
+  it("lets the draft and the Start form's target through, saving nothing", () => {
+    expect(visit("/planner/draft")).toEqual({ kind: "continue", save: [] });
+    expect(visit("/planner/find?q=1")).toEqual({ kind: "continue", save: [] });
+  });
+  it("treats League On paper like the other League views", () => {
+    expect(visit("/league/314/paper")).toEqual({ kind: "continue", save: [{ name: LEAGUE_COOKIE, value: "314" }] });
+    expect(visit("/league/abc/paper")).toEqual({ kind: "not-found" });
+  });
+});
+
 describe("rememberedTeamId", () => {
   it("reads a valid saved team only", () => {
     expect(rememberedTeamId(jar({ [TEAM_COOKIE]: "22" }))).toBe(22);
