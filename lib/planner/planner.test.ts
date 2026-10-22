@@ -19,7 +19,7 @@ import rawTransfers from "./__fixtures__/transfers.json";
 import { rateSquad, replacementsFor, sellingPrice, simulatePlan, type Rules } from "./engine";
 import { freeTransfersAfter, importSquad, pricesPaid, type ImportSource } from "./import";
 import { contextOf, getPlanner, type PlannerSource } from "./index";
-import { getLeaguePaper, type PaperSource } from "./league";
+import { getLeaguePaper, paperLeagues, type PaperSource } from "./league";
 import { priceTrend } from "./players";
 import { RULES_2026_27, rulesOf } from "./rules";
 
@@ -220,6 +220,23 @@ describe("on paper", () => {
     // Chi has no squad yet; the full squad beats the one without Haaland.
     expect(table.rows.map((r) => [r.firstName, r.rank, r.leagueRank])).toEqual([["Bola", 1, 2], ["Ade", 2, 1]]);
     expect(table.rows[0].rating.points).toBeGreaterThan(table.rows[1].rating.points);
+  });
+
+  it("asks for final picks only once FPL marks the gameweek finished", async () => {
+    const asked: [number, boolean][] = [];
+    const spy = source({ picks: async (entryId, gw, final) => (asked.push([gw, final]), entryId === 2 && gw === 7 ? picks : null) });
+    await getLeaguePaper(9, 6, spy);
+    expect(asked.every(([gw, final]) => final === (bootstrap.events.find((e) => e.id === gw)?.finished ?? false))).toBe(true);
+    const done: Bootstrap = { ...bootstrap, events: bootstrap.events.map((e) => (e.id === 7 ? { ...e, finished: true } : e)) };
+    asked.length = 0;
+    await getLeaguePaper(9, 6, { ...spy, bootstrap: async () => done });
+    expect(asked.filter(([gw]) => gw === 7).every(([, final]) => final)).toBe(true);
+  });
+
+  it("lists the leagues a team can be ranked in", () => {
+    const league = (id: number, members: number | null, rank: number | null, kind: "private" | "public" = "private") => ({ id, name: `L${id}`, kind, members, rank, lastRank: rank });
+    const mine = [league(1, 11, 3), league(2, 1, 1), league(3, 900, 12), league(4, 900, 400), league(5, null, null), league(6, 9_000_000, 2_000_000, "public")];
+    expect(paperLeagues(mine).map((l) => l.id)).toEqual([1, 3]);
   });
 
   it("passes on an unknown league or one with no squads", async () => {
