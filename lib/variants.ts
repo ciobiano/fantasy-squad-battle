@@ -359,7 +359,7 @@ export const plannerForm = cva("mt-10 flex flex-col gap-2.5");
 export const orRule = cva("flex items-center gap-3 text-footnote font-semibold text-ink-3 before:h-px before:flex-1 before:bg-hairline after:h-px after:flex-1 after:bg-hairline");
 export const scratchLink = cva("flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border-fine border-surface-3 text-ink no-underline");
 export const scratchTitle = cva("text-headline font-bold");
-export const scratchSub = cva("text-footnote text-ink-2");
+export const scratchSub = cva("text-callout text-ink-2");
 
 /** "Planner" and the team under it. */
 export const plannerHeading = cva("flex min-w-0 flex-1 flex-col gap-1");
@@ -464,19 +464,25 @@ export const gwTab = cva(
 );
 export const gwTabLabel = cva("text-caption font-semibold opacity-85");
 export const gwTabPoints = cva("text-headline font-bold tabular-nums");
-export const planDeadline = cva("-mt-1 text-callout font-medium text-ink-2");
+export const planDeadline = cva("-mt-1 text-body text-ink-2");
 export const planStats = cva("m-0 grid grid-cols-3 rounded-xl bg-surface");
 export const planStat = cva("flex flex-col gap-1 border-l border-hairline px-3.5 py-3 first:border-l-0");
 export const planStatLabel = cva("text-caption font-semibold text-ink-2");
 export const planStatValue = cva("m-0 flex items-baseline gap-1 text-title font-bold tabular-nums");
 export const planStatNote = cva("text-caption font-bold text-ink-3");
 export const planMoves = cva("m-0 flex list-none flex-col gap-1.5 p-0");
-export const planMove = cva("flex min-h-12 items-center justify-between gap-3 rounded-lg bg-surface px-3.5 text-callout font-semibold");
-export const planMoveCost = cva("text-footnote font-bold", { variants: { hit: { true: "text-down", false: "text-ink-2" } } });
-export const planHint = cva("m-0 text-callout text-ink-2");
+export const planMove = cva("flex min-h-13 items-center justify-between gap-3 rounded-lg bg-surface px-4 py-2");
+export const planMoveCost = cva("shrink-0 text-callout font-bold", { variants: { hit: { true: "text-down", false: "text-ink-2" } } });
+export const planHint = cva("m-0 text-body text-ink-2");
 
 /** A player on the planner's pitch or bench: a button that opens his sheet. */
 export const planToken = cva("flex min-w-0 max-w-24 flex-1 flex-col items-center gap-0.75 text-inherit");
+export const emptyShirt = cva("", { variants: { part: { shirt: "fill-on-pitch/10 stroke-on-pitch/60", plus: "fill-none stroke-on-pitch" } } });
+/** The draft's club-limit notice. */
+export const draftLimit = cva("m-0 flex items-center gap-2.5 rounded-lg bg-surface px-3.5 py-3 text-body");
+export const draftLimitDot = cva("size-2 shrink-0 rounded-full bg-caution");
+/** An empty shirt's position, on a dark chip so it reads on the grass. */
+export const slotLabel = cva("rounded-xs bg-black/40 px-1.5 py-1 text-micro font-bold leading-none tracking-wider text-on-pitch");
 export const tokenRole = cva(
   "absolute -top-1.25 -right-2.25 flex h-4.25 min-w-4.25 items-center justify-center rounded-full bg-pitch-badge px-0.75 text-micro font-bold text-on-pitch-badge",
 );
@@ -493,8 +499,8 @@ export const chipCard = cva("flex min-h-16 flex-col items-start gap-1 rounded-lg
   variants: { playing: { true: "ring-2 ring-accent", false: "" } },
   defaultVariants: { playing: false },
 });
-export const chipName = cva("text-callout font-bold");
-export const chipSub = cva("text-footnote font-semibold tabular-nums", { variants: { tone: { gain: "text-up", quiet: "text-ink-2", off: "text-ink-3" } } });
+export const chipName = cva("text-headline font-bold");
+export const chipSub = cva("text-callout font-semibold tabular-nums", { variants: { tone: { gain: "text-up", quiet: "text-ink-2", off: "text-ink-3" } } });
 export const planFootnote = cva("m-0 text-footnote text-ink-2");
 
 /** The bar above the tab bar once the plan changes something. */
@@ -503,8 +509,8 @@ export const planBar = cva(
 );
 export const planBarGain = cva("flex flex-col gap-0.75");
 export const planBarPoints = cva("text-headline font-bold tabular-nums text-up");
-export const planBarSub = cva("text-footnote font-semibold text-ink-2");
-export const planBarButton = cva("inline-flex h-11 items-center rounded-md bg-accent px-5 text-callout font-bold text-on-accent");
+export const planBarSub = cva("text-callout font-semibold text-ink-2");
+export const planBarButton = cva("inline-flex h-12 shrink-0 items-center rounded-lg bg-accent px-5 text-headline font-bold text-on-accent");
 /** Room under the board for the plan bar, so it never covers the last row. */
 export const planBarSpace = cva("h-17 shrink-0");
 
@@ -524,7 +530,7 @@ export const factRow = cva("m-0 grid grid-cols-4 border-y border-hairline py-3.5
 export const fact = cva("flex flex-col gap-1 border-l border-hairline pl-3 first:border-l-0 first:pl-0");
 export const factLabel = cva("text-caption font-semibold text-ink-2");
 export const factValue = cva("m-0 text-headline font-bold tabular-nums");
-export const sheetNews = cva("m-0 rounded-md bg-surface-2 px-3.5 py-3 text-callout");
+export const sheetNews = cva("m-0 rounded-md bg-surface-2 px-3.5 py-3 text-body");
 export const trendChip = cva("inline-flex h-6 items-center rounded-full px-2.5 text-footnote font-bold", {
   variants: { direction: { rise: "bg-up text-on-up", fall: "bg-down text-on-down" } },
 });
@@ -557,7 +563,7 @@ export const costValue = cva("font-bold", { variants: { hit: { true: "text-down"
 export const compareName = cva("truncate text-headline font-bold");
 export const compareGain = cva("text-hero tabular-nums text-up");
 export const compareLedger = cva("m-0 flex flex-col");
-export const compareLedgerRow = cva("flex min-h-11 items-center justify-between border-t border-hairline text-callout [&>dt]:text-ink-2 [&>dd]:m-0 [&>dd]:font-bold [&>dd]:tabular-nums");
+export const compareLedgerRow = cva("flex min-h-11 items-center justify-between border-t border-hairline text-body [&>dt]:text-ink-2 [&>dd]:m-0 [&>dd]:font-bold [&>dd]:tabular-nums");
 export const compareTip = cva("flex items-center gap-3 rounded-lg bg-surface-2 px-3.5 py-3 [&>p]:flex-1");
 export const legendKeys = cva("flex gap-3 text-footnote font-semibold text-ink-2 tabular-nums");
 export const legendKey = cva("flex items-center gap-1.5");
@@ -565,21 +571,20 @@ export const legendDot = cva("size-2 rounded-xs", { variants: { tone: { out: "bg
 
 // Planner: pick a replacement
 export const replaceFilters = cva("mt-2 flex flex-col gap-2.5");
-export const replaceSelect = cva("h-11 w-full rounded-md bg-surface px-3 text-callout font-semibold text-ink");
+export const replaceSelect = cva("h-12 w-full rounded-lg bg-surface px-3.5 text-body font-semibold text-ink");
 export const replaceHead = cva("flex justify-between pb-2 text-caption font-bold uppercase tracking-wider text-ink-2");
 export const replaceList = cva("m-0 flex list-none flex-col p-0");
 export const replaceRow = cva("flex min-h-16.5 w-full items-center gap-3 border-t border-hairline py-2 text-left text-ink disabled:opacity-55");
 export const replaceRowText = cva("flex min-w-0 flex-1 flex-col gap-0.75");
 export const replaceRowName = cva("flex items-center gap-1.5 truncate text-headline");
-export const replaceRowSub = cva("truncate text-footnote", { variants: { blocked: { true: "text-down", false: "text-ink-2" } }, defaultVariants: { blocked: false } });
+export const replaceRowSub = cva("truncate text-callout", { variants: { blocked: { true: "text-down", false: "text-ink-2" } }, defaultVariants: { blocked: false } });
 export const replaceRowEnd = cva("flex shrink-0 flex-col items-end gap-0.75");
-export const replaceGain = cva("text-headline font-bold tabular-nums", { variants: { tone: { up: "text-up", quiet: "text-ink-2" } } });
+export const replaceGain = cva("text-headline font-bold tabular-nums", { variants: { tone: { up: "text-up", quiet: "text-ink-2", plain: "text-ink" } } });
 
 // Planner: review
 export const reviewRows = cva("m-0 flex list-none flex-col p-0");
 export const reviewRow = cva("flex min-h-15 items-center gap-3.5 border-t border-hairline py-2.5");
-export const reviewGw = cva("w-11 shrink-0 text-callout font-bold");
+export const reviewGw = cva("w-14 shrink-0 text-headline font-bold");
 export const reviewText = cva("flex min-w-0 flex-1 flex-col gap-0.75");
 export const reviewPoints = cva("text-headline font-bold tabular-nums");
-export const outlineLink = cva("inline-flex min-h-11 items-center gap-2 self-start rounded-md border-fine border-surface-3 px-4 text-callout font-bold text-ink no-underline");
 

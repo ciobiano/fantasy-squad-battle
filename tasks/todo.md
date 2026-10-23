@@ -362,7 +362,9 @@ Canvas "Pass 4 · Planner", 19 boards: https://claude.ai/artifact/LRmm2RpE97BMqw
   - Undo and redo; the plan kept on the phone; transfer ideas open it applied.
 - [x] 11e · Transfer flow: player sheet, pick a replacement (data ready: `replacementsFor`), compare (with the hit and "free next week"), review.
 - [x] 11f · Chips sheet (data ready: `chipValues`).
-- [ ] 11g · Draft from scratch: empty, pick, partial, full.
+- [x] 11g · Draft from scratch: empty, pick, partial, full (`/planner/draft`, `lib/screens/draft.ts`).
+  - Fifteen shirts within the budget and club limit, kept on the phone with undo; a full draft is rated and planned on the plan board ("‹ Draft" back).
+  - The replace list and the draft's pick list share one picker (`PlayerPicker`).
 - [ ] 11h · Finish
   - Copy in English, Pidgin and French.
   - A JS budget for `/planner/*`.
@@ -373,4 +375,7 @@ Canvas "Pass 4 · Planner", 19 boards: https://claude.ai/artifact/LRmm2RpE97BMqw
   - Your league: Compare in, the rank ("2nd best squad of 11"), and "See the On paper table ›" as its own row.
   - Change team: a sheet with the team ID field and the teams rated on this phone (localStorage), from the team under the title.
   - One main action (Plan transfers); body text 17 px; rows at least 44 pt; ideas show where they go (›).
-- [ ] 11j · The same Apple-guideline pass on Start, the plan board, its sheets, replace and review.
+- [x] 11j · The same Apple-guideline pass on Start, the plan board, its sheets, replace and review.
+  - Body text 17 px (hints, transfer rows, news, ledger, chips), secondary lines 15 px; the sort control and club menu at 44 pt.
+  - Fixed: a planned transfer's names stacked on three lines; transfer names in the plan and review weren't read out.
+  - The review's one main action is Open FPL; "Start from scratch" no longer ends on a 404.

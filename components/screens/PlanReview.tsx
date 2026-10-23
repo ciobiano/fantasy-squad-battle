@@ -4,8 +4,8 @@ import type { PlanResult } from "@/lib/planner/engine";
 import { review } from "@/lib/screens/plan-board";
 import { decimal, deadlineText, signedDecimal } from "@/lib/ui/format";
 import {
-  column, compareGain, ideaArrow, ideaMove, ideaOut, ideaSub, onSkyTitle, panel, panelBody, panelTitle, planBack, planFootnote, planNav,
-  ratingFigure, ratingUnit, reviewRow, reviewRows, reviewGw, reviewPoints, reviewText, sectionHead, sectionHeading, outlineLink,
+  button, column, compareGain, ideaArrow, ideaMove, ideaOut, ideaSub, onSkyTitle, panel, panelBody, panelTitle, planBack, planFootnote, planNav,
+  ratingFigure, ratingUnit, reviewRow, reviewRows, reviewGw, reviewPoints, reviewText, sectionHead, sectionHeading, visuallyHidden,
 } from "@/lib/variants";
 import { ArrowRight, BackIcon, ExternalIcon } from "../ui/icons";
 import type { BoardModel } from "./PlanBoard";
@@ -50,7 +50,8 @@ export function PlanReview({ model, result, base, onBack }: { model: BoardModel;
                 <span className={reviewGw()}>{c.gw(w.gw)}</span>
                 <span className={reviewText()}>
                   {w.transfers.map((t) => (
-                    <span key={`${t.out}-${t.in}`} className={ideaMove()} aria-label={c.moveAria(name(t.out), name(t.in))}>
+                    <span key={`${t.out}-${t.in}`} className={ideaMove()}>
+                      <span className={visuallyHidden()}>{c.moveAria(name(t.out), name(t.in))}</span>
                       <span aria-hidden="true" className={ideaOut()}>
                         {name(t.out)}
                       </span>
@@ -72,7 +73,7 @@ export function PlanReview({ model, result, base, onBack }: { model: BoardModel;
           {c.fplTitle}
         </h2>
         {data.deadline ? <p className={panelBody()}>{c.fplBody(deadlineText(data.deadline, lang))}</p> : null}
-        <a href="https://fantasy.premierleague.com/transfers" target="_blank" rel="noopener noreferrer" className={outlineLink()}>
+        <a href="https://fantasy.premierleague.com/transfers" target="_blank" rel="noopener noreferrer" className={button({ intent: "primary" })}>
           {c.openFpl}
           <ExternalIcon />
         </a>

@@ -2,7 +2,7 @@
 // and full chalk markings, drawn at 6:7 so circles stay round on any phone, and
 // the same in both themes. Players wear their club's colours, never crests.
 import { kitFor, type Kit } from "@/lib/ui/kits";
-import { kitPatterns, pitchMarkings, pitchPaint } from "@/lib/variants";
+import { emptyShirt, kitPatterns, pitchMarkings, pitchPaint } from "@/lib/variants";
 
 const W = 360;
 const H = 420;
@@ -91,6 +91,16 @@ export function Shirt({ club }: { club: string }) {
       <path d={SHIRT} fill={kit.stripes ? `url(#${stripeId(club)})` : kit.body} stroke="rgba(0,0,0,0.28)" strokeWidth={1} />
       {plainSleeves ? null : <path d={SLEEVES} fill={kit.stripes ? kit.body : kit.trim} />}
       <path d={COLLAR} fill="none" stroke={collarColour(kit)} strokeWidth={1.6} />
+    </svg>
+  );
+}
+
+/** A shirt still to fill, in a draft: dashed chalk with a plus. */
+export function EmptyShirt() {
+  return (
+    <svg width="34" height="32" viewBox="0 0 40 38" aria-hidden="true">
+      <path d={SHIRT} className={emptyShirt({ part: "shirt" })} strokeWidth={1.6} strokeDasharray="3 2.5" />
+      <path d="M20 15v10M15 20h10" className={emptyShirt({ part: "plus" })} strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 }

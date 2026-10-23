@@ -113,6 +113,27 @@ export interface PlanCopy {
   readonly fplBody: (deadline: string) => string;
   readonly openFpl: string;
   readonly estimates: string;
+  // Draft from scratch
+  readonly draftBack: string;
+  readonly draftPlayers: string;
+  readonly draftSpent: string;
+  readonly draftLeft: string;
+  readonly draftHint: string;
+  /** "6 to pick, about £5.3m each." */
+  readonly draftToPick: (count: number, each: string) => string;
+  /** "3 from Arsenal, the club limit." */
+  readonly draftClubFull: (count: number, clubs: string) => string;
+  readonly slotAria: (position: Position) => string;
+  readonly pickTitle: (position: Position) => string;
+  /** "£31.5m left · 6 to pick" */
+  readonly pickSub: (left: string, count: number) => string;
+  readonly ptsProjected: string;
+  readonly draftRatingNote: string;
+  readonly planTransfers: string;
+  readonly clearDraft: string;
+  readonly draftKept: string;
+  readonly removeFromDraft: string;
+  readonly draftFootnote: string;
 }
 
 const en: PlanCopy = {
@@ -222,6 +243,23 @@ const en: PlanCopy = {
   fplBody: (deadline) => `We plan, FPL makes the transfer. Do it before ${deadline}.`,
   openFpl: "Open FPL",
   estimates: "Bank and free transfers are estimates.",
+  draftBack: "Planner",
+  draftPlayers: "Players",
+  draftSpent: "Spent",
+  draftLeft: "Left",
+  draftHint: "Tap a shirt to pick a player.",
+  draftToPick: (count, each) => (count === 1 ? `1 to pick, up to ${each}.` : `${count} to pick, about ${each} each.`),
+  draftClubFull: (count, clubs) => `${count} from ${clubs}, the club limit.`,
+  slotAria: (position) => `Pick a ${en.positions[position].toLowerCase()}`,
+  pickTitle: (position) => `Pick a ${en.positions[position].toLowerCase()}`,
+  pickSub: (left, count) => `${left} left · ${count} to pick`,
+  ptsProjected: "pts projected",
+  draftRatingNote: "Best XI and captain each week, no transfers.",
+  planTransfers: "Plan transfers",
+  clearDraft: "Clear draft",
+  draftKept: "Drafts stay on this phone.",
+  removeFromDraft: "Remove from draft",
+  draftFootnote: "Your draft, starting with 1 free transfer.",
 };
 
 const pcm: PlanCopy = {
@@ -257,6 +295,13 @@ const pcm: PlanCopy = {
   projectedChange: (now, was) => `${now} projected, from ${was}.`,
   fplBody: (deadline) => `We dey plan, na FPL you go make the transfer. Do am before ${deadline}.`,
   estimates: "Bank and free transfer na estimate.",
+  draftHint: "Tap shirt to pick player.",
+  draftToPick: (count, each) => (count === 1 ? `1 remain, reach ${each}.` : `${count} remain, about ${each} each.`),
+  draftClubFull: (count, clubs) => `${count} from ${clubs} don full.`,
+  draftRatingNote: "Best XI and captain every week, no transfer.",
+  draftKept: "Your draft dey stay for this phone.",
+  removeFromDraft: "Comot am from draft",
+  draftFootnote: "Your draft, e start with 1 free transfer.",
 };
 
 const fr: PlanCopy = {
@@ -366,6 +411,23 @@ const fr: PlanCopy = {
   fplBody: (deadline) => `Nous planifions, FPL fait le transfert. À faire avant le ${deadline}.`,
   openFpl: "Ouvrir FPL",
   estimates: "Banque et transferts gratuits estimés.",
+  draftBack: "Planificateur",
+  draftPlayers: "Joueurs",
+  draftSpent: "Dépensé",
+  draftLeft: "Restant",
+  draftHint: "Touchez un maillot pour choisir un joueur.",
+  draftToPick: (count, each) => (count === 1 ? `1 à choisir, jusqu’à ${each}.` : `${count} à choisir, environ ${each} chacun.`),
+  draftClubFull: (count, clubs) => `${count} de ${clubs}, la limite par club.`,
+  slotAria: (position) => `Choisir un ${fr.positions[position].toLowerCase()}`,
+  pickTitle: (position) => `Choisir un ${fr.positions[position].toLowerCase()}`,
+  pickSub: (left, count) => `${left} restants · ${count} à choisir`,
+  ptsProjected: "pts prévus",
+  draftRatingNote: "Meilleur onze et capitaine chaque journée, sans transfert.",
+  planTransfers: "Planifier mes transferts",
+  clearDraft: "Effacer le brouillon",
+  draftKept: "Les brouillons restent sur ce téléphone.",
+  removeFromDraft: "Retirer du brouillon",
+  draftFootnote: "Votre brouillon, avec 1 transfert gratuit au départ.",
 };
 
 const PLAN_COPY: Readonly<Record<Lang, PlanCopy>> = { en, pcm, fr };

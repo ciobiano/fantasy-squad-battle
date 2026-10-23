@@ -16,53 +16,24 @@ import {
 import type { PlanBoardView } from "@/lib/screens/planner";
 import { decimal, deadlineText, money, signedDecimal } from "@/lib/ui/format";
 import {
-  chipCard, chipGrid, chipName, chipSub, column, gwTab, gwTabLabel, gwTabPoints, gwTabs, onSkyTitle, planBack, planBar, planBarButton,
+  chipCard, chipGrid, chipName, chipSub, column, gwTab, gwTabLabel, gwTabPoints, gwTabs, ideaArrow, ideaMove, ideaOut, onSkyTitle, planBack, planBar, planBarButton,
   planBarGain, planBarPoints, planBarSpace, planBarSub, planDeadline, planFootnote, planHint, planMove, planMoveCost, planMoves, planNav,
-  planStat, planStatLabel, planStatNote, planStats, planStatValue, planTool, planTools, sectionAside, sectionHead, sectionHeading,
+  planStat, planStatLabel, planStatNote, planStats, planStatValue, planTool, planTools, sectionAside, sectionHead, sectionHeading, visuallyHidden,
 } from "@/lib/variants";
 import { ArrowRight, BackIcon, RedoIcon, UndoIcon } from "../ui/icons";
 import { PlanBench, PlanPitch, type PlanToken } from "./PlanPitch";
 import { PlanReplace } from "./PlanReplace";
 import { PlanReview } from "./PlanReview";
 import { ChipsSheet, CompareSheet, PlayerSheet } from "./PlanSheets";
+import { keep, readKept, subscribeKept } from "./kept";
 
 const CHIPS: readonly Chip[] = ["bboost", "3xc", "freehit", "wildcard"];
 
 type Screen = { readonly kind: "board" } | { readonly kind: "replace"; readonly out: number } | { readonly kind: "review" };
 type SheetState = null | { readonly kind: "player"; readonly id: number } | { readonly kind: "compare"; readonly t: Transfer } | { readonly kind: "chips" };
 
-// Plans kept on the phone. When storage is blocked (a private window) they live in memory for the visit.
-const PLAN_EVENT = "fsb-plan";
-const memory = new Map<string, string>();
-
-function storedPlan(key: string): string | null {
-  try {
-    return localStorage.getItem(key) ?? memory.get(key) ?? null;
-  } catch {
-    return memory.get(key) ?? null;
-  }
-}
-
-function savePlan(key: string, value: string) {
-  memory.set(key, value);
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // Kept in memory only.
-  }
-  window.dispatchEvent(new Event(PLAN_EVENT));
-}
-
-function subscribePlans(onChange: () => void) {
-  window.addEventListener(PLAN_EVENT, onChange);
-  window.addEventListener("storage", onChange);
-  return () => {
-    window.removeEventListener(PLAN_EVENT, onChange);
-    window.removeEventListener("storage", onChange);
-  };
-}
-
-export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
+/** `draft`: the board plans a full draft (lib/screens/draft.ts) rather than an imported team, and goes back to it. */
+export function PlanBoard({ view, lang, draft }: { view: PlanBoardView; lang: Lang; draft?: { readonly onBack: () => void } }) {
   const c = planCopyFor(lang);
   const { data } = view;
   const team = data.team!;
@@ -71,10 +42,10 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
   const players = useMemo(() => playerMap(data), [data]);
   const clubs = useMemo(() => new Map(data.clubs.map((club) => [club.id, club])), [data]);
   const words = useMemo(() => ({ home: c.home, away: c.away, blank: c.blank }), [c]);
-  const key = planKey(team.id, data.gws[0]);
+  const key = planKey(draft ? null : team.id, data.gws[0]);
 
   // The plan lives on this phone (lib/screens/plan-board: planKey); the board reads it from there.
-  const stored = useSyncExternalStore(subscribePlans, () => storedPlan(key), () => null);
+  const stored = useSyncExternalStore(subscribeKept, () => readKept(key), () => null);
   const present = useMemo(() => readPlan(stored, data.gws, players), [stored, data.gws, players]);
   const [undoStack, setUndoStack] = useState<readonly string[]>([]);
   const [redoStack, setRedoStack] = useState<readonly string[]>([]);
@@ -87,7 +58,7 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
     if (!view.idea) return;
     let plan = emptyPlan(data.gws);
     for (const t of view.idea) plan = addTransfer(plan, data.gws[0], t);
-    savePlan(key, writePlan(plan));
+    keep(key, writePlan(plan));
     window.history.replaceState(window.history.state, "", window.location.pathname);
   }, [data.gws, key, view.idea]);
 
@@ -101,7 +72,7 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
   const open = (next: Screen) => {
-    window.history.pushState({ plan: next.kind }, "");
+    window.history.pushState({ ...window.history.state, plan: next.kind }, "");
     setSheet(null);
     setScreen(next);
     window.scrollTo(0, 0);
@@ -112,21 +83,21 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
   const commit = (next: WeekPlan[]) => {
     setUndoStack((u) => [...u, current]);
     setRedoStack([]);
-    savePlan(key, writePlan(next));
+    keep(key, writePlan(next));
   };
   const undo = () => {
     const previous = undoStack[undoStack.length - 1];
     if (previous === undefined) return;
     setUndoStack((u) => u.slice(0, -1));
     setRedoStack((r) => [current, ...r]);
-    savePlan(key, previous);
+    keep(key, previous);
   };
   const redo = () => {
     const nextPlan = redoStack[0];
     if (nextPlan === undefined) return;
     setRedoStack((r) => r.slice(1));
     setUndoStack((u) => [...u, current]);
-    savePlan(key, nextPlan);
+    keep(key, nextPlan);
   };
   const history = { present, past: undoStack, future: redoStack };
 
@@ -190,10 +161,17 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
   return (
     <div lang={lang} className={column({ gap: "sm" })}>
       <nav aria-label={c.title} className={planNav()}>
-        <Link href={`/planner/${team.id}`} className={planBack()}>
-          <BackIcon />
-          {c.back}
-        </Link>
+        {draft ? (
+          <button type="button" className={planBack()} onClick={draft.onBack}>
+            <BackIcon />
+            {c.draftTitle}
+          </button>
+        ) : (
+          <Link href={`/planner/${team.id}`} className={planBack()}>
+            <BackIcon />
+            {c.back}
+          </Link>
+        )}
         <span className={planTools()}>
           <button type="button" aria-label={c.undo} disabled={history.past.length === 0} className={planTool()} onClick={undo}>
             <UndoIcon />
@@ -253,9 +231,12 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
           {week.transfers.map((t, i) => {
             const paid = week.chip !== "wildcard" && week.chip !== "freehit" && i >= week.freeTransfers;
             return (
-              <li key={`${t.out}-${t.in}`} className={planMove()} aria-label={c.moveAria(players.get(t.out)?.name ?? "", players.get(t.in)?.name ?? "")}>
-                <span aria-hidden="true">
-                  {players.get(t.out)?.name} <ArrowRight /> {players.get(t.in)?.name}
+              <li key={`${t.out}-${t.in}`} className={planMove()}>
+                <span className={visuallyHidden()}>{c.moveAria(players.get(t.out)?.name ?? "", players.get(t.in)?.name ?? "")}</span>
+                <span aria-hidden="true" className={ideaMove()}>
+                  <span className={ideaOut()}>{players.get(t.out)?.name}</span>
+                  <ArrowRight className={ideaArrow()} />
+                  {players.get(t.in)?.name}
                 </span>
                 <span className={planMoveCost({ hit: paid })}>{paid ? c.hit(data.rules.hitCost) : c.free}</span>
               </li>
@@ -289,7 +270,7 @@ export function PlanBoard({ view, lang }: { view: PlanBoardView; lang: Lang }) {
         </div>
       </section>
 
-      <p className={planFootnote()}>{c.footnote(team.asOf)}</p>
+      <p className={planFootnote()}>{draft ? c.draftFootnote : c.footnote(team.asOf)}</p>
 
       {changed ? (
         <>
