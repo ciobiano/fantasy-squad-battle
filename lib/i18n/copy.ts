@@ -172,16 +172,24 @@ export interface Copy {
     readonly or: string;
     readonly scratch: string;
     readonly scratchSub: string;
-    readonly asOf: (gw: number) => string;
     readonly gw: (gw: number) => string;
     readonly window: (first: number, last: number) => string;
     readonly ratingHeading: string;
     readonly ptsProjected: string;
-    readonly ratingNote: string;
-    /** "2nd of 11", then "on paper" beside it. */
-    readonly paperRank: (rank: number, of: number) => string;
-    readonly onPaper: string;
-    readonly paperAria: (rank: number, of: number, league: string) => string;
+    /** The end of the rating's one line: "pts projected · GW8–13 · squad as of GW7". */
+    readonly squadAsOf: (gw: number) => string;
+    readonly howWorkedOut: string;
+    readonly explainBody: string;
+    readonly yourLeague: string;
+    readonly compareIn: string;
+    /** A league in Compare in, read out: "Screamerz, 26 managers". */
+    readonly leagueAria: (league: string, members: number) => string;
+    /** "2nd best squad of 11"; the top is "Best squad of 5". */
+    readonly paperLine: (rank: number, of: number) => string;
+    /** Read out while a league's squads are rated. */
+    readonly paperRanking: (league: string) => string;
+    readonly paperUnavailable: string;
+    readonly seePaper: string;
     readonly weekByWeek: string;
     readonly weekAria: (gw: number, points: string) => string;
     readonly whereFrom: string;
@@ -194,8 +202,15 @@ export interface Copy {
     readonly left: (money: string) => string;
     readonly moveAria: (out: string, into: string) => string;
     readonly gainAria: (points: string) => string;
+    /** Read after a transfer idea: where tapping it goes. */
+    readonly ideaOpens: string;
     readonly planButton: string;
+    /** The Change team sheet: its title, the team button that opens it, the form and the recent teams. */
     readonly changeTeam: string;
+    readonly teamButtonAria: (team: string) => string;
+    readonly rateThis: string;
+    readonly recentTeams: string;
+    readonly close: string;
     readonly noSquadTitle: string;
     readonly noSquadBody: (deadline: string | null) => string;
     readonly loading: string;

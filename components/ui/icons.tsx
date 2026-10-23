@@ -23,6 +23,24 @@ export function ChevronRight({ size = 14, className }: IconProps) {
   );
 }
 
+/** A pop-up button's mark: the choice opens a short list. */
+export function UpDownIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size * 0.625} height={size} viewBox="0 0 10 16" aria-hidden="true" className={className} {...stroke} strokeWidth={1.8}>
+      <path d="M2 6l3-3 3 3M2 10l3 3 3-3" />
+    </svg>
+  );
+}
+
+/** The chosen item in a list. */
+export function CheckIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" className={className} {...stroke}>
+      <path d="M3 8.5l3.2 3.2L13 4.8" />
+    </svg>
+  );
+}
+
 /** A link that leaves the app. */
 export function ExternalIcon({ size = 14 }: IconProps) {
   return (

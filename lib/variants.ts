@@ -83,7 +83,8 @@ export const segment = cva(
 export const form = cva("flex flex-col gap-2.5");
 export const fieldLabel = cva("mt-1.5 text-callout font-semibold");
 export const input = cva(
-  "h-13 w-full rounded-lg border-2 border-transparent bg-surface px-4 text-body text-ink placeholder:text-ink-2 focus-visible:border-focus focus-visible:outline-none flagged:border-down",
+  "h-13 w-full rounded-lg border-2 border-transparent px-4 text-body text-ink placeholder:text-ink-2 focus-visible:border-focus focus-visible:outline-none flagged:border-down",
+  { variants: { on: { bg: "bg-surface", surface: "bg-surface-2" } }, defaultVariants: { on: "bg" } },
 );
 export const fieldError = cva("m-0 flex items-start gap-2 text-callout text-down");
 export const help = cva("flex flex-col gap-3 rounded-xl bg-surface p-4");
@@ -360,15 +361,67 @@ export const scratchLink = cva("flex min-h-16 flex-col items-center justify-cent
 export const scratchTitle = cva("text-headline font-bold");
 export const scratchSub = cva("text-footnote text-ink-2");
 
-export const teamLine = cva("flex items-center gap-2 text-callout font-semibold text-on-sky-2");
-export const asOfPill = cva("inline-flex h-5.5 items-center rounded-full bg-on-sky-fill px-2 text-caption font-bold text-on-sky");
-export const ratingHero = cva("flex flex-col gap-2");
+/** "Planner" and the team under it. */
+export const plannerHeading = cva("flex min-w-0 flex-1 flex-col gap-1");
+/** The team under the title: a button that opens Change team (a link to Start before the page's script runs). */
+export const teamButton = cva("-ml-0.5 flex min-h-11 max-w-full items-center gap-2 self-start pr-3 pl-0.5 text-headline text-on-sky no-underline");
+export const teamButtonName = cva("truncate");
+export const teamButtonChevron = cva("shrink-0 opacity-80");
+
+export const ratingHero = cva("flex flex-col gap-1.5");
+/** A big number with its unit beside it (the compare sheet, the review). */
 export const ratingFigure = cva("flex items-end gap-3");
 export const ratingNumber = cva("text-hero tabular-nums");
 export const ratingUnit = cva("flex flex-col pb-0.5 text-headline font-semibold leading-tight text-ink-2");
-export const ratingNote = cva("m-0 mt-1.5 text-callout text-ink-2");
-export const paperPill = cva("mt-1.5 inline-flex min-h-11 items-center gap-2.5 self-start rounded-full bg-surface pr-3.5 pl-4 text-callout font-semibold text-ink no-underline");
-export const paperLeague = cva("text-ink-2");
+/** Your team's rating: the number, then one line under it. */
+export const ratingStack = cva("m-0 flex flex-col gap-2.5");
+export const ratingLine = cva("text-headline text-ink-2");
+export const explain = cva("group/explain");
+export const explainToggle = cva("flex min-h-11 w-fit cursor-pointer items-center gap-1.5 text-headline text-ink-2");
+export const explainChevron = cva("shrink-0 transition-transform group-open/explain:rotate-180 motion-reduce:transition-none");
+export const explainBody = cva("m-0 text-body text-ink-2");
+
+// Your league: grouped rows, iOS Settings style. Nothing clips them, so the
+// Compare in menu can float over the rows below it.
+export const leagueGroup = cva("flex flex-col rounded-xl bg-surface");
+export const leagueRow = cva("flex min-h-13 items-center gap-3 px-4 text-body text-ink no-underline", {
+  variants: {
+    /** The rule above every row but the first. */
+    rule: { true: "border-t border-hairline", false: "" },
+    /** Rows that go somewhere darken while pressed, rounded to the group's corner. */
+    press: { top: "rounded-t-xl active:bg-surface-2", bottom: "rounded-b-xl active:bg-surface-2", none: "" },
+    /** A label at the start and a chevron at the end. */
+    spread: { true: "justify-between", false: "" },
+  },
+  defaultVariants: { rule: false, press: "none", spread: false },
+});
+export const leagueRowLabel = cva("shrink-0 text-ink-2");
+export const leagueMenu = cva("relative");
+export const leagueValue = cva("ml-auto flex min-w-0 items-center gap-1.5 font-semibold");
+export const leagueValueName = cva("truncate");
+export const leagueMenuIcon = cva("shrink-0 text-ink-2");
+export const leagueOptions = cva("absolute top-full right-2 z-10 m-0 flex w-68 list-none flex-col rounded-lg border border-hairline bg-menu p-0 py-1.5 shadow-xl");
+export const leagueOption = cva("flex min-h-11 items-center gap-2.5 pr-3.5 pl-3 text-body text-ink no-underline active:bg-surface-2");
+export const leagueTick = cva("shrink-0", { variants: { on: { true: "", false: "invisible" } } });
+export const leagueOptionName = cva("min-w-0 flex-1 truncate");
+export const leagueOptionSize = cva("text-callout tabular-nums text-ink-2");
+export const paperRankBadge = cva("flex h-7 min-w-7 shrink-0 items-center justify-center rounded-full px-1.5 text-callout font-bold tabular-nums", {
+  variants: { top: { true: "bg-accent text-on-accent", false: "bg-surface-3 text-ink" } },
+});
+export const paperRankQuiet = cva("text-ink-2");
+/** The rank row while a league's squads are rated: a dot and a line, never a spinner. */
+export const rankSkeleton = cva("shrink-0 rounded-full bg-surface-3", { variants: { shape: { dot: "size-7", line: "h-3.5 w-48" } } });
+export const leagueFallback = cva("h-47 rounded-xl bg-surface");
+
+// Change team: the sheet's form and the teams rated on this phone.
+export const teamForm = cva("flex flex-col gap-2.5");
+export const recentHeading = cva("m-0 ml-4 text-callout font-semibold text-ink-2");
+export const recentList = cva("m-0 flex list-none flex-col overflow-hidden rounded-xl bg-surface-2 p-0");
+export const recentItem = cva("border-t border-surface-3 first:border-t-0");
+export const recentRow = cva("flex min-h-15 items-center gap-3 px-4 text-ink no-underline active:bg-surface-3");
+export const recentText = cva("flex min-w-0 flex-1 flex-col gap-0.5");
+export const recentName = cva("truncate text-headline");
+export const recentManager = cva("text-callout text-ink-2");
 
 export const weekGrid = cva("m-0 grid list-none grid-cols-6 gap-1.5 p-0");
 export const weekTile = cva("flex flex-col items-center gap-1 rounded-lg bg-surface py-3");
@@ -377,8 +430,7 @@ export const weekPoints = cva("text-headline font-bold tabular-nums");
 
 export const partList = cva("m-0 flex list-none flex-col gap-3.5 p-0");
 export const partRow = cva("flex flex-col gap-2");
-export const partHead = cva("flex items-baseline justify-between text-callout");
-export const partLabel = cva("font-semibold");
+export const partHead = cva("flex items-baseline justify-between text-body");
 export const partValue = cva("font-bold tabular-nums");
 /** A share bar, drawn as SVG so its length is an attribute rather than an inline style. */
 export const partBar = cva("block h-1.5 w-full overflow-hidden rounded-full");
@@ -391,10 +443,8 @@ export const ideaMoves = cva("flex min-w-0 flex-1 flex-col gap-1");
 export const ideaMove = cva("flex items-center gap-2 text-headline");
 export const ideaOut = cva("font-medium text-ink-2");
 export const ideaArrow = cva("shrink-0 text-ink-3");
-export const ideaSub = cva("text-footnote text-ink-2");
+export const ideaSub = cva("text-callout text-ink-2");
 export const ideaGain = cva("text-headline font-bold tabular-nums text-up");
-/** The main action and a quiet one under it. */
-export const actionStack = cva("flex flex-col gap-1.5");
 
 // ---------------------------------------------------------------- League: On paper
 

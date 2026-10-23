@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import type { PlannerData } from "@/lib/planner";
+import type { MyLeague } from "@/lib/league/my-team";
 import type { PaperTable } from "@/lib/planner/league";
-import { loadDraft, loadPaperRank, loadPlan, loadTeamRating, plannerDestination, plannerStartView, type PlannerScreenSource, type RatedTeamView } from "./planner";
+import {
+  compareHref, compareLeague, loadDraft, loadPaperRank, loadPlan, loadTeamRating, plannerDestination, plannerStartView,
+  type PlannerScreenSource, type RatedTeamView,
+} from "./planner";
 
 const RULES: PlannerData["rules"] = {
   squadSize: 15, starters: 11, clubLimit: 3, budget: 1000, sellOnFee: 0.5, maxFreeTransfers: 5, transfersCap: 20, hitCost: 4,
@@ -34,9 +38,21 @@ const data: PlannerData = {
   },
 };
 
+const league = (id: number, name: string, members: number | null, rank: number | null, kind: MyLeague["kind"] = "private"): MyLeague => ({
+  id, name, kind, members, rank, lastRank: null,
+});
+
+const LEAGUES: readonly MyLeague[] = [
+  league(1261677, "Arena of Champions", 11, 2),
+  league(999, "Not started", null, null),
+  league(314, "Overall", 11_000_000, 812_345, "public"),
+  league(77, "Screamerz", 26, 4),
+];
+
 const source = (over: Partial<PlannerScreenSource> = {}): PlannerScreenSource => ({
   planner: async () => ({ kind: "ready", data }),
   paper: async () => ({ kind: "no-squads" }),
+  myTeam: async () => ({ ok: true, data: { id: 3920688, firstName: "Amateze", teamName: "PASUZAE", leagues: LEAGUES } }),
   ...over,
 });
 
@@ -72,6 +88,16 @@ describe("loadTeamRating", () => {
     expect(view.singles).toEqual([{ moves: [{ out: "Cherki", in: "Mbeumo" }], gain: 9.67, hit: 0, bank: 17 }]);
     expect(view.pairs[0]).toMatchObject({ moves: [{ out: "Cherki", in: "Mbeumo" }, { out: "Slater", in: "Tavernier" }], hit: 4 });
   });
+  it("names the manager and lists only the leagues that can rank the squad", async () => {
+    const view = await rated();
+    expect(view.team.manager).toBe("Amateze");
+    expect(view.leagues).toEqual([{ id: 1261677, name: "Arena of Champions", members: 11 }, { id: 77, name: "Screamerz", members: 26 }]);
+  });
+  it("still rates the squad when the team's leagues don't load", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const view = await rated(source({ myTeam: async () => { throw new Error("503"); } }));
+    expect(view).toMatchObject({ points: 107.46, leagues: [], team: { manager: "" } });
+  });
   it("sends an unknown team back to Start with the reason", async () => {
     const screen = await loadTeamRating("99999999", source({ planner: async () => ({ kind: "team-not-found" }) }));
     expect(screen).toEqual({ kind: "redirect", to: "/planner?start=1&q=99999999&error=team-not-found" });
@@ -92,6 +118,23 @@ describe("loadTeamRating", () => {
   });
 });
 
+describe("compareLeague", () => {
+  const leagues = [{ id: 1, name: "Futo", members: 5 }, { id: 2, name: "Arena", members: 11 }, { id: 3, name: "Screamerz", members: 26 }];
+  it("takes the picked league, then the remembered one, then the first", () => {
+    expect(compareLeague(leagues, "3", 2)?.id).toBe(3);
+    expect(compareLeague(leagues, undefined, 2)?.id).toBe(2);
+    expect(compareLeague(leagues, undefined, null)?.id).toBe(1);
+  });
+  it("skips a league that can't rank this squad, and has nothing without leagues", () => {
+    expect(compareLeague(leagues, "999", 314)?.id).toBe(1);
+    expect(compareLeague(leagues, ["x"], null)?.id).toBe(1);
+    expect(compareLeague([], "1", 1)).toBeNull();
+  });
+  it("links each league to Your team, staying on it", () => {
+    expect(compareHref(3920688, 77)).toBe("/planner/3920688?league=77");
+  });
+});
+
 describe("loadPaperRank", () => {
   const table: PaperTable = {
     kind: "ready",
@@ -104,7 +147,7 @@ describe("loadPaperRank", () => {
       { entry: 3920688, entryName: "PASUZAE", firstName: "Amateze", rank: 2, leagueRank: 4, rating: data.team!.rating },
     ],
   };
-  it("finds the team's rank on paper in the remembered league", async () => {
+  it("finds the team's rank on paper in the league it's compared in", async () => {
     expect(await loadPaperRank(1261677, 3920688, source({ paper: async () => table }))).toEqual({
       rank: 2, of: 2, leagueName: "Arena of Champions", href: "/league/1261677/paper",
     });

@@ -1,12 +1,13 @@
 // The Planner tab before the plan itself: Start (/planner, no team yet), the
 // Start form's target (/planner/find), a team's rating (/planner/{id}), and
-// where that team stands "on paper" in the remembered league.
+// where that team stands "on paper" in the league it's compared in.
 import { parseStartInput } from "@/lib/fpl/start-input";
 import { START_ERRORS, type StartError } from "@/lib/i18n";
 import { fplId } from "@/lib/ids";
+import { getMyTeam, type MyTeamResult } from "@/lib/league/my-team";
 import { getPlanner, type PlannerData, type PlannerOutcome } from "@/lib/planner";
 import type { Position, Transfer } from "@/lib/planner/engine";
-import { getLeaguePaper, type PaperTable } from "@/lib/planner/league";
+import { getLeaguePaper, paperLeagues, type PaperTable } from "@/lib/planner/league";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
 import type { BoardData } from "./plan-board";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
@@ -16,11 +17,14 @@ import type { Query } from "./start";
 export interface PlannerScreenSource {
   readonly planner: (teamId: number | null) => Promise<PlannerOutcome>;
   readonly paper: (leagueId: number) => Promise<PaperTable>;
+  /** The manager's first name and leagues (FPL's entry, which the planner reads too, so it's cached). */
+  readonly myTeam: (teamId: number) => Promise<MyTeamResult>;
 }
 
 export const livePlannerScreens: PlannerScreenSource = {
   planner: (teamId) => getPlanner(teamId),
   paper: (leagueId) => getLeaguePaper(leagueId),
+  myTeam: (teamId) => getMyTeam(teamId),
 };
 
 // ---------------------------------------------------------------- Start
@@ -68,9 +72,24 @@ export interface TransferIdeaView {
   readonly bank: number;
 }
 
+export interface RatingTeam {
+  readonly id: number;
+  readonly name: string;
+  readonly badge: Badge;
+  /** The manager's first name, for the recent teams in Change team ("" if FPL didn't say). */
+  readonly manager: string;
+}
+
+/** A league the squad can be ranked in on paper, for Compare in. */
+export interface CompareLeague {
+  readonly id: number;
+  readonly name: string;
+  readonly members: number;
+}
+
 export interface RatedTeamView {
   readonly kind: "rated";
-  readonly team: { readonly id: number; readonly name: string; readonly badge: Badge };
+  readonly team: RatingTeam;
   /** The squad is as of this gameweek's deadline. */
   readonly asOf: number;
   readonly firstGw: number;
@@ -82,12 +101,14 @@ export interface RatedTeamView {
   readonly parts: readonly { readonly key: RatingPart; readonly points: number; readonly share: number }[];
   readonly singles: readonly TransferIdeaView[];
   readonly pairs: readonly TransferIdeaView[];
+  /** Friend leagues first, smallest first; empty when none can rank this squad (or FPL didn't answer). */
+  readonly leagues: readonly CompareLeague[];
 }
 
 /** The team hasn't played a gameweek yet, so FPL shows no squad. */
 export interface NoSquadView {
   readonly kind: "no-squad";
-  readonly team: { readonly id: number; readonly name: string; readonly badge: Badge };
+  readonly team: RatingTeam;
   /** When FPL will show the squad (the next deadline, ISO), if known. */
   readonly deadline: string | null;
 }
@@ -96,7 +117,27 @@ export type TeamRatingView = RatedTeamView | NoSquadView;
 
 const POSITIONS: readonly Position[] = ["GK", "DEF", "MID", "FWD"];
 
-function ratedView(data: PlannerData): RatedTeamView | null {
+/** Who manages the team and where it can be compared. Only a garnish: without it the rating still shows. */
+interface Mine {
+  readonly manager: string;
+  readonly leagues: readonly CompareLeague[];
+}
+
+async function mine(teamId: number, source: PlannerScreenSource): Promise<Mine> {
+  try {
+    const result = await source.myTeam(teamId);
+    if (!result.ok) return { manager: "", leagues: [] };
+    const leagues = paperLeagues(result.data.leagues).map((l) => ({ id: l.id, name: l.name, members: l.members ?? 0 }));
+    return { manager: result.data.firstName, leagues };
+  } catch (failure) {
+    console.error("[planner] team's leagues failed", { teamId, failure });
+    return { manager: "", leagues: [] };
+  }
+}
+
+const ratingTeam = (id: number, name: string, manager: string): RatingTeam => ({ id, name: name.trim(), badge: badgeFor(name), manager });
+
+function ratedView(data: PlannerData, { manager, leagues }: Mine): RatedTeamView | null {
   const { team, players, rules, gws } = data;
   if (!team || gws.length === 0) return null;
   const nameOf = new Map(players.map((p) => [p.id, p.name]));
@@ -113,7 +154,7 @@ function ratedView(data: PlannerData): RatedTeamView | null {
   const biggest = Math.max(...values.map(([, v]) => v), 1);
   return {
     kind: "rated",
-    team: { id: team.id, name: team.name.trim(), badge: badgeFor(team.name) },
+    team: ratingTeam(team.id, team.name, manager),
     asOf: team.asOf,
     firstGw: gws[0],
     lastGw: gws[gws.length - 1],
@@ -122,6 +163,7 @@ function ratedView(data: PlannerData): RatedTeamView | null {
     parts: values.map(([key, points]) => ({ key, points, share: points / biggest })),
     singles: team.ideas.singles.slice(0, 3).map((i) => idea(i.transfers, i.gain, i.bank)),
     pairs: team.ideas.pairs.slice(0, 1).map((i) => idea(i.transfers, i.gain, i.bank)),
+    leagues,
   };
 }
 
@@ -130,20 +172,33 @@ export async function loadTeamRating(segment: string, source: PlannerScreenSourc
   const teamId = fplId(segment);
   if (teamId === null) return notFound();
   return guard("planner", `/planner/${teamId}`, async () => {
-    const outcome = await source.planner(teamId);
+    const [outcome, extra] = await Promise.all([source.planner(teamId), mine(teamId, source)]);
     if (outcome.kind === "team-not-found") return redirectTo(plannerStartHref(String(teamId), "team-not-found"));
     if (outcome.kind === "no-squad") {
       const { team, deadline } = outcome;
-      return ready({ kind: "no-squad", team: { id: team.id, name: team.name.trim(), badge: badgeFor(team.name) }, deadline });
+      return ready({ kind: "no-squad", team: ratingTeam(team.id, team.name, extra.manager), deadline });
     }
-    const view = ratedView(outcome.data);
+    const view = ratedView(outcome.data, extra);
     if (view) return ready(view);
     // A squad with no gameweeks left to plan: the season is over.
-    return ready({ kind: "no-squad", team: { id: teamId, name: outcome.data.team?.name.trim() ?? "", badge: badgeFor(outcome.data.team?.name ?? "") }, deadline: null });
+    return ready({ kind: "no-squad", team: ratingTeam(teamId, outcome.data.team?.name ?? "", extra.manager), deadline: null });
   });
 }
 
 // ---------------------------------------------------------------- On paper, for the rating screen
+
+/**
+ * The league Your team compares in: the one picked (?league=), else the
+ * remembered one, else the first (a friend league). Only leagues that can rank
+ * the squad count, so a stale link or another team's league falls through.
+ */
+export function compareLeague(leagues: readonly CompareLeague[], picked: Query[string], remembered: number | null): CompareLeague | null {
+  const asked = fplId(typeof picked === "string" ? picked : picked?.[0]);
+  return leagues.find((l) => l.id === asked) ?? leagues.find((l) => l.id === remembered) ?? leagues[0] ?? null;
+}
+
+/** The link that compares the team in another league, staying on Your team. */
+export const compareHref = (teamId: number, leagueId: number): string => `/planner/${teamId}?league=${leagueId}`;
 
 export interface PaperRankView {
   readonly rank: number;

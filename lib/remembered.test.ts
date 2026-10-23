@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fplId } from "./ids";
-import { LEAGUE_COOKIE, TEAM_COOKIE, onVisit, readWatched, rememberedTeamId, watchedKey, withWatched } from "./remembered";
+import { LEAGUE_COOKIE, TEAM_COOKIE, onVisit, readRecentTeams, readWatched, rememberedTeamId, watchedKey, withRecentTeam, withWatched } from "./remembered";
 
 const jar = (cookies: Record<string, string>) => (name: string) => cookies[name];
 const visit = (path: string, cookies: Record<string, string> = {}) => {
@@ -71,6 +71,12 @@ describe("onVisit, Planner", () => {
     expect(visit("/planner/draft")).toEqual({ kind: "continue", save: [] });
     expect(visit("/planner/find?q=1")).toEqual({ kind: "continue", save: [] });
   });
+  it("saves the league Your team is compared in, and only from Your team", () => {
+    const team = { name: TEAM_COOKIE, value: "3920688" };
+    expect(visit("/planner/3920688?league=314")).toEqual({ kind: "continue", save: [team, { name: LEAGUE_COOKIE, value: "314" }] });
+    expect(visit("/planner/3920688?league=abc")).toEqual({ kind: "continue", save: [team] });
+    expect(visit("/planner/3920688/plan?league=314")).toEqual({ kind: "continue", save: [team] });
+  });
   it("treats League On paper like the other League views", () => {
     expect(visit("/league/314/paper")).toEqual({ kind: "continue", save: [{ name: LEAGUE_COOKIE, value: "314" }] });
     expect(visit("/league/abc/paper")).toEqual({ kind: "not-found" });
@@ -81,6 +87,22 @@ describe("rememberedTeamId", () => {
   it("reads a valid saved team only", () => {
     expect(rememberedTeamId(jar({ [TEAM_COOKIE]: "22" }))).toBe(22);
     expect(rememberedTeamId(jar({ [TEAM_COOKIE]: "x" }))).toBeNull();
+  });
+});
+
+describe("recent teams", () => {
+  const a = { id: 1, name: "PASUZAE", manager: "Amaka" };
+  const b = { id: 2, name: "B2B Trini", manager: "JB" };
+  it("puts the latest team first, once, and keeps five", () => {
+    const stored = withRecentTeam(withRecentTeam(null, a), b);
+    expect(readRecentTeams(stored)).toEqual([b, a]);
+    expect(readRecentTeams(withRecentTeam(stored, a))).toEqual([a, b]);
+    const many = [3, 4, 5, 6, 7].reduce((s, id) => withRecentTeam(s, { ...a, id }), stored);
+    expect(readRecentTeams(many).map((t) => t.id)).toEqual([7, 6, 5, 4, 3]);
+  });
+  it("drops anything unreadable", () => {
+    expect(readRecentTeams("{")).toEqual([]);
+    expect(readRecentTeams(JSON.stringify([a, { id: "x", name: 1 }, null]))).toEqual([a]);
   });
 });
 

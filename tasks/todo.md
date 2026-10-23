@@ -357,13 +357,20 @@ Canvas "Pass 4 · Planner", 19 boards: https://claude.ai/artifact/LRmm2RpE97BMqw
   - States: loading, team not found (back to Start with the reason), no squad yet, FPL down.
   - "On paper" pill, streamed, when a league is remembered.
 - [x] 11c · League "On paper": a third League view, `/league/{id}/paper`.
-- [ ] 11d · Plan board (browser, `lib/planner/engine`)
+- [x] 11d · Plan board (browser, `lib/planner/engine`)
   - Gameweek tabs; free transfers, bank and hits; pitch and bench; chips row.
   - Undo and redo; the plan kept on the phone; transfer ideas open it applied.
-- [ ] 11e · Transfer flow: player sheet, pick a replacement (data ready: `replacementsFor`), compare (with the hit and "free next week"), review.
-- [ ] 11f · Chips sheet (data ready: `chipValues`).
+- [x] 11e · Transfer flow: player sheet, pick a replacement (data ready: `replacementsFor`), compare (with the hit and "free next week"), review.
+- [x] 11f · Chips sheet (data ready: `chipValues`).
 - [ ] 11g · Draft from scratch: empty, pick, partial, full.
 - [ ] 11h · Finish
   - Copy in English, Pidgin and French.
   - A JS budget for `/planner/*`.
   - Tests, light theme, accessibility, preview check.
+- [x] 11i · Your team, reworked after Ralph's feedback (canvas "Pass 5 · Planner, reworked", approved 2026-10-23; `docs/handoff/2026-10-22-planner-ux.md`)
+  - Compare in: a pop-up list of the leagues that can rank the squad (`paperLeagues`). Picking one stays on the page: only the rank row reloads, with a placeholder. `?league=` is remembered like a league page.
+  - The rating is one number and one line; "How is this worked out?" holds the explanation.
+  - Your league: Compare in, the rank ("2nd best squad of 11"), and "See the On paper table ›" as its own row.
+  - Change team: a sheet with the team ID field and the teams rated on this phone (localStorage), from the team under the title.
+  - One main action (Plan transfers); body text 17 px; rows at least 44 pt; ideas show where they go (›).
+- [ ] 11j · The same Apple-guideline pass on Start, the plan board, its sheets, replace and review.
