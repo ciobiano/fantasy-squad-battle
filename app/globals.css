@@ -122,6 +122,26 @@
   }
 }
 
+@custom-variant light {
+  :root[data-theme="light"] & {
+    @slot;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) & {
+      @slot;
+    }
+  }
+}
+
+@utility planner-sky {
+  @variant light {
+    --gradient-sky: linear-gradient(180deg, var(--brand-pale), var(--bg));
+    --on-sky: var(--ink);
+    --on-sky-2: var(--ink-2);
+    --on-sky-fill: var(--you-tint);
+  }
+}
+
 /* Story viewer: each card's progress segment fills in 5 s; the card advances when it ends.
    Animates `scale`, the property Tailwind's scale-x-* utilities set: animating transform
    instead would combine with their scale-x-0 and keep the segment empty. */

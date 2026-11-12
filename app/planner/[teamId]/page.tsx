@@ -58,7 +58,7 @@ async function RatingForRequest({ params, searchParams }: Props) {
 
 export default function TeamRatingPage(props: Props) {
   return (
-    <main className={page()}>
+    <main className={page({ planner: true })}>
       <Sky height="rating" />
       <Suspense fallback={<RatingFallback />}>
         <RatingForRequest {...props} />

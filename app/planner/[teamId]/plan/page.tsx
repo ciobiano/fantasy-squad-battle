@@ -19,7 +19,7 @@ async function PlanForRequest({ params, searchParams }: Props) {
 
 export default function PlanPage({ params, searchParams }: Props) {
   return (
-    <main className={page()}>
+    <main className={page({ planner: true })}>
       <Sky height="rating" />
       <Suspense fallback={<RatingFallback />}>
         <PlanForRequest params={params} searchParams={searchParams} />

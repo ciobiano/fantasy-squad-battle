@@ -17,7 +17,7 @@ async function DraftForRequest() {
 
 export default function DraftPage() {
   return (
-    <main className={page()}>
+    <main className={page({ planner: true })}>
       <Sky height="rating" />
       <Suspense fallback={<RatingFallback />}>
         <DraftForRequest />

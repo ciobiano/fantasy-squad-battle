@@ -6,7 +6,7 @@
 // kept on this phone. Picking a replacement and reviewing the plan open over
 // the board; the browser's back button closes them.
 import Link from "next/link";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useMemo, useState, useSyncExternalStore } from "react";
 import { planCopyFor } from "@/lib/i18n/plan";
 import type { Lang } from "@/lib/i18n";
 import { simulatePlan, type Chip, type Transfer, type WeekPlan, type WeekResult } from "@/lib/planner/engine";
@@ -35,6 +35,7 @@ type SheetState = null | { readonly kind: "player"; readonly id: number } | { re
 /** `draft`: the board plans a full draft (lib/screens/draft.ts) rather than an imported team, and goes back to it. */
 export function PlanBoard({ view, lang, draft }: { view: PlanBoardView; lang: Lang; draft?: { readonly onBack: () => void } }) {
   const c = planCopyFor(lang);
+  const weekName = useId();
   const { data } = view;
   const team = data.team!;
   const start = team.start;
@@ -183,24 +184,25 @@ export function PlanBoard({ view, lang, draft }: { view: PlanBoardView; lang: La
       </nav>
       <h1 className={onSkyTitle()}>{c.title}</h1>
 
-      <div role="tablist" aria-label={c.gwTabs} className={gwTabs()}>
+      <div role="radiogroup" aria-label={c.gwTabs} className={gwTabs()}>
         {result.weeks.map((w, i) => (
-          <button
-            key={w.gw}
-            type="button"
-            role="tab"
-            aria-selected={i === gwIndex}
-            aria-label={c.gwAria(w.gw, decimal(w.points, lang))}
-            className={gwTab()}
-            onClick={() => setGwIndex(i)}
-          >
+          <label key={w.gw} className={gwTab()}>
+            <input
+              type="radio"
+              name={weekName}
+              value={w.gw}
+              checked={i === gwIndex}
+              aria-label={c.gwAria(w.gw, decimal(w.points, lang))}
+              className={visuallyHidden()}
+              onChange={() => setGwIndex(i)}
+            />
             <span aria-hidden="true" className={gwTabLabel()}>
               {c.gw(w.gw)}
             </span>
             <span aria-hidden="true" className={gwTabPoints()}>
               {decimal(w.points, lang)}
             </span>
-          </button>
+          </label>
         ))}
       </div>
       {gwIndex === 0 && data.deadline ? <p className={planDeadline()}>{c.deadline(deadlineText(data.deadline, lang))}</p> : null}

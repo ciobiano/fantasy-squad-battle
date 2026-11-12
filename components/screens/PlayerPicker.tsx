@@ -2,7 +2,7 @@
 // player with what he's worth to the squad. Players the squad can't take stay
 // in the list, dimmed, with the rule that stops them. Used to replace a player
 // on the plan board (PlanReplace) and to fill a shirt in a draft (DraftBoard).
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import type { Blocked, Position } from "@/lib/planner/engine";
 import { nextFixtures } from "@/lib/screens/plan-board";
 import { money } from "@/lib/ui/format";
@@ -55,6 +55,7 @@ export function PlayerPicker({ model, gw, position, title, sub, back, rows, valu
   onPick: (id: number) => void;
 }) {
   const { copy: c, lang, data, players, clubs } = model;
+  const sortName = useId();
   const [sort, setSort] = useState<Sort>("value");
   const [query, setQuery] = useState("");
   const [club, setClub] = useState(0);
@@ -98,9 +99,17 @@ export function PlayerPicker({ model, gw, position, title, sub, back, rows, valu
         />
         <div role="radiogroup" aria-label={c.sortBy} className={segmented()}>
           {sorts.map(([key, label]) => (
-            <button key={key} type="button" role="radio" aria-checked={sort === key} className={segment()} onClick={() => setSort(key)}>
+            <label key={key} className={segment({ size: "lg", className: "relative" })}>
+              <input
+                type="radio"
+                name={sortName}
+                value={key}
+                checked={sort === key}
+                className={visuallyHidden()}
+                onChange={() => setSort(key)}
+              />
               {label}
-            </button>
+            </label>
           ))}
         </div>
         <label htmlFor="pick-club" className={fieldLabel()}>

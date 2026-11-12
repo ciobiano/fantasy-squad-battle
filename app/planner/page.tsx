@@ -16,7 +16,7 @@ async function StartForRequest({ searchParams }: { searchParams: PageProps<"/pla
 
 export default function PlannerStartPage({ searchParams }: PageProps<"/planner">) {
   return (
-    <main className={page()}>
+    <main className={page({ planner: true })}>
       <Sky height="planner" />
       <Suspense fallback={<StartFallback />}>
         <StartForRequest searchParams={searchParams} />

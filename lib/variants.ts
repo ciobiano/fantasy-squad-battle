@@ -12,7 +12,7 @@ export const rootBody = cva("min-h-full flex flex-col bg-bg text-ink font-sans t
 
 /** A screen: room at the bottom for the tab bar when there is one. */
 export const page = cva("relative isolate flex min-h-dvh flex-col overflow-x-clip pt-safe", {
-  variants: { tabs: { true: "pb-with-tabs", false: "pb-end" } },
+  variants: { tabs: { true: "pb-with-tabs", false: "pb-end" }, planner: { true: "planner-sky" } },
   defaultVariants: { tabs: true },
 });
 export const column = cva("relative mx-auto flex w-full max-w-md flex-col px-5 pt-14", {
@@ -75,7 +75,7 @@ export const segmented = cva("flex rounded-md bg-surface p-0.75");
 /** A segment: a link (views), a radio label (Start mode) or a submit button (language). */
 export const segment = cva(
   "flex flex-1 items-center justify-center rounded-sm text-callout text-ink-2 has-checked:bg-segment-selected has-checked:font-bold has-checked:text-ink has-focus-visible:outline-2 has-focus-visible:outline-focus current:bg-segment-selected current:font-bold current:text-ink aria-pressed:bg-segment-selected aria-pressed:font-bold aria-pressed:text-ink aria-checked:bg-segment-selected aria-checked:font-bold aria-checked:text-ink",
-  { variants: { size: { md: "h-10", sm: "h-8.5" } }, defaultVariants: { size: "md" } },
+  { variants: { size: { lg: "h-11", md: "h-10", sm: "h-8.5" } }, defaultVariants: { size: "md" } },
 );
 
 // ---------------------------------------------------------------- Forms
@@ -460,7 +460,7 @@ export const planTools = cva("flex gap-1");
 export const planTool = cva("inline-flex size-11 items-center justify-center rounded-full bg-on-sky-fill text-on-sky disabled:opacity-40");
 export const gwTabs = cva("-mx-5 flex gap-2 overflow-x-auto px-5 scrollbar-none");
 export const gwTab = cva(
-  "flex h-14.5 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-lg bg-on-sky-fill text-ink aria-selected:bg-accent aria-selected:text-on-accent",
+  "relative flex h-14.5 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-lg bg-on-sky-fill text-ink has-checked:bg-accent has-checked:text-on-accent has-focus-visible:outline-2 has-focus-visible:-outline-offset-2 has-focus-visible:outline-focus",
 );
 export const gwTabLabel = cva("text-caption font-semibold opacity-85");
 export const gwTabPoints = cva("text-headline font-bold tabular-nums");
