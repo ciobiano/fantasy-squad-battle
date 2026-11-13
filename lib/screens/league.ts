@@ -7,6 +7,7 @@ import { SAMPLE_LEAGUE, fplId } from "@/lib/ids";
 import { getLeagueView, type LeagueViewResult } from "@/lib/league/league-view";
 import { marketFromView } from "./from-view";
 import { SAMPLE_MARKET, marketView, type MarketView } from "./market";
+import type { PaperView } from "./paper";
 import { guard, notFound, ready, redirectTo, type Screen } from "./screen";
 import { startHref } from "./start";
 import { SAMPLE_TABLE, tableView, type TableView } from "./table";
@@ -34,7 +35,7 @@ export const liveLeague: LeagueSource = {
   view: (leagueId, { gw, youId }) => getLeagueView(leagueId, { gw, youId, now: Date.now() }),
 };
 
-export type LeagueTab = "market" | "table";
+export type LeagueTab = "market" | "table" | "paper";
 
 export interface LeagueView {
   /** A number, or "sample". */
@@ -48,12 +49,19 @@ export interface LeagueView {
     | { readonly kind: "market"; readonly market: MarketView }
     /** No awards to show yet (before the season's first unlocked gameweek): a note and a link to the Table. */
     | { readonly kind: "market-soon" }
-    | { readonly kind: "table"; readonly table: TableView };
+    | { readonly kind: "table"; readonly table: TableView }
+    /** Every squad rated and ranked (lib/screens/paper.ts); `gw` is the gameweek the squads are as of. */
+    | { readonly kind: "paper"; readonly paper: PaperView }
+    /** Before the first deadline nobody has a squad to rate. */
+    | { readonly kind: "paper-soon" };
 }
 
-const changeHrefFor = (team: number | null) => (team !== null ? `/team/${team}` : "/?start=1&mode=league");
+/** The views loadLeague draws; On paper has its own loader (paper.ts). */
+export type StandingsTab = Exclude<LeagueTab, "paper">;
 
-function sampleLeague(tab: LeagueTab, changeHref: string): LeagueView {
+export const changeHrefFor = (team: number | null): string => (team !== null ? `/team/${team}` : "/?start=1&mode=league");
+
+function sampleLeague(tab: StandingsTab, changeHref: string): LeagueView {
   const body: LeagueView["body"] =
     tab === "market" ? { kind: "market", market: marketView(SAMPLE_MARKET) } : { kind: "table", table: SAMPLE_TABLE };
   return { leagueId: SAMPLE_LEAGUE, leagueName: SAMPLE_MARKET.leagueName, tab, gw: SAMPLE_MARKET.gw, changeHref, body };
@@ -65,7 +73,7 @@ function sampleLeague(tab: LeagueTab, changeHref: string): LeagueView {
  */
 export async function loadLeague(
   segment: string,
-  tab: LeagueTab,
+  tab: StandingsTab,
   team: number | null,
   source: LeagueSource = liveLeague,
 ): Promise<Screen<LeagueView>> {

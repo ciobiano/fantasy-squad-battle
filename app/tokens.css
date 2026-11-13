@@ -7,6 +7,7 @@
   --surface-2: #e3e5e2;
   --surface-3: #e9ebe8;
   --segment-selected: #ffffff;
+  --menu: #ffffff;
   --hairline: #e3e5e2;
   --card-rule: #e3e5e2;
   --watched: #d5d8d4;
@@ -79,6 +80,7 @@
     --surface-2: #24272a;
     --surface-3: #2a2d31;
     --segment-selected: #2a2d31;
+    --menu: #24272a;
     --hairline: #24272a;
     --card-rule: #24272a;
     --watched: #3a3d41;
@@ -122,6 +124,7 @@
   --surface-2: #24272a;
   --surface-3: #2a2d31;
   --segment-selected: #2a2d31;
+  --menu: #24272a;
   --hairline: #24272a;
   --card-rule: #24272a;
   --watched: #3a3d41;
@@ -163,6 +166,7 @@
   --surface-2: #e3e5e2;
   --surface-3: #e9ebe8;
   --segment-selected: #ffffff;
+  --menu: #ffffff;
   --hairline: #e3e5e2;
   --card-rule: #e3e5e2;
   --watched: #d5d8d4;
@@ -203,6 +207,7 @@
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
   --color-segment-selected: var(--segment-selected);
+  --color-menu: var(--menu);
   --color-hairline: var(--hairline);
   --color-card-rule: var(--card-rule);
   --color-watched: var(--watched);

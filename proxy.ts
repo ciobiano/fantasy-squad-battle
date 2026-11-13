@@ -2,8 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { REMEMBER_FOR, onVisit } from "@/lib/remembered";
 
 // Runs before a page renders (lib/remembered.ts decides): "/" opens the last
-// league, a league page with no valid ID is a real 404, and team and league
-// pages save their ID. Pages stream, and a streamed page's status is always 200,
+// league and "/planner" the last team, a league or planner page with no valid
+// ID is a real 404, and team and league pages save their ID. Pages stream, and a streamed page's status is always 200,
 // so a 404 has to be decided here.
 const NO_SUCH_PAGE = "/404";
 
@@ -20,5 +20,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/team/:id", "/league/:id", "/league/:id/table", "/league/:id/story/:card", "/s/:league/:gw"],
+  matcher: [
+    "/", "/team/:id", "/league/:id", "/league/:id/table", "/league/:id/paper", "/league/:id/story/:card", "/s/:league/:gw",
+    "/planner", "/planner/:id", "/planner/:id/plan",
+  ],
 };

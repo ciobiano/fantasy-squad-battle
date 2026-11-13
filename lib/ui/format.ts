@@ -1,4 +1,5 @@
 // Small formatting rules shared by the app screens.
+import type { Lang } from "@/lib/i18n";
 
 /** Ranks over 99,999 shorten (412K, 1.2M); smaller ones keep their separators. */
 export function compactRank(rank: number): string {
@@ -32,5 +33,36 @@ export function age(isoTime: string, now: number): string {
   return hours < 24 ? `${Math.max(1, hours)}h` : `${Math.floor(hours / 24)}d`;
 }
 
-/** First word of a full name: surnames are never shown. */
-export const firstName = (fullName: string): string => fullName.trim().split(/\s+/)[0] ?? "";
+/** One decimal place, the way each language writes it: "53.7", or "53,7" in French. */
+export function decimal(value: number, lang: Lang): string {
+  const text = value.toFixed(1);
+  return lang === "fr" ? text.replace(".", ",") : text;
+}
+
+/** FPL money (tenths of a million): "£1.7m", or "1,7 M£" in French. */
+export function money(tenths: number, lang: Lang): string {
+  const millions = decimal(tenths / 10, lang);
+  return lang === "fr" ? `${millions} M£` : `£${millions}m`;
+}
+
+/** A points change with its sign: "+9.7", "−4.0" (a real minus sign). */
+export function signedDecimal(value: number, lang: Lang): string {
+  const size = decimal(Math.abs(value), lang);
+  if (Math.round(Math.abs(value) * 10) === 0) return size;
+  return `${value < 0 ? "−" : "+"}${size}`;
+}
+
+/** FPL deadlines in West Africa Time, where most of our players are: "Fri 23 Oct, 18:30", "ven. 23 oct., 18:30". */
+export function deadlineText(iso: string, lang: Lang): string {
+  const when = new Date(iso);
+  const locale = lang === "fr" ? "fr-FR" : "en-GB";
+  const zone = { timeZone: "Africa/Lagos" } as const;
+  const day = when.toLocaleDateString(locale, { ...zone, weekday: "short", day: "numeric", month: "short" });
+  const time = when.toLocaleTimeString(locale, { ...zone, hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${day.replace(/,/g, "")}, ${time}`;
+}
+
+/** The day of a forecast, in West Africa Time: "Tue", "mar.". */
+export const weekdayText = (iso: string, lang: Lang): string =>
+  new Date(iso).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-GB", { timeZone: "Africa/Lagos", weekday: "short" });
+

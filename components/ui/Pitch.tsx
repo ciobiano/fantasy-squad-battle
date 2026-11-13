@@ -2,7 +2,7 @@
 // and full chalk markings, drawn at 6:7 so circles stay round on any phone, and
 // the same in both themes. Players wear their club's colours, never crests.
 import { kitFor, type Kit } from "@/lib/ui/kits";
-import { pitchMarkings, pitchPaint } from "@/lib/variants";
+import { emptyShirt, kitPatterns, pitchMarkings, pitchPaint } from "@/lib/variants";
 
 const W = 360;
 const H = 420;
@@ -12,6 +12,31 @@ const BOX = { w: 176, h: 66 };
 const SIX = { w: 80, h: 24 };
 
 const stripeId = (club: string) => `kit-stripes-${club}`;
+
+function StripeDefs({ clubs }: { clubs: readonly string[] }) {
+  return (
+    <defs>
+      {clubs.map((club) => {
+        const kit = kitFor(club);
+        return (
+          <pattern key={club} id={stripeId(club)} width="8" height="40" patternUnits="userSpaceOnUse">
+            <rect width="8" height="40" fill={kit.body} />
+            <rect x="4" width="4" height="40" fill={kit.trim} />
+          </pattern>
+        );
+      })}
+    </defs>
+  );
+}
+
+/** The stripe patterns striped shirts use, for shirts drawn away from the pitch (lists, sheets). */
+export function KitPatterns({ clubs }: { clubs: readonly string[] }) {
+  return (
+    <svg width="0" height="0" aria-hidden="true" className={kitPatterns()}>
+      <StripeDefs clubs={clubs} />
+    </svg>
+  );
+}
 
 /** The pitch's ground and markings, plus the stripe patterns its striped shirts use. */
 export function PitchMarkings({ stripedClubs }: { stripedClubs: readonly string[] }) {
@@ -23,17 +48,7 @@ export function PitchMarkings({ stripedClubs }: { stripedClubs: readonly string[
   ];
   return (
     <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" className={pitchMarkings()}>
-      <defs>
-        {stripedClubs.map((club) => {
-          const kit = kitFor(club);
-          return (
-            <pattern key={club} id={stripeId(club)} width="8" height="40" patternUnits="userSpaceOnUse">
-              <rect width="8" height="40" fill={kit.body} />
-              <rect x="4" width="4" height="40" fill={kit.trim} />
-            </pattern>
-          );
-        })}
-      </defs>
+      <StripeDefs clubs={stripedClubs} />
       <rect width={W} height={H} className={pitchPaint({ part: "ground" })} />
       {Array.from({ length: STRIPES / 2 }, (_, i) => (
         <rect key={i} y={(i * 2 * H) / STRIPES} width={W} height={H / STRIPES} className={pitchPaint({ part: "stripe" })} />
@@ -76,6 +91,16 @@ export function Shirt({ club }: { club: string }) {
       <path d={SHIRT} fill={kit.stripes ? `url(#${stripeId(club)})` : kit.body} stroke="rgba(0,0,0,0.28)" strokeWidth={1} />
       {plainSleeves ? null : <path d={SLEEVES} fill={kit.stripes ? kit.body : kit.trim} />}
       <path d={COLLAR} fill="none" stroke={collarColour(kit)} strokeWidth={1.6} />
+    </svg>
+  );
+}
+
+/** A shirt still to fill, in a draft: dashed chalk with a plus. */
+export function EmptyShirt() {
+  return (
+    <svg width="34" height="32" viewBox="0 0 40 38" aria-hidden="true">
+      <path d={SHIRT} className={emptyShirt({ part: "shirt" })} strokeWidth={1.6} strokeDasharray="3 2.5" />
+      <path d="M20 15v10M15 20h10" className={emptyShirt({ part: "plus" })} strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 }

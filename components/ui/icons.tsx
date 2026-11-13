@@ -23,6 +23,67 @@ export function ChevronRight({ size = 14, className }: IconProps) {
   );
 }
 
+/** A pop-up button's mark: the choice opens a short list. */
+export function UpDownIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size * 0.625} height={size} viewBox="0 0 10 16" aria-hidden="true" className={className} {...stroke} strokeWidth={1.8}>
+      <path d="M2 6l3-3 3 3M2 10l3 3 3-3" />
+    </svg>
+  );
+}
+
+/** The chosen item in a list. */
+export function CheckIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" className={className} {...stroke}>
+      <path d="M3 8.5l3.2 3.2L13 4.8" />
+    </svg>
+  );
+}
+
+/** A link that leaves the app. */
+export function ExternalIcon({ size = 14 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden="true" {...stroke} strokeWidth={1.7}>
+      <path d="M5.5 2.5h-3v9h9v-3M8 2h4v4M12 2 6.5 7.5" />
+    </svg>
+  );
+}
+
+/** Back to the previous screen. */
+export function BackIcon({ size = 18 }: IconProps) {
+  return (
+    <svg width={size * 0.61} height={size} viewBox="0 0 11 18" aria-hidden="true" {...stroke} strokeWidth={2.2}>
+      <path d="M9 1.5 1.75 9 9 16.5" />
+    </svg>
+  );
+}
+
+export function UndoIcon({ size = 22 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden="true" {...stroke} strokeWidth={1.9}>
+      <path d="M8 4.5 3.5 9 8 13.5M4 9h9.5a5 5 0 0 1 0 10H10" />
+    </svg>
+  );
+}
+
+export function RedoIcon({ size = 22 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden="true" {...stroke} strokeWidth={1.9}>
+      <path d="M14 4.5 18.5 9 14 13.5M18 9H8.5a5 5 0 0 0 0 10H12" />
+    </svg>
+  );
+}
+
+/** "Out → in": a transfer. */
+export function ArrowRight({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 16 12" aria-hidden="true" className={className} {...stroke} strokeWidth={1.8}>
+      <path d="M1 6h13M9.5 1.5 14 6l-4.5 4.5" />
+    </svg>
+  );
+}
+
 export function ThemeIcon({ size = 20 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
@@ -55,6 +116,8 @@ export const TAB_ICONS = {
   league: "M3 22h20M5.5 22v-6h5v6M10.5 22V9h5v13M15.5 22v-9h5v9",
   fixtures: "M5.5 5h15a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3.5 10.5h19M8.5 3v4M17.5 3v4M8 15h2M12 15h2M16 15h2M8 18.5h2M12 18.5h2",
   players: "M13 12.5a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5zM4.5 22.5c.6-4.6 4.1-7.5 8.5-7.5s7.9 2.9 8.5 7.5",
+  /** A clipboard with a tick: the plan. */
+  planner: "M9 4.5H7.5a2 2 0 0 0-2 2V21a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V6.5a2 2 0 0 0-2-2H17M9.5 3h7v3.5h-7zM9 14.5l2.75 2.75L17 12",
 } as const;
 
 /** Story viewer icons, as drawn on the canvas (S-Story). */

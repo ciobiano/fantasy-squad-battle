@@ -16,6 +16,12 @@
   --text-display--letter-spacing: -0.03em;
   --text-display--font-weight: 700;
 
+  /* The planner's big figures (the team rating, a plan's gain). */
+  --text-hero: clamp(3.5rem, 3rem + 2.5vw, 4.5rem);
+  --text-hero--line-height: 0.85;
+  --text-hero--letter-spacing: -0.045em;
+  --text-hero--font-weight: 700;
+
   --text-large-title: clamp(1.625rem, 1.4rem + 1.1vw, 1.875rem);
   --text-large-title--line-height: 1.1;
   --text-large-title--letter-spacing: -0.025em;
@@ -86,6 +92,10 @@
 @utility pb-sheet {
   padding-bottom: calc(2rem + env(safe-area-inset-bottom));
 }
+/* The plan bar sits on top of the tab bar (h-21). */
+@utility bottom-tabs {
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+}
 @utility pb-cta {
   padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
 }
@@ -109,6 +119,26 @@
     :root:not([data-theme="light"]) & {
       @slot;
     }
+  }
+}
+
+@custom-variant light {
+  :root[data-theme="light"] & {
+    @slot;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) & {
+      @slot;
+    }
+  }
+}
+
+@utility planner-sky {
+  @variant light {
+    --gradient-sky: linear-gradient(180deg, var(--brand-pale), var(--bg));
+    --on-sky: var(--ink);
+    --on-sky-2: var(--ink-2);
+    --on-sky-fill: var(--you-tint);
   }
 }
 

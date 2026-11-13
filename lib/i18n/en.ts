@@ -1,6 +1,12 @@
 // English. Ralph edits this one.
 import type { Copy } from "./copy";
 
+const ordinal = (n: number): string => {
+  const tens = n % 100;
+  const suffix = tens >= 11 && tens <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
+  return `${n}${suffix}`;
+};
+
 export const en: Copy = {
   theme: { system: "Theme: System. Change theme", light: "Theme: Light. Change theme", dark: "Theme: Dark. Change theme" },
   languageLabel: "Language",
@@ -63,6 +69,16 @@ export const en: Copy = {
     standingsCaption: (gw) => `Season standings after gameweek ${gw}`,
     you: "You",
     sample: "Sample league",
+    paperView: "On paper",
+    squadsAsOf: (gw) => `Squads as of GW${gw}`,
+    paperSoon: "Squads show here after the first deadline.",
+    paperBest: (name) => `${name} has the best squad on paper.`,
+    paperLeader: (name, rank) => `${name} tops the table with the ${ordinal(rank)} best.`,
+    paperLeaderToo: "And tops the table too.",
+    paperCaption: (first, last) => `Squads ranked by projected points, GW${first}–${last}`,
+    paperColumns: { rank: "#", manager: "Manager", points: (first, last) => `GW${first}–${last}`, table: "Table" },
+    paperNote: "Each squad’s best XI and captain each week, no transfers.",
+    ordinal: (n) => ordinal(n),
   },
   fixtures: {
     title: "Fixtures",
@@ -153,5 +169,49 @@ export const en: Copy = {
     kept: "kept",
     paid: "paid",
     others: (count) => `+${count} others`,
+  },
+  planner: {
+    title: "Planner",
+    tagline: "Rate your squad. Plan your transfers.",
+    rateButton: "Rate my team",
+    or: "or",
+    scratch: "Start from scratch",
+    scratchSub: "Pick every player yourself",
+    gw: (gw) => `GW${gw}`,
+    window: (first, last) => `GW${first}–${last}`,
+    ratingHeading: "Team rating",
+    ptsProjected: "pts projected",
+    squadAsOf: (gw) => `squad as of GW${gw}`,
+    howWorkedOut: "How is this worked out?",
+    explainBody: "Our projection for every player, with your best XI and captain picked each week and no transfers. It’s points, so you can compare it with any squad.",
+    yourLeague: "Your league",
+    compareIn: "Compare in",
+    leagueAria: (league, members) => `${league}, ${members} managers`,
+    paperLine: (rank, of) => (rank === 1 ? `Best squad of ${of}` : `${ordinal(rank)} best squad of ${of}`),
+    paperRanking: (league) => `Rating every squad in ${league}`,
+    paperUnavailable: "Can’t rank this league right now",
+    seePaper: "See the On paper table",
+    weekByWeek: "Week by week",
+    weekAria: (gw, points) => `Gameweek ${gw}: ${points} points`,
+    whereFrom: "Where the points come from",
+    parts: { GK: "Goalkeeper", DEF: "Defenders", MID: "Midfielders", FWD: "Forwards", captain: "Captain’s armband" },
+    ideas: "Transfer ideas",
+    ideasAside: (first, last) => `GW${first}–${last}, after hits`,
+    freeTransfer: "Free transfer",
+    twoTransfers: "Two transfers",
+    hitCounted: (hit) => `−${hit} hit counted`,
+    left: (money) => `${money} left`,
+    moveAria: (out, into) => `${out} out, ${into} in`,
+    gainAria: (points) => `${points} points`,
+    ideaOpens: "Opens in the planner",
+    planButton: "Plan transfers",
+    changeTeam: "Change team",
+    teamButtonAria: (team) => `${team}. Change team`,
+    rateThis: "Rate this team",
+    recentTeams: "Recent on this phone",
+    close: "Close",
+    noSquadTitle: "No squad to rate yet",
+    noSquadBody: (deadline) => (deadline ? `FPL shows a new team’s squad after its first deadline: ${deadline}.` : "FPL shows a new team’s squad after its first deadline."),
+    loading: "Rating your squad",
   },
 };

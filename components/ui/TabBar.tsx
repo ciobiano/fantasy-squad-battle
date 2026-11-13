@@ -2,14 +2,16 @@ import Link from "next/link";
 import { tab, tabBar, tabBarInner } from "@/lib/variants";
 import { TabIcon } from "./icons";
 
-export type TabKey = "league" | "fixtures" | "players";
+export type TabKey = "league" | "fixtures" | "players" | "planner";
 
-// League · Fixtures · Players. Planner gets a tab only when it ships; never a disabled tab.
-// "League" goes to "/", which opens the remembered league (proxy.ts) or Start.
+// League · Fixtures · Players · Planner; never a disabled tab.
+// "League" goes to "/" and "Planner" to "/planner", which open the remembered
+// league and team (proxy.ts), or Start.
 const TABS: readonly { key: TabKey; href: string; label: string }[] = [
   { key: "league", href: "/", label: "League" },
   { key: "fixtures", href: "/fixtures", label: "Fixtures" },
   { key: "players", href: "/players", label: "Players" },
+  { key: "planner", href: "/planner", label: "Planner" },
 ];
 
 export function TabBar({ active }: { active: TabKey }) {

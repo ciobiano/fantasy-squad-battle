@@ -2,8 +2,9 @@
 // GW points are FPL's event_total (before hits), the same number the official
 // table shows; the Market view and cards use the net score.
 import type { Standings } from "@/lib/fpl/schemas";
+import { firstNameOf } from "@/lib/league/standings";
 import { badgeFor, type Badge } from "@/lib/ui/badge";
-import { firstName, movement, type Movement } from "@/lib/ui/format";
+import { movement, type Movement } from "@/lib/ui/format";
 
 export interface TableRow {
   readonly entry: number;
@@ -33,7 +34,8 @@ export function tableView(standings: Standings, youEntry: number | null): TableV
       pos: row.rank,
       // FPL reports last_rank 0 for a manager's first ranked week.
       move: movement(row.rank, row.last_rank > 0 ? row.last_rank : null),
-      firstName: firstName(row.player_name),
+      // The cards' rule (lib/league), so a manager reads the same in both.
+      firstName: firstNameOf(row.player_name, row.entry_name),
       teamName: row.entry_name.trim(),
       badge: badgeFor(row.entry_name),
       gw: row.event_total,

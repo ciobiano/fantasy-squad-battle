@@ -9,7 +9,11 @@ const DATA = {
   regex: "^@/lib/(fpl|league|tools|projections)(/|$)|^@/lib/planner(/(?!engine(/|$))|$)",
   message: "FPL data reaches the app through a screen module in lib/screens.",
 };
-const INTERNALS = { group: ["@/lib/i18n/*", "@/lib/cards/render/*"], message: "Import the module's entry point (@/lib/i18n, @/lib/cards/render)." };
+// lib/i18n/plan is the exception: the plan board runs in the browser and loads only its own lines.
+const INTERNALS = {
+  group: ["@/lib/i18n/*", "!@/lib/i18n/plan", "@/lib/cards/render/*"],
+  message: "Import the module's entry point (@/lib/i18n, @/lib/cards/render).",
+};
 const REQUEST = { group: ["next/headers", "@/lib/request"], message: "Only routes (app/) read the request; pass what it says down as arguments." };
 
 const layer = (files, patterns, ignores = []) => ({

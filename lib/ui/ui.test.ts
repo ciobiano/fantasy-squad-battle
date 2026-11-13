@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { badgeFor, initials } from "./badge";
-import { age, compactRank, firstName, movement } from "./format";
+import { age, compactRank, deadlineText, decimal, money, movement, signedDecimal } from "./format";
 
 describe("format", () => {
   it("shortens big ranks", () => {
@@ -22,9 +22,6 @@ describe("format", () => {
     expect(age("2026-10-12T11:59:00Z", now)).toBe("1h");
     expect(age("2026-10-09T12:00:00Z", now)).toBe("3d");
   });
-  it("keeps the first name only", () => {
-    expect(firstName("  Ralph   Obiano ")).toBe("Ralph");
-  });
 });
 
 describe("badges", () => {
@@ -41,3 +38,24 @@ describe("badges", () => {
     expect(b.colour).toBeLessThanOrEqual(8);
   });
 });
+
+describe("planner numbers", () => {
+  it("writes one decimal and FPL money the way each language does", () => {
+    expect(decimal(53.67, "en")).toBe("53.7");
+    expect(decimal(53.67, "fr")).toBe("53,7");
+    expect(money(17, "pcm")).toBe("£1.7m");
+    expect(money(1000, "en")).toBe("£100.0m");
+    expect(money(17, "fr")).toBe("1,7 M£");
+    expect(signedDecimal(9.67, "en")).toBe("+9.7");
+    expect(signedDecimal(-4, "fr")).toBe("−4,0");
+    expect(signedDecimal(0.02, "en")).toBe("0.0");
+  });
+});
+
+describe("deadlineText", () => {
+  it("writes an FPL deadline in West Africa Time", () => {
+    expect(deadlineText("2026-10-23T17:30:00Z", "en")).toBe("Fri 23 Oct, 18:30");
+    expect(deadlineText("2026-10-23T17:30:00Z", "fr")).toMatch(/^ven\.? 23 oct\.?, 18:30$/);
+  });
+});
+
